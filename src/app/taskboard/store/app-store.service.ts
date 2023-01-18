@@ -7,15 +7,15 @@ import { TaskboardState } from '../state';
 
 @Injectable()
 export class TaskboardStoreService extends ComponentStore<TaskboardState> {
-  tasks$: Observable<Task[]> = this.select(
+  readonly tasks$: Observable<Task[]> = this.select(
     (state: TaskboardState) => state.tasks
   );
 
-  filters$: Observable<Filters> = this.select(
+  readonly filters$: Observable<Filters> = this.select(
     (state: TaskboardState) => state.filters
   );
 
-  loading$: Observable<boolean> = this.select(
+  readonly loading$: Observable<boolean> = this.select(
     (state: TaskboardState) => state.loading
   );
 

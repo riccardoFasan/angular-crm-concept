@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskboardStoreService } from '../../store/app-store.service';
 import { Observable } from 'rxjs';
@@ -24,9 +24,9 @@ import { ListComponent } from '../list/list.component';
   styles: [],
 })
 export class TaskboardContainerComponent {
-  tasks$: Observable<Task[]> = this.store.tasks$;
-  filters$: Observable<Filters> = this.store.filters$;
-  loading$: Observable<boolean> = this.store.loading$;
+  private readonly store: TaskboardStoreService = inject(TaskboardStoreService);
 
-  constructor(private store: TaskboardStoreService) {}
+  readonly tasks$: Observable<Task[]> = this.store.tasks$;
+  readonly filters$: Observable<Filters> = this.store.filters$;
+  readonly loading$: Observable<boolean> = this.store.loading$;
 }
