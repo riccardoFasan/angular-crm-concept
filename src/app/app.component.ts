@@ -1,10 +1,12 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { TaskboardContainerComponent } from './taskboard/components';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  standalone: true,
+  imports: [CommonModule, TaskboardContainerComponent],
+  template: `<app-taskboard-container></app-taskboard-container>`,
+  styles: [],
 })
-export class AppComponent {
-  title = 'taskboard';
-}
+export class AppComponent {}
