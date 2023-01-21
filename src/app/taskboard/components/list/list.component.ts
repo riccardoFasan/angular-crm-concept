@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Task } from '../../models';
 import { MatTableModule } from '@angular/material/table';
-import { MatChipsModule } from '@angular/material/chips';
-import { PriorityColorPipe, StatusColorPipe } from '../../pipes';
+import { PriorityChipComponent } from '../priority-chip/priority-chip.component';
+import { StatusChipComponent } from '../status-chip/status-chip.component';
 
 @Component({
   selector: 'app-list',
@@ -11,10 +11,9 @@ import { PriorityColorPipe, StatusColorPipe } from '../../pipes';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    PriorityChipComponent,
+    StatusChipComponent,
     MatTableModule,
-    MatChipsModule,
-    PriorityColorPipe,
-    StatusColorPipe,
   ],
   template: `<table mat-table [dataSource]="tasks">
     <ng-container matColumnDef="description">
@@ -25,24 +24,14 @@ import { PriorityColorPipe, StatusColorPipe } from '../../pipes';
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
       <td mat-cell *matCellDef="let element">
-        <mat-chip
-          [color]="element.priority | statusColor"
-          [disableRipple]="true"
-        >
-          {{ element.status }}
-        </mat-chip>
+        <app-status-chip [status]="element.status"></app-status-chip>
       </td>
     </ng-container>
 
     <ng-container matColumnDef="priority">
       <th mat-header-cell *matHeaderCellDef>Priority</th>
       <td mat-cell *matCellDef="let element">
-        <mat-chip
-          [color]="element.priority | priorityColor"
-          [disableRipple]="true"
-        >
-          {{ element.priority }}
-        </mat-chip>
+        <app-priority-chip [priority]="element.priority"></app-priority-chip>
       </td>
     </ng-container>
 

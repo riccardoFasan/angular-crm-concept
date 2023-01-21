@@ -27,8 +27,8 @@ export class TaskboardStoreService extends ComponentStore<TaskboardState> {
           id: 'hey',
           description:
             'My firsy rendered task with component-store and anguar material',
-          status: Status.NotStarted,
-          priority: Priority.Low,
+          status: Status.Completed,
+          priority: Priority.Top,
           deadline: new Date(),
         },
       ],

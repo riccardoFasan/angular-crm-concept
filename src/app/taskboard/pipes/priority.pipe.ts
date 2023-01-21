@@ -2,13 +2,14 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { Priority } from '../enums';
 
 @Pipe({
-  name: 'priorityColor',
+  name: 'priority',
   standalone: true,
 })
-export class PriorityColorPipe implements PipeTransform {
-  transform(priority: Priority): string {
-    if (priority === Priority.High) return 'error';
-    if (priority === Priority.Medium) return 'warn';
-    return 'success';
+export class PriorityPipe implements PipeTransform {
+  transform(priority: Priority): { color: string; name: string } {
+    if (priority === Priority.Top) return { name: 'Top', color: '#DB234B' };
+    if (priority === Priority.Medium)
+      return { name: 'Medium', color: '#FF810A' };
+    return { name: 'Low', color: '#18DB91' };
   }
 }

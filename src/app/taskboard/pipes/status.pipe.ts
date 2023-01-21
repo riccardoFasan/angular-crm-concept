@@ -1,15 +1,17 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Status } from '../enums';
-
 @Pipe({
-  name: 'statusColor',
+  name: 'status',
   standalone: true,
 })
-export class StatusColorPipe implements PipeTransform {
-  transform(status: Status): 'success' | 'warn' | 'blue' | 'gray' {
-    if (status === Status.Completed) return 'success';
-    if (status === Status.InProgress) return 'warn';
-    if (status === Status.InReview) return 'blue';
-    return 'gray';
+export class StatusPipe implements PipeTransform {
+  transform(status: Status): { color: string | null; name: string } {
+    if (status === Status.Completed)
+      return { name: 'Completed', color: '#18DB91' };
+    if (status === Status.InProgress)
+      return { name: 'In Progress', color: '#FF810A' };
+    if (status === Status.InReview)
+      return { name: 'In Review', color: '#2994DB' };
+    return { name: 'Not Started', color: null };
   }
 }
