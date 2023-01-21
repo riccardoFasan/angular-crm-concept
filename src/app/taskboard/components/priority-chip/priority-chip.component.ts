@@ -8,13 +8,15 @@ import { MatChipsModule } from '@angular/material/chips';
   selector: 'app-priority-chip',
   standalone: true,
   imports: [CommonModule, PriorityPipe, MatChipsModule],
-  template: `<mat-chip
-    *ngIf="priority | priority as vm"
-    [style.backgroundColor]="vm.color"
-    [disableRipple]="true"
-  >
-    {{ vm.name }}
-  </mat-chip>`,
+  template: `
+    <mat-chip
+      *ngIf="priority | priority as vm"
+      [style.backgroundColor]="vm.color"
+      [disableRipple]="true"
+    >
+      {{ vm.name }}
+    </mat-chip>
+  `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

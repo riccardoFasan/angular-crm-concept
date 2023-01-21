@@ -17,12 +17,10 @@ import { StatusChipComponent } from '../status-chip/status-chip.component';
     MatTableModule,
     MatProgressBarModule,
   ],
-  template: ` <mat-progress-bar
-      *ngIf="loading"
-      mode="indeterminate"
-    ></mat-progress-bar>
+  template: `
+    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
     <table
-      [ngStyle]="{ 'marginTop.px': !loading ? '4' : 0 }"
+      [ngStyle]="{ 'marginTop.px': !loading ? '4' : '0' }"
       mat-table
       [dataSource]="tasks"
     >
@@ -59,7 +57,8 @@ import { StatusChipComponent } from '../status-chip/status-chip.component';
 
       <tr mat-header-row *matHeaderRowDef="columns"></tr>
       <tr mat-row *matRowDef="let row; columns: columns"></tr>
-    </table>`,
+    </table>
+  `,
   styles: [],
 })
 export class ListComponent {

@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable, switchMap, tap } from 'rxjs';
-import { Pagination, SearchCriteria, Task } from '../models';
+import { Filters, Pagination, SearchCriteria, Task } from '../models';
 import { ApiService } from '../services/api.service';
 import { TaskboardState } from '../state';
 
@@ -29,6 +29,16 @@ export class TaskboardStoreService extends ComponentStore<TaskboardState> {
       searchCriteria: {
         ...state.searchCriteria,
         pagination,
+      },
+    })
+  );
+
+  readonly updateFilters = this.updater(
+    (state: TaskboardState, filters: Filters) => ({
+      ...state,
+      searchCriteria: {
+        ...state.searchCriteria,
+        filters,
       },
     })
   );

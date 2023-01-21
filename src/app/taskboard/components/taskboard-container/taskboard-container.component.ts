@@ -5,20 +5,28 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
 import { TaskboardStoreService } from '../../store/app-store.service';
 import { Observable } from 'rxjs';
-import { Pagination, SearchCriteria, Task } from '../../models';
+import { Filters, Pagination, SearchCriteria, Task } from '../../models';
 import { ListComponent } from '../list/list.component';
 import { PaginationComponent } from '../pagination/pagination.component';
+import { FiltersComponent } from '../filters/filters.component';
 
 @Component({
   selector: 'app-taskboard-container',
   standalone: true,
-  imports: [CommonModule, ListComponent, PaginationComponent],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    ListComponent,
+    PaginationComponent,
+    FiltersComponent,
+  ],
   providers: [TaskboardStoreService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <ng-container
+    <mat-card
       *ngIf="{
         tasks: tasks$ | async,
         count: count$ | async,
@@ -26,6 +34,11 @@ import { PaginationComponent } from '../pagination/pagination.component';
         loading: loading$ | async
       } as vm"
     >
+      <app-filters
+        [filters]="vm.searchCriteria!.filters"
+        [loading]="vm.loading!"
+        (filtersChange)="onFiltersChange($event)"
+      ></app-filters>
       <app-list [tasks]="vm.tasks!" [loading]="vm.loading!"></app-list>
       <app-pagination
         [pagination]="vm.searchCriteria!.pagination"
@@ -33,7 +46,7 @@ import { PaginationComponent } from '../pagination/pagination.component';
         [loading]="vm.loading!"
         (paginationChange)="onPaginationChange($event)"
       ></app-pagination>
-    </ng-container>
+    </mat-card>
   `,
   styles: [
     `
@@ -59,5 +72,9 @@ export class TaskboardContainerComponent implements AfterViewInit {
 
   protected onPaginationChange(pagination: Pagination): void {
     this.store.updatePagination(pagination);
+  }
+
+  protected onFiltersChange(filters: Filters): void {
+    this.store.updateFilters(filters);
   }
 }
