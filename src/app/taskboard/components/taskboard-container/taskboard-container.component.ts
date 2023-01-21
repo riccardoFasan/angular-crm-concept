@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskboardStoreService } from '../../store/app-store.service';
 import { Observable } from 'rxjs';
@@ -10,6 +10,7 @@ import { ListComponent } from '../list/list.component';
   standalone: true,
   imports: [CommonModule, ListComponent],
   providers: [TaskboardStoreService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ng-container
       *ngIf="{

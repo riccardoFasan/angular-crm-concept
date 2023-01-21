@@ -25,9 +25,11 @@ export class TaskboardStoreService extends ComponentStore<TaskboardState> {
       tasks: [
         {
           id: 'hey',
-          description: 'My firsy rendered task with @ngrx/component-store!',
+          description:
+            'My firsy rendered task with component-store and anguar material',
           status: Status.NotStarted,
           priority: Priority.Low,
+          deadline: new Date(),
         },
       ],
       loading: false,

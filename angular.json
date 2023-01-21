@@ -9,6 +9,10 @@
         "@schematics/angular:component": {
           "inlineTemplate": true,
           "inlineStyle": true,
+          "standalone": true,
+          "changeDetection": "OnPush"
+        },
+        "@schematics/angular:pipe": {
           "standalone": true
         }
       },
