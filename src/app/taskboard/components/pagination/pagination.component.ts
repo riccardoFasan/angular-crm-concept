@@ -8,20 +8,25 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FilterPaginationOptionsPipe } from '../../pipes';
+import { Pagination } from '../../models';
 
 @Component({
   selector: 'app-pagination',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, MatPaginatorModule, FilterPaginationOptionsPipe],
-  template: `<mat-paginator
-    showFirstLastButtons
-    [pageSizeOptions]="pageSizeOptions | filterPaginationOptions : count"
-    [pageSize]="pageSize"
-    [pageIndex]="page"
-    [length]="count"
-    (page)="onPageChange($event)"
-  ></mat-paginator>`,
+  template: `
+    <mat-paginator
+      showFirstLastButtons
+      [pageSizeOptions]="pageSizeOptions | filterPaginationOptions : count"
+      [pageSize]="pagination.pageSize"
+      [pageIndex]="pagination.pageIndex"
+      [disabled]="loading"
+      [length]="count"
+      (page)="onPaginationChange($event)"
+    >
+    </mat-paginator>
+  `,
   styles: [
     `
       :host {
@@ -32,14 +37,18 @@ import { FilterPaginationOptionsPipe } from '../../pipes';
 })
 export class PaginationComponent {
   @Input() count: number = 0;
-  @Input() page: number = 0;
-  @Input() pageSize: number = 0;
+  @Input() loading: boolean = false;
+  @Input() pagination!: Pagination;
 
-  @Output() pageChange: EventEmitter<number> = new EventEmitter<number>();
+  @Output() paginationChange: EventEmitter<Pagination> =
+    new EventEmitter<Pagination>();
 
-  protected readonly pageSizeOptions: number[] = [5, 10, 15, 20];
+  protected readonly pageSizeOptions: number[] = [5, 10];
 
-  protected onPageChange(e: PageEvent): void {
-    this.pageChange.emit(e.pageIndex);
+  protected onPaginationChange(e: PageEvent): void {
+    this.paginationChange.emit({
+      pageIndex: e.pageIndex,
+      pageSize: e.pageSize,
+    });
   }
 }

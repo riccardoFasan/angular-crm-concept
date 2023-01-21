@@ -1,8 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskboardStoreService } from '../../store/app-store.service';
 import { Observable } from 'rxjs';
-import { Filters, Task } from '../../models';
+import { Pagination, SearchCriteria, Task } from '../../models';
 import { ListComponent } from '../list/list.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 
@@ -16,19 +21,17 @@ import { PaginationComponent } from '../pagination/pagination.component';
     <ng-container
       *ngIf="{
         tasks: tasks$ | async,
-        filters: filters$ | async,
-        loading: loading$ | async,
-        pageSize: pageSize$ | async,
-        page: page$ | async,
-        count: count$ | async
+        count: count$ | async,
+        searchCriteria: searchCriteria$ | async,
+        loading: loading$ | async
       } as vm"
     >
       <app-list [tasks]="vm.tasks!" [loading]="vm.loading!"></app-list>
       <app-pagination
-        [page]="vm.page!"
-        [pageSize]="vm.pageSize!"
+        [pagination]="vm.searchCriteria!.pagination"
         [count]="vm.count!"
-        (pageChange)="onPageChange($event)"
+        [loading]="vm.loading!"
+        (paginationChange)="onPaginationChange($event)"
       ></app-pagination>
     </ng-container>
   `,
@@ -41,15 +44,20 @@ import { PaginationComponent } from '../pagination/pagination.component';
     `,
   ],
 })
-export class TaskboardContainerComponent {
+export class TaskboardContainerComponent implements AfterViewInit {
   private readonly store: TaskboardStoreService = inject(TaskboardStoreService);
 
   protected readonly tasks$: Observable<Task[]> = this.store.tasks$;
-  protected readonly filters$: Observable<Filters> = this.store.filters$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;
-  protected readonly pageSize$: Observable<number> = this.store.pageSize$;
-  protected readonly page$: Observable<number> = this.store.page$;
+  protected readonly searchCriteria$: Observable<SearchCriteria> =
+    this.store.searchCriteria$;
   protected readonly count$: Observable<number> = this.store.count$;
 
-  protected onPageChange(page: number): void {}
+  ngAfterViewInit(): void {
+    this.store.getTasks(this.searchCriteria$);
+  }
+
+  protected onPaginationChange(pagination: Pagination): void {
+    this.store.updatePagination(pagination);
+  }
 }

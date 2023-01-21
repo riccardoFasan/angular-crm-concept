@@ -1,10 +1,8 @@
-import { Filters, Task } from '../models';
+import { Task, SearchCriteria } from '../models';
 
 export interface TaskboardState {
   tasks: Task[];
-  filters: Filters;
-  loading: boolean;
-  pageSize: number;
-  page: number;
+  searchCriteria: SearchCriteria;
   count: number;
+  loading: boolean;
 }

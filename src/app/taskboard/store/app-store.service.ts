@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { Observable } from 'rxjs';
-import { Filters, Task } from '../models';
+import { Observable, switchMap, tap } from 'rxjs';
+import { Pagination, SearchCriteria, Task } from '../models';
+import { ApiService } from '../services/api.service';
 import { TaskboardState } from '../state';
-import { FAKE_TASKS } from './tasks';
 
 @Injectable()
 export class TaskboardStoreService extends ComponentStore<TaskboardState> {
@@ -11,34 +11,83 @@ export class TaskboardStoreService extends ComponentStore<TaskboardState> {
     (state: TaskboardState) => state.tasks
   );
 
-  readonly filters$: Observable<Filters> = this.select(
-    (state: TaskboardState) => state.filters
+  readonly count$: Observable<number> = this.select(
+    (state: TaskboardState) => state.count
+  );
+
+  readonly searchCriteria$: Observable<SearchCriteria> = this.select(
+    (state: TaskboardState) => state.searchCriteria
   );
 
   readonly loading$: Observable<boolean> = this.select(
     (state: TaskboardState) => state.loading
   );
 
-  readonly pageSize$: Observable<number> = this.select(
-    (state: TaskboardState) => state.pageSize
+  readonly updatePagination = this.updater(
+    (state: TaskboardState, pagination: Pagination) => ({
+      ...state,
+      searchCriteria: {
+        ...state.searchCriteria,
+        pagination,
+      },
+    })
   );
 
-  readonly page$: Observable<number> = this.select(
-    (state: TaskboardState) => state.page
+  readonly getTasks = this.effect(
+    (searchCriteria$: Observable<SearchCriteria>) =>
+      searchCriteria$.pipe(
+        tap(() => this.updateLoading(true)),
+        switchMap((searchCriteria: SearchCriteria) =>
+          this.api.getTasks(searchCriteria).pipe(
+            tap({
+              next: (response: { tasks: Task[]; count: number }) => {
+                this.updateTasks(response.tasks);
+                this.updateCount(response.count);
+                this.updateLoading(false);
+              },
+              // TODO: error handling
+              //error: () => ,
+            })
+          )
+        )
+      )
   );
 
-  readonly count$: Observable<number> = this.select(
-    (state: TaskboardState) => state.count
+  private readonly updateLoading = this.updater(
+    (state: TaskboardState, loading: boolean) => ({
+      ...state,
+      loading,
+    })
   );
+
+  private readonly updateCount = this.updater(
+    (state: TaskboardState, count: number) => ({
+      ...state,
+      count,
+    })
+  );
+
+  private readonly updateTasks = this.updater(
+    (state: TaskboardState, tasks: Task[]) => ({
+      ...state,
+      tasks,
+    })
+  );
+
+  private api: ApiService = inject(ApiService);
 
   constructor() {
     super({
-      filters: {},
-      tasks: FAKE_TASKS,
+      tasks: [],
+      count: 0,
+      searchCriteria: {
+        filters: {},
+        pagination: {
+          pageSize: 5,
+          pageIndex: 0,
+        },
+      },
       loading: false,
-      pageSize: 5,
-      page: 0,
-      count: FAKE_TASKS.length,
     });
   }
 }

@@ -11,7 +11,7 @@ export const FAKE_TASKS: Task[] = [
     deadline: new Date(),
   },
   {
-    id: '1',
+    id: '2',
     description:
       'My firsy rendered task with component-store and anguar material',
     status: Status.NotStarted,
@@ -19,7 +19,7 @@ export const FAKE_TASKS: Task[] = [
     deadline: new Date(),
   },
   {
-    id: '1',
+    id: '3',
     description:
       'My firsy rendered task with component-store and anguar material',
     status: Status.InProgress,
@@ -27,7 +27,7 @@ export const FAKE_TASKS: Task[] = [
     deadline: new Date(),
   },
   {
-    id: '1',
+    id: '4',
     description:
       'My firsy rendered task with component-store and anguar material',
     status: Status.NotStarted,
@@ -35,7 +35,7 @@ export const FAKE_TASKS: Task[] = [
     deadline: new Date(),
   },
   {
-    id: '1',
+    id: '5',
     description:
       'My firsy rendered task with component-store and anguar material',
     status: Status.Completed,
@@ -43,7 +43,7 @@ export const FAKE_TASKS: Task[] = [
     deadline: new Date(),
   },
   {
-    id: '1',
+    id: '6',
     description:
       'My firsy rendered task with component-store and anguar material',
     status: Status.InProgress,
@@ -51,7 +51,7 @@ export const FAKE_TASKS: Task[] = [
     deadline: new Date(),
   },
   {
-    id: '1',
+    id: '7',
     description:
       'My firsy rendered task with component-store and anguar material',
     status: Status.NotStarted,
@@ -59,7 +59,23 @@ export const FAKE_TASKS: Task[] = [
     deadline: new Date(),
   },
   {
-    id: '1',
+    id: '8',
+    description:
+      'My firsy rendered task with component-store and anguar material',
+    status: Status.Completed,
+    priority: Priority.Low,
+    deadline: new Date(),
+  },
+  {
+    id: '9',
+    description:
+      'My firsy rendered task with component-store and anguar material',
+    status: Status.NotStarted,
+    priority: Priority.Low,
+    deadline: new Date(),
+  },
+  {
+    id: '10',
     description:
       'My firsy rendered task with component-store and anguar material',
     status: Status.Completed,
