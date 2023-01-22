@@ -1,7 +1,7 @@
-import { Filters } from './filters.model';
-import { Pagination } from './pagination.model';
+import { Filters, Pagination, Sorting } from '.';
 
 export interface SearchCriteria {
   filters: Filters;
   pagination: Pagination;
+  sorting?: Sorting;
 }

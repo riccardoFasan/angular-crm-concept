@@ -97,6 +97,11 @@ import { MatButtonModule } from '@angular/material/button';
         [matDatepicker]="picker"
         matInput
       />
+      <mat-hint>mm/dd/yyyy</mat-hint>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
       <button
         *ngIf="deadline"
         matSuffix
@@ -106,11 +111,6 @@ import { MatButtonModule } from '@angular/material/button';
       >
         <mat-icon>close</mat-icon>
       </button>
-      <mat-hint>mm/dd/yyyy</mat-hint>
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="picker"
-      ></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
   `,

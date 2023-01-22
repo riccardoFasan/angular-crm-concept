@@ -8,7 +8,13 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { TaskboardStoreService } from '../../store/app-store.service';
 import { Observable } from 'rxjs';
-import { Filters, Pagination, SearchCriteria, Task } from '../../models';
+import {
+  Filters,
+  Pagination,
+  SearchCriteria,
+  Sorting,
+  Task,
+} from '../../models';
 import { ListComponent } from '../list/list.component';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { FiltersComponent } from '../filters/filters.component';
@@ -39,7 +45,12 @@ import { FiltersComponent } from '../filters/filters.component';
         [loading]="vm.loading!"
         (filtersChange)="onFiltersChange($event)"
       ></app-filters>
-      <app-list [tasks]="vm.tasks!" [loading]="vm.loading!"></app-list>
+      <app-list
+        [tasks]="vm.tasks!"
+        [loading]="vm.loading!"
+        [sorting]="vm.searchCriteria!.sorting"
+        (sortingChange)="onSortingChange($event)"
+      ></app-list>
       <app-pagination
         [pagination]="vm.searchCriteria!.pagination"
         [count]="vm.count!"
@@ -70,11 +81,15 @@ export class TaskboardContainerComponent implements AfterViewInit {
     this.store.getTasks(this.searchCriteria$);
   }
 
-  protected onPaginationChange(pagination: Pagination): void {
-    this.store.updatePagination(pagination);
-  }
-
   protected onFiltersChange(filters: Filters): void {
     this.store.updateFilters(filters);
+  }
+
+  protected onSortingChange(sorting: Sorting): void {
+    this.store.updateSorting(sorting);
+  }
+
+  protected onPaginationChange(pagination: Pagination): void {
+    this.store.updatePagination(pagination);
   }
 }
