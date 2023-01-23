@@ -8,7 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FilterPaginationOptionsPipe } from '../../pipes';
-import { Pagination } from 'src/app/taskboard/models';
+import { Pagination } from '../../models';
 
 @Component({
   selector: 'app-pagination',
