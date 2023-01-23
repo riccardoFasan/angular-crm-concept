@@ -10,12 +10,11 @@ import { Sorting, Task } from '../../models';
 import { MatTableModule } from '@angular/material/table';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSortModule, Sort, SortDirection } from '@angular/material/sort';
-import { PriorityChipComponent } from '../priority-chip/priority-chip.component';
-import { StatusChipComponent } from '../status-chip/status-chip.component';
+import { PriorityChipComponent, StatusChipComponent } from '..';
 import { SortOrder } from '../../enums';
 
 @Component({
-  selector: 'app-list',
+  selector: 'app-data-table',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -72,7 +71,7 @@ import { SortOrder } from '../../enums';
   `,
   styles: [],
 })
-export class ListComponent {
+export class DataTableComponent {
   @Input() tasks: Task[] = [];
   @Input() loading: boolean = false;
   @Input() sorting?: Sorting;

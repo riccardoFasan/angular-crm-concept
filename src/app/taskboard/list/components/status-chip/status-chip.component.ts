@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatusPipe } from '../../pipes';
-import { Status } from '../../enums';
 import { MatChipsModule } from '@angular/material/chips';
+import { Status } from 'src/app/taskboard/enums';
 
 @Component({
   selector: 'app-status-chip',

@@ -14,10 +14,11 @@ import {
   SearchCriteria,
   Sorting,
   Task,
-} from '../../models';
-import { ListComponent } from '../list/list.component';
-import { PaginationComponent } from '../pagination/pagination.component';
-import { FiltersComponent } from '../filters/filters.component';
+} from 'src/app/taskboard/models';
+import { DataTableComponent } from '../list/components/data-table/data-table.component';
+import { PaginationComponent } from '../list/components/pagination/pagination.component';
+import { FiltersComponent } from '../list/components/filters/filters.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-taskboard-container',
@@ -25,9 +26,10 @@ import { FiltersComponent } from '../filters/filters.component';
   imports: [
     CommonModule,
     MatCardModule,
-    ListComponent,
+    DataTableComponent,
     PaginationComponent,
     FiltersComponent,
+    RouterModule,
   ],
   providers: [TaskboardStoreService],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -45,12 +47,12 @@ import { FiltersComponent } from '../filters/filters.component';
         [loading]="vm.loading!"
         (filtersChange)="onFiltersChange($event)"
       ></app-filters>
-      <app-list
+      <app-data-table
         [tasks]="vm.tasks!"
         [loading]="vm.loading!"
         [sorting]="vm.searchCriteria!.sorting"
         (sortingChange)="onSortingChange($event)"
-      ></app-list>
+      ></app-data-table>
       <app-pagination
         [pagination]="vm.searchCriteria!.pagination"
         [count]="vm.count!"

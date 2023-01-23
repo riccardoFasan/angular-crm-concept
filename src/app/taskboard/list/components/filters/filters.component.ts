@@ -13,9 +13,9 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Filters } from '../../models';
-import { Priority, Status } from '../../enums';
 import { MatButtonModule } from '@angular/material/button';
+import { Filters } from 'src/app/taskboard/models';
+import { Priority, Status } from 'src/app/taskboard/enums';
 
 @Component({
   selector: 'app-filters',
