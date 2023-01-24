@@ -1,17 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
-import { TaskboardContainerComponent } from './taskboard/components';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, TaskboardContainerComponent],
+  imports: [CommonModule, HeaderComponent, RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-header></app-header>
     <main>
-      <app-taskboard-container></app-taskboard-container>
+      <router-outlet></router-outlet>
     </main>
   `,
   styles: [
