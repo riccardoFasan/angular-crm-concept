@@ -8,16 +8,21 @@ export const APP_ROUTES: Routes = [
   },
   {
     path: 'taskboard',
-    loadChildren: () =>
-      import('./features/taskboard/taskboard.routes').then(
-        (m) => m.TASKBOARD_ROUTES
-      ),
-  },
-  {
-    path: 'taskboard/:id',
-    loadChildren: () =>
-      import('./features/task-edit/task-edit.routes').then(
-        (m) => m.TASK_EDIT_ROUTES
-      ),
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import('./features/taskboard/taskboard.routes').then(
+            (m) => m.TASKBOARD_ROUTES
+          ),
+      },
+      {
+        path: ':id',
+        loadChildren: () =>
+          import('./features/task-edit/task-edit.routes').then(
+            (m) => m.TASK_EDIT_ROUTES
+          ),
+      },
+    ],
   },
 ];
