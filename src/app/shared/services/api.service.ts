@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, take, throwError, timer } from 'rxjs';
+import { map, Observable, take, timer } from 'rxjs';
 import { SortOrder } from '../enums';
 import { Filters, Pagination, SearchCriteria, Sorting, Task } from '../models';
 import { FAKE_TASKS } from './tasks';
