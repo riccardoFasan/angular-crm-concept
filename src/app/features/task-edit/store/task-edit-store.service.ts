@@ -5,6 +5,9 @@ import { TaskEditState } from '../state';
 @Injectable()
 export class TaskEditStoreService extends ComponentStore<TaskEditState> {
   constructor() {
-    super({});
+    super({
+      loading: false,
+      formData: {},
+    });
   }
 }
