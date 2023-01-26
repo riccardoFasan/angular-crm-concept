@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, take, timer } from 'rxjs';
+import { map, Observable, take, throwError, timer } from 'rxjs';
 import { SortOrder } from '../enums';
 import { Filters, Pagination, SearchCriteria, Sorting, Task } from '../models';
 import { FAKE_TASKS } from './tasks';
@@ -8,6 +8,39 @@ import { FAKE_TASKS } from './tasks';
   providedIn: 'root',
 })
 export class ApiService {
+  getTask(taskId: string): Observable<Task> {
+    return timer(300).pipe(
+      take(1),
+      map(() => {
+        const task: Task | undefined = FAKE_TASKS.find(
+          (task) => task.id === taskId
+        );
+        if (task) return task;
+        throw new Error(`Cannot find a task with id ${taskId}`);
+      })
+    );
+  }
+
+  createTask(task: Task): Observable<Task> {
+    const id: string = (
+      Math.max(...FAKE_TASKS.map((task) => parseInt(task.id))) + 1
+    ).toString();
+    return timer(300).pipe(
+      take(1),
+      map(() => ({
+        ...task,
+        id,
+      }))
+    );
+  }
+
+  updateTask(task: Task): Observable<Task> {
+    return timer(300).pipe(
+      take(1),
+      map(() => task)
+    );
+  }
+
   getTasks(
     searchCriteria: SearchCriteria
   ): Observable<{ tasks: Task[]; count: number }> {
