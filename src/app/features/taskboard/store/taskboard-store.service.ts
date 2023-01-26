@@ -8,7 +8,7 @@ import {
   Sorting,
   Task,
 } from 'src/app/shared/models';
-import { ApiService } from 'src/app/shared/services/api.service';
+import { ApiService } from 'src/app/shared/services';
 import { TaskboardState } from '../state';
 
 @Injectable()
