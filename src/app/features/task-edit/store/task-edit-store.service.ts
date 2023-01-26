@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { EMPTY, filter, iif, Observable, of, switchMap, tap } from 'rxjs';
+import { EMPTY, Observable, switchMap, tap } from 'rxjs';
 import { EditingMode } from 'src/app/shared/enums';
 import { Task } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
