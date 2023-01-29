@@ -19,21 +19,18 @@ import { TaskFormComponent } from '../presentation';
   imports: [CommonModule, MatCardModule, TaskFormComponent],
   providers: [TaskEditStoreService],
   template: `
-    {{ loading$ | async }}
-    <hr />
-    {{ (task$ | async) ? 'There is data' : 'There is no data' }}
-    <!-- loading: loading$ | async, -->
     <mat-card
       *ngIf="{
         formData: formData$ | async,
         task: task$ | async,
+        loading: loading$ | async,
         synchronized: synchronized$ | async,
         editingMode: editingMode$ | async,
         taskId: taskId$ | async
       } as vm"
     >
-      <!-- [loading]="vm.loading!" -->
       <app-task-form
+        [loading]="vm.loading!"
         [formData]="vm.formData!"
         [task]="vm.task!"
         [synchronized]="vm.synchronized!"
@@ -48,12 +45,10 @@ import { TaskFormComponent } from '../presentation';
 export class TaskEditContainerComponent implements AfterViewInit {
   private readonly store: TaskEditStoreService = inject(TaskEditStoreService);
 
-  protected readonly loading$: Observable<boolean> = this.store.loading$.pipe(
-    tap((loading: boolean) => console.log(typeof loading))
-  );
   protected readonly formData$: Observable<Partial<Task>> =
     this.store.formData$;
   protected readonly task$: Observable<Task | undefined> = this.store.task$;
+  protected readonly loading$: Observable<boolean> = this.store.loading$;
   protected readonly synchronized$: Observable<boolean> =
     this.store.synchronized$;
   protected readonly editingMode$: Observable<EditingMode> =

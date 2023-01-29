@@ -9,16 +9,16 @@ import { TaskEditState } from '../state';
 
 @Injectable()
 export class TaskEditStoreService extends ComponentStore<TaskEditState> {
-  readonly loading$: Observable<boolean> = this.select(
-    (state: TaskEditState) => state.loading
-  );
-
   readonly formData$: Observable<Partial<Task>> = this.select(
     (state: TaskEditState) => state.formData
   );
 
   readonly task$: Observable<Task | undefined> = this.select(
     (state: TaskEditState) => state.task
+  );
+
+  readonly loading$: Observable<boolean> = this.select(
+    (state: TaskEditState) => state.loading
   );
 
   readonly synchronized$: Observable<boolean> = this.select(
@@ -100,9 +100,9 @@ export class TaskEditStoreService extends ComponentStore<TaskEditState> {
 
   constructor() {
     super({
-      loading: false,
       formData: {},
       task: undefined,
+      loading: false,
     });
   }
 }
