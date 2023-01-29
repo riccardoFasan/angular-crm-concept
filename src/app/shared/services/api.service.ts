@@ -9,7 +9,7 @@ import { FAKE_TASKS } from './tasks';
 })
 export class ApiService {
   getTask(taskId: string): Observable<Task> {
-    return timer(300).pipe(
+    return timer(1000).pipe(
       take(1),
       map(() => {
         const task: Task | undefined = FAKE_TASKS.find(
