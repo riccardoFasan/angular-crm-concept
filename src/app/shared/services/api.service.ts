@@ -21,10 +21,11 @@ export class ApiService {
     );
   }
 
-  createTask(task: Task): Observable<Task> {
+  createTask(task: Partial<Task>): Observable<Task> {
     const id: string = (
       Math.max(...FAKE_TASKS.map((task) => parseInt(task.id))) + 1
     ).toString();
+    // @ts-ignore
     return timer(300).pipe(
       take(1),
       map(() => ({
@@ -34,7 +35,8 @@ export class ApiService {
     );
   }
 
-  updateTask(task: Task): Observable<Task> {
+  updateTask(task: Partial<Task>): Observable<Task> {
+    // @ts-ignore
     return timer(300).pipe(
       take(1),
       map(() => task)
