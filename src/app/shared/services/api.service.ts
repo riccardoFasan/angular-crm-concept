@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
 import { map, Observable, take, timer } from 'rxjs';
 import { SortOrder } from '../enums';
-import { Filters, Pagination, SearchCriteria, Sorting, Task } from '../models';
+import {
+  Filters,
+  Pagination,
+  SearchCriteria,
+  Sorting,
+  Task,
+  TaskFormData,
+} from '../models';
 import { FAKE_TASKS } from './tasks';
 
 @Injectable({
@@ -9,7 +16,7 @@ import { FAKE_TASKS } from './tasks';
 })
 export class ApiService {
   getTask(taskId: string): Observable<Task> {
-    return timer(1000).pipe(
+    return timer(300).pipe(
       take(1),
       map(() => {
         const task: Task | undefined = FAKE_TASKS.find(
@@ -21,9 +28,9 @@ export class ApiService {
     );
   }
 
-  createTask(task: Partial<Task>): Observable<Task> {
+  createTask(task: TaskFormData): Observable<Task> {
     const id: string = (
-      Math.max(...FAKE_TASKS.map((task) => parseInt(task.id))) + 1
+      Math.max(...FAKE_TASKS.map((task) => parseInt(task.id!))) + 1
     ).toString();
     // @ts-ignore
     return timer(300).pipe(
@@ -35,7 +42,7 @@ export class ApiService {
     );
   }
 
-  updateTask(task: Partial<Task>): Observable<Task> {
+  updateTask(task: Task): Observable<Task> {
     // @ts-ignore
     return timer(300).pipe(
       take(1),

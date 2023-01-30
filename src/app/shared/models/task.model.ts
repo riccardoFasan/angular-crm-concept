@@ -1,7 +1,7 @@
 import { Priority, Status } from '../enums';
 
 export interface Task {
-  id: string;
+  id?: string;
   description: string;
   status: Status;
   priority: Priority;

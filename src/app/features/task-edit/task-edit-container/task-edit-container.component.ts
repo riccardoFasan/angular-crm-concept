@@ -7,8 +7,8 @@ import {
 import { CommonModule } from '@angular/common';
 import { TaskEditStoreService } from '../store/task-edit-store.service';
 import { MatCardModule } from '@angular/material/card';
-import { filter, map, Observable, tap } from 'rxjs';
-import { Task } from 'src/app/shared/models';
+import { distinctUntilChanged, filter, map, Observable, tap } from 'rxjs';
+import { Task, TaskFormData } from 'src/app/shared/models';
 import { EditingMode } from 'src/app/shared/enums';
 import { ActivatedRoute, Params } from '@angular/router';
 import { TaskFormComponent } from '../presentation';
@@ -45,8 +45,7 @@ import { TaskFormComponent } from '../presentation';
 export class TaskEditContainerComponent implements AfterViewInit {
   private readonly store: TaskEditStoreService = inject(TaskEditStoreService);
 
-  protected readonly formData$: Observable<Partial<Task>> =
-    this.store.formData$;
+  protected readonly formData$: Observable<TaskFormData> = this.store.formData$;
   protected readonly task$: Observable<Task | undefined> = this.store.task$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;
   protected readonly synchronized$: Observable<boolean> =
@@ -59,6 +58,7 @@ export class TaskEditContainerComponent implements AfterViewInit {
   protected readonly taskId$: Observable<string | null> =
     this.activatedRoute.params.pipe(
       map((params: Params) => params['id']),
+      distinctUntilChanged(),
       filter((id: string) => Boolean(id) && id !== 'new'),
       tap((id: string) => this.store.getTask(id))
     );
@@ -67,7 +67,7 @@ export class TaskEditContainerComponent implements AfterViewInit {
     this.store.syncTask(this.formData$);
   }
 
-  protected onFormDataChanged(formData: Partial<Task>): void {
+  protected onFormDataChanged(formData: TaskFormData): void {
     this.store.updateFormData(formData);
   }
 }

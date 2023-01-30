@@ -1,7 +1,7 @@
-import { Task } from 'src/app/shared/models';
+import { Task, TaskFormData } from 'src/app/shared/models';
 
 export interface TaskEditState {
-  formData: Partial<Task>;
+  formData: TaskFormData;
   task?: Task;
   loading: boolean;
 }
