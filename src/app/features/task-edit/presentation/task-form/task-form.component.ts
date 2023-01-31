@@ -4,8 +4,9 @@ import {
   Input,
   Output,
   EventEmitter,
+  inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { EditingMode, Priority, Status } from 'src/app/shared/enums';
 import { Task, TaskFormData } from 'src/app/shared/models';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -22,6 +23,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-task-form',
@@ -37,6 +39,7 @@ import {
     MatNativeDateModule,
     MatButtonModule,
     MatDividerModule,
+    MatIconModule,
   ],
   template: `
     <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
@@ -45,7 +48,12 @@ import {
       [formGroup]="form"
       [ngStyle]="{ 'marginTop.px': !loading ? '4' : '0' }"
     >
-      <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'New task' }}</h1>
+      <div>
+        <button (click)="back()" mat-icon-button>
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'New task' }}</h1>
+      </div>
       <div>
         <mat-form-field appearance="outline">
           <mat-label>Description</mat-label>
@@ -124,8 +132,8 @@ import {
         padding: 1rem;
       }
 
-      form h1 {
-        margin-bottom: 2rem;
+      form div h1 {
+        margin: 0;
       }
 
       form > div {
@@ -133,6 +141,11 @@ import {
         justify-content: space-between;
         align-items: center;
         gap: 1rem;
+      }
+
+      form div:first-child {
+        justify-content: start;
+        margin-bottom: 3rem;
       }
 
       form > div mat-form-field {
@@ -183,6 +196,8 @@ export class TaskFormComponent {
     deadline: new FormControl<Date | null>(null),
   });
 
+  private location: Location = inject(Location);
+
   protected save(): void {
     if (this.form.invalid && !this.synchronized) return;
     this.formDataChange.emit({ ...this.task, ...this.form.value });
@@ -194,5 +209,9 @@ export class TaskFormComponent {
       return;
     }
     this.form.reset();
+  }
+
+  protected back(): void {
+    this.location.back();
   }
 }

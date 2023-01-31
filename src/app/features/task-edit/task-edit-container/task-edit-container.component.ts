@@ -17,7 +17,7 @@ import { TaskFormComponent } from '../presentation';
   selector: 'app-task-edit-container',
   standalone: true,
   imports: [CommonModule, MatCardModule, TaskFormComponent],
-  providers: [TaskEditStoreService],
+  // providers: [TaskEditStoreService],
   template: `
     <mat-card
       *ngIf="{
