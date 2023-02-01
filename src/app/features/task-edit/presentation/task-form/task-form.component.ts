@@ -4,9 +4,8 @@ import {
   Input,
   Output,
   EventEmitter,
-  inject,
 } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { EditingMode, Priority, Status } from 'src/app/shared/enums';
 import { Task, TaskFormData } from 'src/app/shared/models';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -23,7 +22,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
+import { BackComponent } from 'src/app/shared/components/back/back.component';
 
 @Component({
   selector: 'app-task-form',
@@ -39,7 +38,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatNativeDateModule,
     MatButtonModule,
     MatDividerModule,
-    MatIconModule,
+    BackComponent,
   ],
   template: `
     <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
@@ -49,9 +48,7 @@ import { MatIconModule } from '@angular/material/icon';
       [ngStyle]="{ 'marginTop.px': !loading ? '4' : '0' }"
     >
       <div>
-        <button (click)="back()" mat-icon-button>
-          <mat-icon>arrow_back</mat-icon>
-        </button>
+        <app-back></app-back>
         <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'New task' }}</h1>
       </div>
       <div>
@@ -196,8 +193,6 @@ export class TaskFormComponent {
     deadline: new FormControl<Date | null>(null),
   });
 
-  private location: Location = inject(Location);
-
   protected save(): void {
     if (this.form.invalid && !this.synchronized) return;
     this.formDataChange.emit({ ...this.task, ...this.form.value });
@@ -209,9 +204,5 @@ export class TaskFormComponent {
       return;
     }
     this.form.reset();
-  }
-
-  protected back(): void {
-    this.location.back();
   }
 }
