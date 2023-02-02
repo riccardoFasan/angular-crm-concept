@@ -5,3 +5,9 @@ export interface TaskEditState {
   task?: Task;
   loading: boolean;
 }
+
+export const INITIAL_TASK_EDIT_STATE: TaskEditState = {
+  formData: {},
+  task: undefined,
+  loading: false,
+};

@@ -1,14 +1,31 @@
 import { inject, Injectable } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
-import { EMPTY, first, Observable, switchMap, take, tap } from 'rxjs';
+import { ActivatedRoute, Params } from '@angular/router';
+import { ComponentStore, OnStateInit } from '@ngrx/component-store';
+import {
+  distinctUntilChanged,
+  EMPTY,
+  first,
+  map,
+  Observable,
+  pipe,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { EditingMode } from 'src/app/shared/enums';
 import { Task, TaskFormData } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
 import { areEqualObjects } from 'src/utilities';
-import { TaskEditState } from '../state';
+import { INITIAL_TASK_EDIT_STATE, TaskEditState } from '../state';
 
 @Injectable()
-export class TaskEditStoreService extends ComponentStore<TaskEditState> {
+export class TaskEditStoreService
+  extends ComponentStore<TaskEditState>
+  implements OnStateInit
+{
+  private readonly api: ApiService = inject(ApiService);
+  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+
   readonly formData$: Observable<TaskFormData> = this.select(
     (state: TaskEditState) => state.formData
   );
@@ -37,28 +54,8 @@ export class TaskEditStoreService extends ComponentStore<TaskEditState> {
     })
   );
 
-  readonly getTask = this.effect((taskId$: Observable<string | undefined>) =>
-    taskId$.pipe(
-      switchMap((taskId: string | undefined) => {
-        if (!taskId) return EMPTY;
-        this.updateLoading(true);
-        return this.api.getTask(taskId).pipe(
-          tap({
-            next: (task: Task) => {
-              this.updateLoading(false);
-              this.updateFormData(task);
-              this.updateTask(task);
-            },
-            // TODO: error handling
-            //error: () => ,
-          })
-        );
-      })
-    )
-  );
-
-  readonly syncTask = this.effect((formData$: Observable<Partial<Task>>) =>
-    formData$.pipe(
+  readonly saveTask = this.effect<Partial<Task>>(
+    pipe(
       switchMap((formData: Partial<Task>) =>
         this.synchronized$.pipe(
           first((synchronized: boolean) => synchronized !== true),
@@ -85,6 +82,38 @@ export class TaskEditStoreService extends ComponentStore<TaskEditState> {
       )
     )
   );
+
+  private readonly taskId$: Observable<string | undefined> =
+    this.activatedRoute.params.pipe(
+      map((params: Params) => {
+        const id: string | undefined = params['id'];
+        if (Boolean(id) && id !== 'new') return id;
+        return undefined;
+      }),
+      distinctUntilChanged()
+    );
+
+  private readonly getTask = this.effect(
+    (taskId$: Observable<string | undefined>) =>
+      taskId$.pipe(
+        switchMap((taskId: string | undefined) => {
+          if (!taskId) return EMPTY;
+          this.updateLoading(true);
+          return this.api.getTask(taskId).pipe(
+            tap({
+              next: (task: Task) => {
+                this.updateLoading(false);
+                this.updateFormData(task);
+                this.updateTask(task);
+              },
+              // TODO: error handling
+              //error: () => ,
+            })
+          );
+        })
+      )
+  );
+
   private readonly updateTask = this.updater(
     (state: TaskEditState, task: Task) => ({
       ...state,
@@ -96,13 +125,11 @@ export class TaskEditStoreService extends ComponentStore<TaskEditState> {
     (state: TaskEditState, loading: boolean) => ({ ...state, loading })
   );
 
-  private readonly api: ApiService = inject(ApiService);
-
   constructor() {
-    super({
-      formData: {},
-      task: undefined,
-      loading: false,
-    });
+    super(INITIAL_TASK_EDIT_STATE);
+  }
+
+  ngrxOnStateInit(): void {
+    this.getTask(this.taskId$);
   }
 }

@@ -2,23 +2,37 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { DialogAction } from 'src/app/shared/enums';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-leave-form-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule],
+  imports: [CommonModule, MatButtonModule, MatDialogModule],
   template: `
     <h1 mat-dialog-title>Leave task without saving?</h1>
     <div mat-dialog-actions>
-      <button mat-button color="primary" type="button" (click)="leave()">
+      <button mat-button color="warn" type="button" (click)="leave()">
         Leave form
       </button>
-      <button mat-button color="warn" type="button" (click)="remain()">
+      <button
+        mat-button
+        mat-flat-button
+        color="primary"
+        type="button"
+        (click)="remain()"
+      >
         Remain
       </button>
     </div>
   `,
-  styles: [],
+  styles: [
+    `
+      div {
+        display: flex;
+        justify-content: space-between;
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeaveFormDialogComponent {

@@ -1,9 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { Observable } from 'rxjs';
@@ -20,6 +15,7 @@ import {
   PaginationComponent,
 } from '../presentation';
 import { TaskboardStoreService } from '../store/taskboard-store.service';
+import { provideComponentStore } from '@ngrx/component-store';
 
 @Component({
   selector: 'app-taskboard-container',
@@ -31,7 +27,7 @@ import { TaskboardStoreService } from '../store/taskboard-store.service';
     PaginationComponent,
     FiltersComponent,
   ],
-  providers: [TaskboardStoreService],
+  providers: [provideComponentStore(TaskboardStoreService)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-card
@@ -70,7 +66,7 @@ import { TaskboardStoreService } from '../store/taskboard-store.service';
     `,
   ],
 })
-export class TaskboardContainerComponent implements AfterViewInit {
+export class TaskboardContainerComponent {
   private readonly store: TaskboardStoreService = inject(TaskboardStoreService);
 
   protected readonly tasks$: Observable<Task[]> = this.store.tasks$;
@@ -78,10 +74,6 @@ export class TaskboardContainerComponent implements AfterViewInit {
   protected readonly searchCriteria$: Observable<SearchCriteria> =
     this.store.searchCriteria$;
   protected readonly count$: Observable<number> = this.store.count$;
-
-  ngAfterViewInit(): void {
-    this.store.getTasks(this.searchCriteria$);
-  }
 
   protected onFiltersChange(filters: Filters): void {
     this.store.updateFilters(filters);

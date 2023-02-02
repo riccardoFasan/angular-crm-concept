@@ -1,23 +1,19 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskEditStoreService } from '../store/task-edit-store.service';
 import { MatCardModule } from '@angular/material/card';
-import { distinctUntilChanged, filter, map, Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { Task, TaskFormData } from 'src/app/shared/models';
 import { EditingMode } from 'src/app/shared/enums';
-import { ActivatedRoute, Params } from '@angular/router';
 import { TaskFormComponent } from '../presentation';
+import { provideComponentStore } from '@ngrx/component-store';
+import { CanLeave } from 'src/app/shared/interfaces';
 
 @Component({
   selector: 'app-task-edit-container',
   standalone: true,
   imports: [CommonModule, MatCardModule, TaskFormComponent],
-  // providers: [TaskEditStoreService],
+  providers: [provideComponentStore(TaskEditStoreService)],
   template: `
     <mat-card
       *ngIf="{
@@ -25,8 +21,7 @@ import { TaskFormComponent } from '../presentation';
         task: task$ | async,
         loading: loading$ | async,
         synchronized: synchronized$ | async,
-        editingMode: editingMode$ | async,
-        taskId: taskId$ | async
+        editingMode: editingMode$ | async
       } as vm"
     >
       <app-task-form
@@ -36,13 +31,14 @@ import { TaskFormComponent } from '../presentation';
         [synchronized]="vm.synchronized!"
         [editingMode]="vm.editingMode!"
         (formDataChange)="onFormDataChanged($event)"
+        (onSave)="onFormSaved($event)"
       ></app-task-form>
     </mat-card>
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaskEditContainerComponent implements AfterViewInit {
+export class TaskEditContainerComponent implements CanLeave {
   private readonly store: TaskEditStoreService = inject(TaskEditStoreService);
 
   protected readonly formData$: Observable<TaskFormData> = this.store.formData$;
@@ -53,21 +49,13 @@ export class TaskEditContainerComponent implements AfterViewInit {
   protected readonly editingMode$: Observable<EditingMode> =
     this.store.editingMode$;
 
-  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
-
-  protected readonly taskId$: Observable<string | null> =
-    this.activatedRoute.params.pipe(
-      map((params: Params) => params['id']),
-      distinctUntilChanged(),
-      filter((id: string) => Boolean(id) && id !== 'new'),
-      tap((id: string) => this.store.getTask(id))
-    );
-
-  ngAfterViewInit(): void {
-    this.store.syncTask(this.formData$);
-  }
+  canLeave$: Observable<boolean> = this.store.synchronized$;
 
   protected onFormDataChanged(formData: TaskFormData): void {
     this.store.updateFormData(formData);
+  }
+
+  protected onFormSaved(formData: TaskFormData): void {
+    this.store.saveTask(formData);
   }
 }

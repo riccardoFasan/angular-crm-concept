@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { ComponentStore, OnStateInit } from '@ngrx/component-store';
 import { Observable, switchMap, tap } from 'rxjs';
 import {
   Filters,
@@ -9,10 +9,15 @@ import {
   Task,
 } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
-import { TaskboardState } from '../state';
+import { INITIAL_TASKBOARD_STATE, TaskboardState } from '../state';
 
 @Injectable()
-export class TaskboardStoreService extends ComponentStore<TaskboardState> {
+export class TaskboardStoreService
+  extends ComponentStore<TaskboardState>
+  implements OnStateInit
+{
+  private readonly api: ApiService = inject(ApiService);
+
   readonly tasks$: Observable<Task[]> = this.select(
     (state: TaskboardState) => state.tasks
   );
@@ -59,7 +64,7 @@ export class TaskboardStoreService extends ComponentStore<TaskboardState> {
     })
   );
 
-  readonly getTasks = this.effect(
+  private readonly getTasks = this.effect(
     (searchCriteria$: Observable<SearchCriteria>) =>
       searchCriteria$.pipe(
         tap(() => this.updateLoading(true)),
@@ -100,20 +105,11 @@ export class TaskboardStoreService extends ComponentStore<TaskboardState> {
     })
   );
 
-  private api: ApiService = inject(ApiService);
-
   constructor() {
-    super({
-      tasks: [],
-      count: 0,
-      searchCriteria: {
-        filters: {},
-        pagination: {
-          pageSize: 5,
-          pageIndex: 0,
-        },
-      },
-      loading: false,
-    });
+    super(INITIAL_TASKBOARD_STATE);
+  }
+
+  ngrxOnStateInit(): void {
+    this.getTasks(this.searchCriteria$);
   }
 }

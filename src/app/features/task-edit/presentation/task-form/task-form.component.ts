@@ -23,6 +23,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { BackComponent } from 'src/app/shared/components/back/back.component';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-task-form',
@@ -42,15 +43,14 @@ import { BackComponent } from 'src/app/shared/components/back/back.component';
   ],
   template: `
     <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
-
+    <div>
+      <app-back></app-back>
+      <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'New task' }}</h1>
+    </div>
     <form
       [formGroup]="form"
       [ngStyle]="{ 'marginTop.px': !loading ? '4' : '0' }"
     >
-      <div>
-        <app-back></app-back>
-        <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'New task' }}</h1>
-      </div>
       <div>
         <mat-form-field appearance="outline">
           <mat-label>Description</mat-label>
@@ -116,7 +116,7 @@ import { BackComponent } from 'src/app/shared/components/back/back.component';
 
     <div class="data">
       <code>
-        {{ form.valueChanges | async | json }}
+        {{ valueChanges$ | async | json }}
       </code>
       <code>
         {{ task | json }}
@@ -125,14 +125,15 @@ import { BackComponent } from 'src/app/shared/components/back/back.component';
   `,
   styles: [
     `
-      form {
-        padding: 1rem;
-      }
-
-      form div h1 {
+      h1 {
         margin: 0;
       }
 
+      :host {
+        padding: 1rem;
+      }
+
+      :host div:first-child,
       form > div {
         display: flex;
         justify-content: space-between;
@@ -140,7 +141,7 @@ import { BackComponent } from 'src/app/shared/components/back/back.component';
         gap: 1rem;
       }
 
-      form div:first-child {
+      :host div:first-child {
         justify-content: start;
         margin-bottom: 3rem;
       }
@@ -155,7 +156,6 @@ import { BackComponent } from 'src/app/shared/components/back/back.component';
       }
 
       .data {
-        padding: 1rem;
         display: flex;
         justify-content: space-between;
         align-items: stretch;
@@ -186,16 +186,23 @@ export class TaskFormComponent {
   @Output() formDataChange: EventEmitter<TaskFormData> =
     new EventEmitter<TaskFormData>();
 
-  protected form: FormGroup = new FormGroup({
+  @Output() onSave: EventEmitter<TaskFormData> =
+    new EventEmitter<TaskFormData>();
+
+  protected readonly form: FormGroup = new FormGroup({
     description: new FormControl<string>('', [Validators.required]),
     status: new FormControl<Status | null>(null, [Validators.required]),
     priority: new FormControl<Priority | null>(null, [Validators.required]),
     deadline: new FormControl<Date | null>(null),
   });
 
+  valueChanges$: Observable<Partial<Task>> = this.form.valueChanges.pipe(
+    tap((formData: Partial<Task>) => this.formDataChange.emit(formData))
+  );
+
   protected save(): void {
     if (this.form.invalid && !this.synchronized) return;
-    this.formDataChange.emit({ ...this.task, ...this.form.value });
+    this.onSave.emit({ ...this.task, ...this.form.value });
   }
 
   protected reset(): void {

@@ -1,13 +1,13 @@
 import { Routes } from '@angular/router';
-import { TaskEditStoreService } from './store/task-edit-store.service';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { canLeaveForm } from 'src/app/shared/guards';
-import { MatDialog } from '@angular/material/dialog';
+import { importProvidersFrom } from '@angular/core';
 
 export const TASK_EDIT_ROUTES: Routes = [
   {
     path: '',
-    providers: [TaskEditStoreService, MatDialog],
-    // canDeactivate: [canLeaveForm],
+    providers: [MatDialog, importProvidersFrom(MatDialogModule)],
+    canDeactivate: [canLeaveForm],
     loadComponent: () =>
       import('./task-edit-container/task-edit-container.component').then(
         (m) => m.TaskEditContainerComponent
