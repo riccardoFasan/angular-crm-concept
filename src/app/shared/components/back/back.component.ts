@@ -4,10 +4,10 @@ import {
   inject,
   Input,
 } from '@angular/core';
-import { CommonModule, Location } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
+import { NavigationService } from '../../services';
 
 @Component({
   selector: 'app-back',
@@ -22,20 +22,11 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BackComponent {
+  private readonly navigation: NavigationService = inject(NavigationService);
+
   @Input() fallbackPath: string = '/';
 
-  private location: Location = inject(Location);
-  private router: Router = inject(Router);
-
   protected back(): void {
-    if (!this.hasPreviousPath) {
-      this.router.navigateByUrl(this.fallbackPath);
-      return;
-    }
-    this.location.back();
-  }
-
-  private get hasPreviousPath(): boolean {
-    return Boolean(this.router.getCurrentNavigation()?.previousNavigation);
+    this.navigation.back(this.fallbackPath);
   }
 }

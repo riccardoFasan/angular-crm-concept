@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LeaveFormService } from './leave-form.service';
+import { NavigationService } from './navigation.service';
 
-describe('LeaveFormService', () => {
-  let service: LeaveFormService;
+describe('NavigationService', () => {
+  let service: NavigationService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(LeaveFormService);
+    service = TestBed.inject(NavigationService);
   });
 
   it('should be created', () => {

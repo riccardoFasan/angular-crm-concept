@@ -1,6 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { DialogAction } from 'src/app/shared/enums';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -10,19 +15,22 @@ import { MatButtonModule } from '@angular/material/button';
   imports: [CommonModule, MatButtonModule, MatDialogModule],
   template: `
     <h1 mat-dialog-title>Leave task without saving?</h1>
+    <div mat-dialog-content>
+      <p>
+        There are unsaved changes.
+        <br />
+        Do you want to leave the form without save your changes, remain and
+        continue editing or save and exit?
+      </p>
+    </div>
     <div mat-dialog-actions>
-      <button mat-button color="warn" type="button" (click)="leave()">
-        Leave form
-      </button>
-      <button
-        mat-button
-        mat-flat-button
-        color="primary"
-        type="button"
-        (click)="remain()"
-      >
-        Remain
-      </button>
+      <button mat-button mat-flat-button (click)="remain()">Remain</button>
+      <div>
+        <button mat-button mat-flat-button (click)="leave()">Exit</button>
+        <button mat-button mat-flat-button color="primary" (click)="save()">
+          Save and exit
+        </button>
+      </div>
     </div>
   `,
   styles: [
@@ -36,15 +44,18 @@ import { MatButtonModule } from '@angular/material/button';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeaveFormDialogComponent {
-  private readonly dialogRef: MatDialogRef<LeaveFormDialogComponent> = inject(
-    MatDialogRef<LeaveFormDialogComponent>
-  );
+  @Output() onClose: EventEmitter<DialogAction> =
+    new EventEmitter<DialogAction>();
 
   protected leave(): void {
-    this.dialogRef.close(DialogAction.Leave);
+    this.onClose.emit(DialogAction.Leave);
+  }
+
+  protected save(): void {
+    this.onClose.emit(DialogAction.Save);
   }
 
   protected remain(): void {
-    this.dialogRef.close(DialogAction.Remain);
+    this.onClose.emit(DialogAction.Remain);
   }
 }

@@ -95,7 +95,7 @@ import { Observable, tap } from 'rxjs';
           (click)="reset()"
           [disabled]="loading"
           mat-button
-          color="primary"
+          mat-flat-button
           type="button"
         >
           Reset
@@ -146,6 +146,10 @@ import { Observable, tap } from 'rxjs';
         margin-bottom: 3rem;
       }
 
+      form {
+        margin-bottom: 1.5rem;
+      }
+
       form > div mat-form-field {
         width: 50%;
       }
@@ -160,6 +164,7 @@ import { Observable, tap } from 'rxjs';
         justify-content: space-between;
         align-items: stretch;
         gap: 1rem;
+        padding-top: 1.5rem;
       }
 
       .data code {

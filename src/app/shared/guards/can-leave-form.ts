@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { map, of, switchMap } from 'rxjs';
+import { Observable, map, of, race, switchMap } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LeaveFormDialogComponent } from 'src/app/features/task-edit/presentation/leave-form-dialog/leave-form-dialog.component';
 import { DialogAction } from '../enums';
@@ -13,10 +13,17 @@ export const canLeaveForm = (component: CanLeave) => {
       const dialogRef: MatDialogRef<LeaveFormDialogComponent> = dialog.open(
         LeaveFormDialogComponent
       );
-      return dialogRef.afterClosed().pipe(
-        map((action: DialogAction) => {
-          const wantToLeave: boolean = action === DialogAction.Leave;
-          return wantToLeave;
+      const backdropClick$: Observable<DialogAction> = dialogRef
+        .backdropClick()
+        .pipe(map(() => DialogAction.Remain));
+      const onButtonClick$: Observable<DialogAction> =
+        dialogRef.componentInstance.onClose;
+      return race([backdropClick$, onButtonClick$]).pipe(
+        switchMap((action: DialogAction) => {
+          dialogRef.close();
+          if (action === DialogAction.Leave) return of(true);
+          if (action === DialogAction.Remain) return of(false);
+          return component.saveAndLeave().pipe(map(() => false));
         })
       );
     })
