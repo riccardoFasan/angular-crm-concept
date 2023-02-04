@@ -2,14 +2,12 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskEditStoreService } from '../store/task-edit-store.service';
 import { MatCardModule } from '@angular/material/card';
-import { Observable, filter, switchMap, take, tap } from 'rxjs';
+import { Observable, filter, map, switchMap, take } from 'rxjs';
 import { Task, TaskFormData } from 'src/app/shared/models';
 import { EditingMode } from 'src/app/shared/enums';
 import { TaskFormComponent } from '../presentation';
 import { provideComponentStore } from '@ngrx/component-store';
 import { CanLeave } from 'src/app/shared/interfaces';
-import { Router } from '@angular/router';
-import { NavigationService } from 'src/app/shared/services';
 
 @Component({
   selector: 'app-task-edit-container',
@@ -42,9 +40,8 @@ import { NavigationService } from 'src/app/shared/services';
 })
 export class TaskEditContainerComponent implements CanLeave {
   private readonly store: TaskEditStoreService = inject(TaskEditStoreService);
-  private readonly navigation: NavigationService = inject(NavigationService);
 
-  private readonly taskboardPath: string = '/taskboard';
+  readonly targetPath: string = '/taskboard';
 
   protected readonly formData$: Observable<TaskFormData> = this.store.formData$;
   protected readonly task$: Observable<Task | undefined> = this.store.task$;
@@ -56,14 +53,14 @@ export class TaskEditContainerComponent implements CanLeave {
 
   readonly canLeave$: Observable<boolean> = this.store.synchronized$;
 
-  saveAndLeave(): Observable<any> {
+  beforeLeave(): Observable<TaskFormData> {
     return this.formData$.pipe(
       take(1),
       switchMap((formData: TaskFormData) => {
         this.onFormSaved(formData);
         return this.synchronized$.pipe(
           filter((synchronized: boolean) => synchronized === true),
-          tap(() => this.navigation.back(this.taskboardPath))
+          map(() => formData)
         );
       })
     );

@@ -1,6 +1,7 @@
 import { Observable } from 'rxjs';
 
 export interface CanLeave {
+  readonly targetPath: string;
   readonly canLeave$: Observable<boolean>;
-  saveAndLeave<T>(): Observable<T>;
+  beforeLeave(): Observable<any>;
 }
