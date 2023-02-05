@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './shared/components/header/header.component';
+import { LoadingStoreService } from './shared/store';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +11,7 @@ import { HeaderComponent } from './shared/components/header/header.component';
   imports: [CommonModule, HeaderComponent, RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-header></app-header>
+    <app-header [loading]="!!(loading$ | async)"></app-header>
     <main>
       <router-outlet></router-outlet>
     </main>
@@ -22,4 +24,9 @@ import { HeaderComponent } from './shared/components/header/header.component';
     `,
   ],
 })
-export class AppComponent {}
+export class AppComponent {
+  private readonly loadingStore: LoadingStoreService =
+    inject(LoadingStoreService);
+
+  loading$: Observable<boolean> = this.loadingStore.loading$;
+}

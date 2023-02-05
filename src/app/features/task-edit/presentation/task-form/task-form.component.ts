@@ -8,7 +8,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { EditingMode, Priority, Status } from 'src/app/shared/enums';
 import { Task, TaskFormData } from 'src/app/shared/models';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -31,7 +30,6 @@ import { Observable, tap } from 'rxjs';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatProgressBarModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -42,7 +40,6 @@ import { Observable, tap } from 'rxjs';
     BackComponent,
   ],
   template: `
-    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
     <div>
       <app-back></app-back>
       <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'New task' }}</h1>

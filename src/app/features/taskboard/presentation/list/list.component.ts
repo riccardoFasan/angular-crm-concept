@@ -8,7 +8,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { Sorting, Task } from 'src/app/shared/models';
 import { MatTableModule } from '@angular/material/table';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSortModule, Sort, SortDirection } from '@angular/material/sort';
 import { PriorityChipComponent } from '../priority-chip/priority-chip.component';
 import { StatusChipComponent } from '../status-chip/status-chip.component';
@@ -23,18 +22,15 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     RouterModule,
     MatTableModule,
-    MatProgressBarModule,
     MatSortModule,
     PriorityChipComponent,
     StatusChipComponent,
   ],
   template: `
-    <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
     <table
       mat-table
       matSort
       (matSortChange)="onSortChange($event)"
-      [ngStyle]="{ 'marginTop.px': !loading ? '4' : '0' }"
       [dataSource]="tasks"
     >
       <ng-container matColumnDef="id">

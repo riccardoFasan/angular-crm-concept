@@ -17,6 +17,7 @@ import { Task, TaskFormData } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
 import { areEqualObjects } from 'src/utilities';
 import { INITIAL_TASK_EDIT_STATE, TaskEditState } from '../state';
+import { LoadingStoreService } from 'src/app/shared/store';
 
 @Injectable()
 export class TaskEditStoreService
@@ -25,6 +26,8 @@ export class TaskEditStoreService
 {
   private readonly api: ApiService = inject(ApiService);
   private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private readonly loadingStore: LoadingStoreService =
+    inject(LoadingStoreService);
 
   readonly formData$: Observable<TaskFormData> = this.select(
     (state: TaskEditState) => state.formData
@@ -54,15 +57,15 @@ export class TaskEditStoreService
     })
   );
 
-  readonly saveTask = this.effect<Partial<Task>>(
+  readonly saveTask = this.effect<TaskFormData>(
     pipe(
-      switchMap((formData: Partial<Task>) =>
+      switchMap((formData: TaskFormData) =>
         this.synchronized$.pipe(
           first((synchronized: boolean) => synchronized !== true),
           switchMap(() =>
             this.editingMode$.pipe(
               take(1),
-              tap(() => this.updateLoading(true)),
+              tap(() => this.syncLoading(true)),
               switchMap((editingMode: EditingMode) =>
                 editingMode === EditingMode.Creating
                   ? this.api.createTask(formData)
@@ -70,7 +73,7 @@ export class TaskEditStoreService
               ),
               tap({
                 next: (task: Task) => {
-                  this.updateLoading(false);
+                  this.syncLoading(false);
                   this.updateTask(task);
                 },
                 // TODO: error handling
@@ -98,11 +101,11 @@ export class TaskEditStoreService
       taskId$.pipe(
         switchMap((taskId: string | undefined) => {
           if (!taskId) return EMPTY;
-          this.updateLoading(true);
+          this.syncLoading(true);
           return this.api.getTask(taskId).pipe(
             tap({
               next: (task: Task) => {
-                this.updateLoading(false);
+                this.syncLoading(false);
                 this.updateFormData(task);
                 this.updateTask(task);
               },
@@ -112,6 +115,15 @@ export class TaskEditStoreService
           );
         })
       )
+  );
+
+  private readonly syncLoading = this.effect<boolean>(
+    pipe(
+      tap((loading: boolean) => {
+        this.updateLoading(loading);
+        this.loadingStore.updateLoading(loading);
+      })
+    )
   );
 
   private readonly updateTask = this.updater(

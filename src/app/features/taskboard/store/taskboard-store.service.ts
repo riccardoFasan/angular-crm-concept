@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore, OnStateInit } from '@ngrx/component-store';
-import { Observable, switchMap, tap } from 'rxjs';
+import { Observable, pipe, switchMap, tap } from 'rxjs';
 import {
   Filters,
   Pagination,
@@ -10,6 +10,7 @@ import {
 } from 'src/app/shared/models';
 import { ApiService } from 'src/app/shared/services';
 import { INITIAL_TASKBOARD_STATE, TaskboardState } from '../state';
+import { LoadingStoreService } from 'src/app/shared/store';
 
 @Injectable()
 export class TaskboardStoreService
@@ -17,6 +18,8 @@ export class TaskboardStoreService
   implements OnStateInit
 {
   private readonly api: ApiService = inject(ApiService);
+  private readonly loadingStore: LoadingStoreService =
+    inject(LoadingStoreService);
 
   readonly tasks$: Observable<Task[]> = this.select(
     (state: TaskboardState) => state.tasks
@@ -67,14 +70,14 @@ export class TaskboardStoreService
   private readonly getTasks = this.effect(
     (searchCriteria$: Observable<SearchCriteria>) =>
       searchCriteria$.pipe(
-        tap(() => this.updateLoading(true)),
+        tap(() => this.syncLoading(true)),
         switchMap((searchCriteria: SearchCriteria) =>
           this.api.getTasks(searchCriteria).pipe(
             tap({
               next: (response: { tasks: Task[]; count: number }) => {
                 this.updateTasks(response.tasks);
                 this.updateCount(response.count);
-                this.updateLoading(false);
+                this.syncLoading(false);
               },
               // TODO: error handling
               //error: () => ,
@@ -82,6 +85,15 @@ export class TaskboardStoreService
           )
         )
       )
+  );
+
+  private readonly syncLoading = this.effect<boolean>(
+    pipe(
+      tap((loading: boolean) => {
+        this.updateLoading(loading);
+        this.loadingStore.updateLoading(loading);
+      })
+    )
   );
 
   private readonly updateLoading = this.updater(

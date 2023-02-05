@@ -14,7 +14,7 @@ import {
   ListComponent,
   PaginationComponent,
 } from '../presentation';
-import { TaskboardStoreService } from '../store/taskboard-store.service';
+import { TaskboardStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
 
 @Component({
