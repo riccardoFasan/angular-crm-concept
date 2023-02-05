@@ -21,7 +21,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { BackComponent } from 'src/app/shared/components/back/back.component';
+import { BackComponent } from 'src/app/shared/components';
 import { Observable, tap } from 'rxjs';
 
 @Component({

@@ -48,6 +48,7 @@ import { provideComponentStore } from '@ngrx/component-store';
         [loading]="vm.loading!"
         [sorting]="vm.searchCriteria!.sorting"
         (sortingChange)="onSortingChange($event)"
+        (taskRemoved)="onTaskRemoved($event)"
       ></app-list>
       <app-pagination
         [pagination]="vm.searchCriteria!.pagination"
@@ -85,5 +86,9 @@ export class TaskboardContainerComponent {
 
   protected onPaginationChange(pagination: Pagination): void {
     this.store.updatePagination(pagination);
+  }
+
+  protected onTaskRemoved(task: Task): void {
+    this.store.removeTask(task);
   }
 }

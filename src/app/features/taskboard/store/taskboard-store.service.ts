@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore, OnStateInit } from '@ngrx/component-store';
-import { Observable, pipe, switchMap, tap } from 'rxjs';
+import { Observable, pipe, switchMap, tap, withLatestFrom } from 'rxjs';
 import {
   Filters,
   Pagination,
@@ -65,6 +65,28 @@ export class TaskboardStoreService
         sorting,
       },
     })
+  );
+
+  readonly removeTask = this.effect<Task>(
+    pipe(
+      tap(() => this.syncLoading(true)),
+      withLatestFrom(this.tasks$),
+      switchMap(([task, tasks]) =>
+        this.api.removeTask(task).pipe(
+          tap({
+            next: (response: Task) => {
+              const remainingTasks: Task[] = tasks.filter(
+                (task: Task) => task.id !== response.id
+              );
+              this.updateTasks(remainingTasks);
+              this.syncLoading(false);
+            },
+            // TODO: error handling
+            //error: () => ,
+          })
+        )
+      )
+    )
   );
 
   private readonly getTasks = this.effect(

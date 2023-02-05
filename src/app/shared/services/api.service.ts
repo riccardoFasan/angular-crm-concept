@@ -42,6 +42,13 @@ export class ApiService {
     );
   }
 
+  removeTask(task: Task): Observable<Task> {
+    return timer(300).pipe(
+      take(1),
+      map(() => task)
+    );
+  }
+
   updateTask(task: Task): Observable<Task> {
     // @ts-ignore
     return timer(300).pipe(
