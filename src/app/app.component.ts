@@ -11,10 +11,16 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, HeaderComponent, RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-header [loading]="!!(loading$ | async)"></app-header>
-    <main>
-      <router-outlet></router-outlet>
-    </main>
+    <ng-container
+      *ngIf="{
+        loading: loading$ | async
+      } as vm"
+    >
+      <app-header [loading]="!!vm.loading"></app-header>
+      <main>
+        <router-outlet></router-outlet>
+      </main>
+    </ng-container>
   `,
   styles: [
     `
@@ -28,5 +34,5 @@ export class AppComponent {
   private readonly loadingStore: LoadingStoreService =
     inject(LoadingStoreService);
 
-  loading$: Observable<boolean> = this.loadingStore.loading$;
+  protected readonly loading$: Observable<boolean> = this.loadingStore.loading$;
 }

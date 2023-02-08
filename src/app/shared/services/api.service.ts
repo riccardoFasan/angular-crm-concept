@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, take, timer } from 'rxjs';
+import { map, Observable, take, tap, timer } from 'rxjs';
+import { randomBoolean } from 'src/utilities';
 import { SortOrder } from '../enums';
 import {
   Filters,
@@ -15,9 +16,15 @@ import { FAKE_TASKS } from './tasks';
   providedIn: 'root',
 })
 export class ApiService {
+  private readonly fakeCall$: Observable<number> = timer(300).pipe(
+    take(1),
+    tap(() => {
+      if (this.thereIsARandomError) throw new Error('Something went wrong!');
+    })
+  );
+
   getTask(taskId: string): Observable<Task> {
-    return timer(300).pipe(
-      take(1),
+    return this.fakeCall$.pipe(
       map(() => {
         const task: Task | undefined = FAKE_TASKS.find(
           (task) => task.id === taskId
@@ -33,8 +40,7 @@ export class ApiService {
       Math.max(...FAKE_TASKS.map((task) => parseInt(task.id!))) + 1
     ).toString();
     // @ts-ignore
-    return timer(300).pipe(
-      take(1),
+    return this.fakeCall$.pipe(
       map(() => ({
         ...task,
         id,
@@ -43,25 +49,18 @@ export class ApiService {
   }
 
   removeTask(task: Task): Observable<Task> {
-    return timer(300).pipe(
-      take(1),
-      map(() => task)
-    );
+    return this.fakeCall$.pipe(map(() => task));
   }
 
   updateTask(task: Task): Observable<Task> {
     // @ts-ignore
-    return timer(300).pipe(
-      take(1),
-      map(() => task)
-    );
+    return this.fakeCall$.pipe(map(() => task));
   }
 
   getTasks(
     searchCriteria: SearchCriteria
   ): Observable<{ tasks: Task[]; count: number }> {
-    return timer(300).pipe(
-      take(1),
+    return this.fakeCall$.pipe(
       map(() => {
         const sortedTasks: Task[] = this.getSortedTasks(
           FAKE_TASKS,
@@ -78,6 +77,10 @@ export class ApiService {
         };
       })
     );
+  }
+
+  private get thereIsARandomError(): boolean {
+    return randomBoolean(0.1);
   }
 
   private getSortedTasks(tasks: Task[], sorting?: Sorting): Task[] {

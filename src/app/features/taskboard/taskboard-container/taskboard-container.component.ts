@@ -16,6 +16,7 @@ import {
 } from '../presentation';
 import { TaskboardStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
+import { SnackbarDirective } from 'src/app/shared/directives';
 
 @Component({
   selector: 'app-taskboard-container',
@@ -26,6 +27,7 @@ import { provideComponentStore } from '@ngrx/component-store';
     ListComponent,
     PaginationComponent,
     FiltersComponent,
+    SnackbarDirective,
   ],
   providers: [provideComponentStore(TaskboardStoreService)],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,7 +37,8 @@ import { provideComponentStore } from '@ngrx/component-store';
         tasks: tasks$ | async,
         count: count$ | async,
         searchCriteria: searchCriteria$ | async,
-        loading: loading$ | async
+        loading: loading$ | async,
+        error: error$ | async
       } as vm"
     >
       <app-filters
@@ -56,6 +59,11 @@ import { provideComponentStore } from '@ngrx/component-store';
         [loading]="vm.loading!"
         (paginationChange)="onPaginationChange($event)"
       ></app-pagination>
+      <app-snackbar
+        *ngIf="vm.error"
+        [message]="vm.error"
+        (dismissed)="onSnackbardDismissed()"
+      ></app-snackbar>
     </mat-card>
   `,
   styles: [
@@ -75,20 +83,25 @@ export class TaskboardContainerComponent {
   protected readonly searchCriteria$: Observable<SearchCriteria> =
     this.store.searchCriteria$;
   protected readonly count$: Observable<number> = this.store.count$;
+  protected readonly error$: Observable<string | undefined> = this.store.error$;
 
   protected onFiltersChange(filters: Filters): void {
-    this.store.updateFilters(filters);
+    this.store.filter(filters);
   }
 
   protected onSortingChange(sorting: Sorting): void {
-    this.store.updateSorting(sorting);
+    this.store.sort(sorting);
   }
 
   protected onPaginationChange(pagination: Pagination): void {
-    this.store.updatePagination(pagination);
+    this.store.paginate(pagination);
   }
 
   protected onTaskRemoved(task: Task): void {
     this.store.removeTask(task);
+  }
+
+  protected onSnackbardDismissed(): void {
+    this.store.clearError();
   }
 }

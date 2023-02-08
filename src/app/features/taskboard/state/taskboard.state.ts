@@ -5,6 +5,7 @@ export interface TaskboardState {
   searchCriteria: SearchCriteria;
   count: number;
   loading: boolean;
+  error?: string;
 }
 
 export const INITIAL_TASKBOARD_STATE: TaskboardState = {

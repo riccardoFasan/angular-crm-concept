@@ -37,34 +37,35 @@ export class TaskboardStoreService
     (state: TaskboardState) => state.loading
   );
 
-  readonly updatePagination = this.updater(
-    (state: TaskboardState, pagination: Pagination) => ({
-      ...state,
-      searchCriteria: {
-        ...state.searchCriteria,
-        pagination,
-      },
-    })
+  readonly error$: Observable<string | undefined> = this.select(
+    (state: TaskboardState) => state.error
   );
 
-  readonly updateFilters = this.updater(
-    (state: TaskboardState, filters: Filters) => ({
-      ...state,
-      searchCriteria: {
-        ...state.searchCriteria,
-        filters,
-      },
-    })
+  readonly paginate = this.effect<Pagination>(
+    pipe(
+      withLatestFrom(this.searchCriteria$),
+      tap(([pagination, searchCriteria]) =>
+        this.updateSearchCriteria({ ...searchCriteria, pagination })
+      )
+    )
   );
 
-  readonly updateSorting = this.updater(
-    (state: TaskboardState, sorting: Sorting) => ({
-      ...state,
-      searchCriteria: {
-        ...state.searchCriteria,
-        sorting,
-      },
-    })
+  readonly filter = this.effect<Filters>(
+    pipe(
+      withLatestFrom(this.searchCriteria$),
+      tap(([filters, searchCriteria]) =>
+        this.updateSearchCriteria({ ...searchCriteria, filters })
+      )
+    )
+  );
+
+  readonly sort = this.effect<Sorting>(
+    pipe(
+      withLatestFrom(this.searchCriteria$),
+      tap(([sorting, searchCriteria]) =>
+        this.updateSearchCriteria({ ...searchCriteria, sorting })
+      )
+    )
   );
 
   readonly removeTask = this.effect<Task>(
@@ -81,19 +82,25 @@ export class TaskboardStoreService
               this.updateTasks(remainingTasks);
               this.syncLoading(false);
             },
-            // TODO: error handling
-            //error: () => ,
+            error: (message: string) => {
+              this.updateError(message);
+              this.syncLoading(false);
+            },
           })
         )
       )
     )
   );
 
+  readonly clearError = this.effect<void>(
+    pipe(tap(() => this.updateError(undefined)))
+  );
+
   private readonly getTasks = this.effect(
     (searchCriteria$: Observable<SearchCriteria>) =>
       searchCriteria$.pipe(
         tap(() => this.syncLoading(true)),
-        switchMap((searchCriteria: SearchCriteria) =>
+        switchMap((searchCriteria) =>
           this.api.getTasks(searchCriteria).pipe(
             tap({
               next: (response: { tasks: Task[]; count: number }) => {
@@ -101,8 +108,10 @@ export class TaskboardStoreService
                 this.updateCount(response.count);
                 this.syncLoading(false);
               },
-              // TODO: error handling
-              //error: () => ,
+              error: (message: string) => {
+                this.updateError(message);
+                this.syncLoading(false);
+              },
             })
           )
         )
@@ -136,6 +145,20 @@ export class TaskboardStoreService
     (state: TaskboardState, tasks: Task[]) => ({
       ...state,
       tasks,
+    })
+  );
+
+  private readonly updateSearchCriteria = this.updater(
+    (state: TaskboardState, searchCriteria: SearchCriteria) => ({
+      ...state,
+      searchCriteria,
+    })
+  );
+
+  private readonly updateError = this.updater(
+    (state: TaskboardState, error?: string) => ({
+      ...state,
+      error,
     })
   );
 
