@@ -14,19 +14,18 @@ import {
 import { Subject, takeUntil, tap } from 'rxjs';
 
 @Directive({
-  selector: 'app-snackbar',
+  selector: 'app-error-snackbar',
   standalone: true,
   providers: [MatSnackBar],
 })
-export class SnackbarDirective implements OnDestroy {
-  private destroy$: Subject<void> = new Subject<void>();
+export class ErrorSnackbarDirective implements OnDestroy {
+  private readonly destroy$: Subject<void> = new Subject<void>();
 
   @Input() set message(message: string) {
     const snackBarRef: MatSnackBarRef<TextOnlySnackBar> = this.snackbar.open(
       message,
-      'OK'
+      'Reload'
     );
-
     snackBarRef
       .onAction()
       .pipe(
@@ -34,6 +33,7 @@ export class SnackbarDirective implements OnDestroy {
         tap(() => {
           this.dismissed.emit();
           snackBarRef.dismiss();
+          this.reload();
         })
       )
       .subscribe();
@@ -45,5 +45,9 @@ export class SnackbarDirective implements OnDestroy {
 
   ngOnDestroy(): void {
     this.destroy$.next();
+  }
+
+  private reload(): void {
+    location.reload();
   }
 }

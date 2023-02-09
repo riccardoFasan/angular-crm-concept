@@ -1,1 +1,1 @@
-export * from './snackbar.directive';
+export * from './error-snackbar.directive';

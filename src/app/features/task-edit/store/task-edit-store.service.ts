@@ -41,6 +41,10 @@ export class TaskEditStoreService
     (state: TaskEditState) => state.loading
   );
 
+  readonly error$: Observable<string | undefined> = this.select(
+    (state: TaskEditState) => state.error
+  );
+
   readonly synchronized$: Observable<boolean> = this.select(
     (state: TaskEditState) => areEqualObjects(state.task, state.formData)
   );
@@ -75,8 +79,16 @@ export class TaskEditStoreService
           this.syncLoading(false);
           this.updateTask(task);
         },
+        error: (message: string) => {
+          this.updateError(message);
+          this.syncLoading(false);
+        },
       })
     )
+  );
+
+  readonly clearError = this.effect<void>(
+    pipe(tap(() => this.updateError(undefined)))
   );
 
   private readonly taskId$: Observable<string | undefined> =
@@ -102,8 +114,10 @@ export class TaskEditStoreService
                 this.updateFormData(task);
                 this.updateTask(task);
               },
-              // TODO: error handling
-              //error: () => ,
+              error: (message: string) => {
+                this.updateError(message);
+                this.syncLoading(false);
+              },
             })
           );
         })
@@ -128,6 +142,13 @@ export class TaskEditStoreService
 
   private readonly updateLoading = this.updater(
     (state: TaskEditState, loading: boolean) => ({ ...state, loading })
+  );
+
+  private readonly updateError = this.updater(
+    (state: TaskEditState, error?: string) => ({
+      ...state,
+      error,
+    })
   );
 
   constructor() {

@@ -16,51 +16,18 @@ import { FAKE_TASKS } from './tasks';
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly fakeCall$: Observable<number> = timer(300).pipe(
-    take(1),
+  private readonly fakeRequest$: Observable<number> = timer(300).pipe(take(1));
+
+  private readonly faultyRequest$: Observable<number> = this.fakeRequest$.pipe(
     tap(() => {
-      if (this.thereIsARandomError) throw new Error('Something went wrong!');
+      if (this.thereIsARandomError) throw Error('Something went wrong!');
     })
   );
-
-  getTask(taskId: string): Observable<Task> {
-    return this.fakeCall$.pipe(
-      map(() => {
-        const task: Task | undefined = FAKE_TASKS.find(
-          (task) => task.id === taskId
-        );
-        if (task) return task;
-        throw new Error(`Cannot find a task with id ${taskId}`);
-      })
-    );
-  }
-
-  createTask(task: TaskFormData): Observable<Task> {
-    const id: string = (
-      Math.max(...FAKE_TASKS.map((task) => parseInt(task.id!))) + 1
-    ).toString();
-    // @ts-ignore
-    return this.fakeCall$.pipe(
-      map(() => ({
-        ...task,
-        id,
-      }))
-    );
-  }
-
-  removeTask(task: Task): Observable<Task> {
-    return this.fakeCall$.pipe(map(() => task));
-  }
-
-  updateTask(task: Task): Observable<Task> {
-    // @ts-ignore
-    return this.fakeCall$.pipe(map(() => task));
-  }
 
   getTasks(
     searchCriteria: SearchCriteria
   ): Observable<{ tasks: Task[]; count: number }> {
-    return this.fakeCall$.pipe(
+    return this.faultyRequest$.pipe(
       map(() => {
         const sortedTasks: Task[] = this.getSortedTasks(
           FAKE_TASKS,
@@ -77,6 +44,41 @@ export class ApiService {
         };
       })
     );
+  }
+
+  getTask(taskId: string): Observable<Task> {
+    return this.fakeRequest$.pipe(
+      map(() => {
+        const task: Task | undefined = FAKE_TASKS.find(
+          (task) => task.id === taskId
+        );
+        if (task) return task;
+        throw Error(`Cannot find a task with id ${taskId}`);
+      })
+    );
+  }
+
+  createTask(task: TaskFormData): Observable<Task> {
+    const greatestId: number = Math.max(
+      ...FAKE_TASKS.map((task) => parseInt(task.id!))
+    );
+    const id: string = (greatestId + 1).toString();
+    // @ts-ignore
+    return this.fakeRequest$.pipe(
+      map(() => ({
+        ...task,
+        id,
+      }))
+    );
+  }
+
+  updateTask(task: Task): Observable<Task> {
+    // @ts-ignore
+    return this.fakeRequest$.pipe(map(() => task));
+  }
+
+  removeTask(task: Task): Observable<Task> {
+    return this.fakeRequest$.pipe(map(() => task));
   }
 
   private get thereIsARandomError(): boolean {

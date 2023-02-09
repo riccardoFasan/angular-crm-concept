@@ -16,7 +16,7 @@ import {
 } from '../presentation';
 import { TaskboardStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
-import { SnackbarDirective } from 'src/app/shared/directives';
+import { ErrorSnackbarDirective } from 'src/app/shared/directives';
 
 @Component({
   selector: 'app-taskboard-container',
@@ -27,7 +27,7 @@ import { SnackbarDirective } from 'src/app/shared/directives';
     ListComponent,
     PaginationComponent,
     FiltersComponent,
-    SnackbarDirective,
+    ErrorSnackbarDirective,
   ],
   providers: [provideComponentStore(TaskboardStoreService)],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,11 +59,11 @@ import { SnackbarDirective } from 'src/app/shared/directives';
         [loading]="vm.loading!"
         (paginationChange)="onPaginationChange($event)"
       ></app-pagination>
-      <app-snackbar
+      <app-error-snackbar
         *ngIf="vm.error"
         [message]="vm.error"
         (dismissed)="onSnackbardDismissed()"
-      ></app-snackbar>
+      ></app-error-snackbar>
     </mat-card>
   `,
   styles: [
