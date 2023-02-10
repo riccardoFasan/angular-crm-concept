@@ -1,10 +1,14 @@
-import { Task, SearchCriteria } from 'src/app/shared/models';
+import { Priority, Status } from 'src/app/shared/enums';
+import { Task, SearchCriteria, Option } from 'src/app/shared/models';
 
 export interface TaskboardState {
   tasks: Task[];
   searchCriteria: SearchCriteria;
   count: number;
   loading: boolean;
+  priorities: Option<Priority>[];
+  states: Option<Status>[];
+  filtersLoading: boolean;
   error?: string;
 }
 
@@ -19,4 +23,7 @@ export const INITIAL_TASKBOARD_STATE: TaskboardState = {
     },
   },
   loading: false,
+  priorities: [],
+  states: [],
+  filtersLoading: false,
 };

@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, take, tap, timer } from 'rxjs';
+import { map, Observable, of, take, tap, timer } from 'rxjs';
 import { randomBoolean } from 'src/utilities';
-import { SortOrder } from '../enums';
+import { Priority, SortOrder, Status } from '../enums';
 import {
   Filters,
+  Option,
   Pagination,
   SearchCriteria,
   Sorting,
   Task,
   TaskFormData,
 } from '../models';
-import { FAKE_TASKS } from './tasks';
+import { FAKE_PRIORITIES, FAKE_STATES, FAKE_TASKS } from './data';
 
 @Injectable({
   providedIn: 'root',
@@ -83,6 +84,14 @@ export class ApiService {
 
   private get thereIsARandomError(): boolean {
     return randomBoolean(0.1);
+  }
+
+  getPriorites(): Observable<Option<Priority>[]> {
+    return this.fakeRequest$.pipe(map(() => FAKE_PRIORITIES));
+  }
+
+  getStates(): Observable<Option<Status>[]> {
+    return this.fakeRequest$.pipe(map(() => FAKE_STATES));
   }
 
   private getSortedTasks(tasks: Task[], sorting?: Sorting): Task[] {

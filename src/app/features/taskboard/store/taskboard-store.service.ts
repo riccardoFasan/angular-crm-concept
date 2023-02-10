@@ -1,8 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore, OnStateInit } from '@ngrx/component-store';
-import { Observable, pipe, switchMap, tap, withLatestFrom } from 'rxjs';
+import {
+  forkJoin,
+  Observable,
+  pipe,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
 import {
   Filters,
+  Option,
   Pagination,
   SearchCriteria,
   Sorting,
@@ -11,6 +19,7 @@ import {
 import { ApiService } from 'src/app/shared/services';
 import { INITIAL_TASKBOARD_STATE, TaskboardState } from '../state';
 import { LoadingStoreService } from 'src/app/shared/store';
+import { Priority, Status } from 'src/app/shared/enums';
 
 @Injectable()
 export class TaskboardStoreService
@@ -39,6 +48,18 @@ export class TaskboardStoreService
 
   readonly error$: Observable<string | undefined> = this.select(
     (state: TaskboardState) => state.error
+  );
+
+  readonly priorities$: Observable<Option<Priority>[]> = this.select(
+    (state: TaskboardState) => state.priorities
+  );
+
+  readonly states$: Observable<Option<Status>[]> = this.select(
+    (state: TaskboardState) => state.states
+  );
+
+  readonly filtersLoading$: Observable<boolean> = this.select(
+    (state: TaskboardState) => state.filtersLoading
   );
 
   readonly paginate = this.effect<Pagination>(
@@ -118,6 +139,26 @@ export class TaskboardStoreService
       )
   );
 
+  private readonly getOptions = this.effect<void>(
+    pipe(
+      tap(() => this.updateFiltersLoading(true)),
+      switchMap(() =>
+        forkJoin([this.api.getPriorites(), this.api.getStates()])
+      ),
+      tap({
+        next: ([priorities, states]) => {
+          this.updatePriorites(priorities);
+          this.updateStates(states);
+          this.updateFiltersLoading(false);
+        },
+        error: (message: string) => {
+          this.updateError(message);
+          this.updateFiltersLoading(false);
+        },
+      })
+    )
+  );
+
   private readonly syncLoading = this.effect<boolean>(
     pipe(
       tap((loading: boolean) => {
@@ -155,6 +196,27 @@ export class TaskboardStoreService
     })
   );
 
+  private readonly updatePriorites = this.updater(
+    (state: TaskboardState, priorities: Option<Priority>[]) => ({
+      ...state,
+      priorities,
+    })
+  );
+
+  private readonly updateStates = this.updater(
+    (state: TaskboardState, states: Option<Status>[]) => ({
+      ...state,
+      states,
+    })
+  );
+
+  private readonly updateFiltersLoading = this.updater(
+    (state: TaskboardState, filtersLoading: boolean) => ({
+      ...state,
+      filtersLoading,
+    })
+  );
+
   private readonly updateError = this.updater(
     (state: TaskboardState, error?: string) => ({
       ...state,
@@ -168,5 +230,6 @@ export class TaskboardStoreService
 
   ngrxOnStateInit(): void {
     this.getTasks(this.searchCriteria$);
+    this.getOptions();
   }
 }

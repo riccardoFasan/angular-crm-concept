@@ -13,7 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Filters } from 'src/app/shared/models';
+import { Filters, Option } from 'src/app/shared/models';
 import { Priority, Status } from 'src/app/shared/enums';
 import { MatButtonModule } from '@angular/material/button';
 
@@ -54,11 +54,14 @@ import { MatButtonModule } from '@angular/material/button';
 
     <mat-form-field appearance="outline">
       <mat-label>Status</mat-label>
-      <mat-select [(ngModel)]="status" (ngModelChange)="onStatusChange()">
-        <mat-option value="NOT_STARTED">Not Started</mat-option>
-        <mat-option value="IN_PROGRESS">In Progress</mat-option>
-        <mat-option value="IN_REVIEW">In Review</mat-option>
-        <mat-option value="COMPLETED">Completed</mat-option>
+      <mat-select
+        [disabled]="filtersLoading"
+        [(ngModel)]="status"
+        (ngModelChange)="onStatusChange()"
+      >
+        <mat-option *ngFor="let state of states" [value]="state.value">
+          {{ state.label }}
+        </mat-option>
       </mat-select>
       <button
         *ngIf="status"
@@ -73,10 +76,17 @@ import { MatButtonModule } from '@angular/material/button';
 
     <mat-form-field appearance="outline">
       <mat-label>Priority</mat-label>
-      <mat-select [(ngModel)]="priority" (ngModelChange)="onPriorityChange()">
-        <mat-option value="LOW">Low</mat-option>
-        <mat-option value="MEDIUM">Medium</mat-option>
-        <mat-option value="TOP">Top</mat-option>
+      <mat-select
+        [disabled]="filtersLoading"
+        [(ngModel)]="priority"
+        (ngModelChange)="onPriorityChange()"
+      >
+        <mat-option
+          *ngFor="let priority of priorities"
+          [value]="priority.value"
+        >
+          {{ priority.label }}
+        </mat-option>
       </mat-select>
       <button
         *ngIf="priority"
@@ -131,8 +141,10 @@ import { MatButtonModule } from '@angular/material/button';
   ],
 })
 export class FiltersComponent {
-  @Input() loading: boolean = false;
   @Input() filters!: Filters;
+  @Input() priorities: Option<Priority>[] = [];
+  @Input() states: Option<Status>[] = [];
+  @Input() filtersLoading: boolean = false;
 
   @Output() filtersChange: EventEmitter<Filters> = new EventEmitter<Filters>();
 
