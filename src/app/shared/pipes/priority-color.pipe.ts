@@ -10,6 +10,6 @@ export class PriorityColorPipe implements PipeTransform {
     if (priority === Priority.Top) return { name: 'Top', color: '#DB234B' };
     if (priority === Priority.Medium)
       return { name: 'Medium', color: '#FF810A' };
-    return { name: 'Low', color: '#18DB91' };
+    return { name: 'Low', color: '#18BB99' };
   }
 }

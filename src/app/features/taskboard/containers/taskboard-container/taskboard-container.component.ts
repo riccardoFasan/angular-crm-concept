@@ -38,6 +38,11 @@ import { FiltersContainerComponent } from '../filters-container/filters-containe
         error: error$ | async
       } as vm"
     >
+      <app-filters-container
+        [filters]="vm.searchCriteria!.filters"
+        (filtersChange)="onFiltersChange($event)"
+      >
+      </app-filters-container>
       <app-list
         [tasks]="vm.tasks!"
         [loading]="vm.loading!"
@@ -45,11 +50,6 @@ import { FiltersContainerComponent } from '../filters-container/filters-containe
         (sortingChange)="onSortingChange($event)"
         (taskRemoved)="onTaskRemoved($event)"
       ></app-list>
-      <app-filters-container
-        [filters]="vm.searchCriteria!.filters"
-        (filtersChange)="onFiltersChange($event)"
-      >
-      </app-filters-container>
       <app-pagination
         [pagination]="vm.searchCriteria!.pagination"
         [count]="vm.count!"

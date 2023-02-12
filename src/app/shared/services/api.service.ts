@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, of, take, tap, timer } from 'rxjs';
+import { map, Observable, take, timer } from 'rxjs';
 import { randomBoolean } from 'src/utilities';
 import { Priority, SortOrder, Status } from '../enums';
 import {
@@ -19,16 +19,10 @@ import { FAKE_PRIORITIES, FAKE_STATES, FAKE_TASKS } from './data';
 export class ApiService {
   private readonly fakeRequest$: Observable<number> = timer(300).pipe(take(1));
 
-  private readonly faultyRequest$: Observable<number> = this.fakeRequest$.pipe(
-    tap(() => {
-      if (this.thereIsARandomError) throw Error('Something went wrong!');
-    })
-  );
-
   getTasks(
     searchCriteria: SearchCriteria
   ): Observable<{ tasks: Task[]; count: number }> {
-    return this.faultyRequest$.pipe(
+    return this.fakeRequest$.pipe(
       map(() => {
         const sortedTasks: Task[] = this.getSortedTasks(
           FAKE_TASKS,

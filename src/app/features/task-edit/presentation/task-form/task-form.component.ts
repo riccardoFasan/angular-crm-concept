@@ -4,6 +4,8 @@ import {
   Input,
   Output,
   EventEmitter,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EditingMode, Priority, Status } from 'src/app/shared/enums';
@@ -14,7 +16,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDividerModule } from '@angular/material/divider';
 import {
   FormControl,
   FormGroup,
@@ -22,7 +23,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { BackComponent } from 'src/app/shared/components';
-import { Observable, tap } from 'rxjs';
+import { Observable, Subject, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-task-form',
@@ -36,7 +37,6 @@ import { Observable, tap } from 'rxjs';
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
-    MatDividerModule,
     BackComponent,
   ],
   template: `
@@ -108,17 +108,6 @@ import { Observable, tap } from 'rxjs';
         </button>
       </div>
     </form>
-
-    <mat-divider></mat-divider>
-
-    <div class="data">
-      <code>
-        {{ valueChanges$ | async | json }}
-      </code>
-      <code>
-        {{ task | json }}
-      </code>
-    </div>
   `,
   styles: [
     `
@@ -155,28 +144,13 @@ import { Observable, tap } from 'rxjs';
         margin-top: 1rem;
         justify-content: flex-end;
       }
-
-      .data {
-        display: flex;
-        justify-content: space-between;
-        align-items: stretch;
-        gap: 1rem;
-        padding-top: 1.5rem;
-      }
-
-      .data code {
-        display: block;
-        width: 50%;
-        flex-grow: 1;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 0.5rem;
-        padding: 0.75rem;
-      }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaskFormComponent {
+export class TaskFormComponent implements OnInit, OnDestroy {
+  private readonly destroy$: Subject<void> = new Subject<void>();
+
   @Input() loading: boolean = false;
   @Input() synchronized: boolean = false;
   @Input() editingMode: EditingMode = EditingMode.Editing;
@@ -198,9 +172,19 @@ export class TaskFormComponent {
     deadline: new FormControl<Date | null>(null),
   });
 
-  valueChanges$: Observable<Partial<Task>> = this.form.valueChanges.pipe(
-    tap((formData: Partial<Task>) => this.formDataChange.emit(formData))
-  );
+  private readonly valueChanges$: Observable<Partial<Task>> =
+    this.form.valueChanges.pipe(
+      takeUntil(this.destroy$),
+      tap((formData: Partial<Task>) => this.formDataChange.emit(formData))
+    );
+
+  ngOnInit(): void {
+    this.valueChanges$.subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
 
   protected save(): void {
     if (this.form.invalid && !this.synchronized) return;
