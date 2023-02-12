@@ -1,6 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { ComponentStore, OnStateInit } from '@ngrx/component-store';
-import { Observable, pipe, switchMap, tap, withLatestFrom } from 'rxjs';
+import {
+  concatMap,
+  exhaustMap,
+  Observable,
+  pipe,
+  tap,
+  withLatestFrom,
+} from 'rxjs';
 import {
   Filters,
   Pagination,
@@ -72,7 +79,7 @@ export class TaskboardStoreService
     pipe(
       tap(() => this.syncLoading(true)),
       withLatestFrom(this.tasks$),
-      switchMap(([task, tasks]) =>
+      concatMap(([task, tasks]) =>
         this.api.removeTask(task).pipe(
           tap({
             next: (response: Task) => {
@@ -100,7 +107,7 @@ export class TaskboardStoreService
     (searchCriteria$: Observable<SearchCriteria>) =>
       searchCriteria$.pipe(
         tap(() => this.syncLoading(true)),
-        switchMap((searchCriteria) =>
+        exhaustMap((searchCriteria) =>
           this.api.getTasks(searchCriteria).pipe(
             tap({
               next: (response: { tasks: Task[]; count: number }) => {

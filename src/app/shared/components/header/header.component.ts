@@ -40,10 +40,10 @@ import { RouterModule } from '@angular/router';
     `
       mat-toolbar-row {
         gap: 0.5rem;
-      }
 
-      h1.mat-h2 {
-        margin: 0 1.5rem 0.125rem 0;
+        h1.mat-h2 {
+          margin: 0 1.5rem 0.125rem 0;
+        }
       }
     `,
   ],

@@ -102,10 +102,10 @@ import { MatIconModule } from '@angular/material/icon';
     `
       table tr td {
         cursor: pointer;
-      }
 
-      td div.actions {
-        display: flex;
+        div.actions {
+          display: flex;
+        }
       }
     `,
   ],

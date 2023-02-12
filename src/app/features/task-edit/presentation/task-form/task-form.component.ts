@@ -111,38 +111,36 @@ import { Observable, Subject, takeUntil, tap } from 'rxjs';
   `,
   styles: [
     `
-      h1 {
-        margin: 0;
-      }
-
       :host {
         padding: 1rem;
-      }
 
-      :host div:first-child,
-      form > div {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-      }
+        h1 {
+          margin: 0;
+        }
 
-      :host div:first-child {
-        justify-content: start;
-        margin-bottom: 3rem;
-      }
+        div:first-child,
+        form > div {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 1rem;
+        }
 
-      form {
-        margin-bottom: 1.5rem;
-      }
+        div:first-child {
+          justify-content: start;
+          margin-bottom: 2rem;
+        }
 
-      form > div mat-form-field {
-        width: 50%;
-      }
+        form {
+          div mat-form-field {
+            width: 50%;
+          }
 
-      form > div:last-child {
-        margin-top: 1rem;
-        justify-content: flex-end;
+          div:last-child {
+            margin-top: 1rem;
+            justify-content: flex-end;
+          }
+        }
       }
     `,
   ],

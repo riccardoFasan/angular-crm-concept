@@ -133,10 +133,6 @@ import { MatButtonModule } from '@angular/material/button';
         margin-bottom: 2rem;
         gap: 1rem;
       }
-
-      mat-form-field {
-        flex-grow: 1;
-      }
     `,
   ],
 })
