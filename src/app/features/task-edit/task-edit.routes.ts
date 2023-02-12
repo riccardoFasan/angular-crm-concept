@@ -9,8 +9,8 @@ export const TASK_EDIT_ROUTES: Routes = [
     providers: [MatDialog, importProvidersFrom(MatDialogModule)],
     canDeactivate: [canLeaveForm],
     loadComponent: () =>
-      import('./task-edit-container/task-edit-container.component').then(
-        (m) => m.TaskEditContainerComponent
-      ),
+      import(
+        './containers/task-edit-container/task-edit-container.component'
+      ).then((m) => m.TaskEditContainerComponent),
   },
 ];

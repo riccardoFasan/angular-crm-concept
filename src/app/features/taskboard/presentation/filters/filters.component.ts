@@ -55,7 +55,7 @@ import { MatButtonModule } from '@angular/material/button';
     <mat-form-field appearance="outline">
       <mat-label>Status</mat-label>
       <mat-select
-        [disabled]="filtersLoading"
+        [disabled]="optionsLoading"
         [(ngModel)]="status"
         (ngModelChange)="onStatusChange()"
       >
@@ -77,7 +77,7 @@ import { MatButtonModule } from '@angular/material/button';
     <mat-form-field appearance="outline">
       <mat-label>Priority</mat-label>
       <mat-select
-        [disabled]="filtersLoading"
+        [disabled]="optionsLoading"
         [(ngModel)]="priority"
         (ngModelChange)="onPriorityChange()"
       >
@@ -144,7 +144,7 @@ export class FiltersComponent {
   @Input() filters!: Filters;
   @Input() priorities: Option<Priority>[] = [];
   @Input() states: Option<Status>[] = [];
-  @Input() filtersLoading: boolean = false;
+  @Input() optionsLoading: boolean = false;
 
   @Output() filtersChange: EventEmitter<Filters> = new EventEmitter<Filters>();
 

@@ -4,8 +4,8 @@ export const TASKBOARD_ROUTES: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./taskboard-container/taskboard-container.component').then(
-        (m) => m.TaskboardContainerComponent
-      ),
+      import(
+        './containers/taskboard-container/taskboard-container.component'
+      ).then((m) => m.TaskboardContainerComponent),
   },
 ];

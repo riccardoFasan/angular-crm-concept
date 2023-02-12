@@ -4,21 +4,16 @@ import { MatCardModule } from '@angular/material/card';
 import { Observable } from 'rxjs';
 import {
   Filters,
-  Option,
   Pagination,
   SearchCriteria,
   Sorting,
   Task,
 } from 'src/app/shared/models';
-import {
-  FiltersComponent,
-  ListComponent,
-  PaginationComponent,
-} from '../presentation';
-import { TaskboardStoreService } from '../store';
+import { ListComponent, PaginationComponent } from '../../presentation';
+import { TaskboardStoreService } from '../../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
-import { Priority, Status } from 'src/app/shared/enums';
+import { FiltersContainerComponent } from '../filters-container/filters-container.component';
 
 @Component({
   selector: 'app-taskboard-container',
@@ -28,7 +23,7 @@ import { Priority, Status } from 'src/app/shared/enums';
     MatCardModule,
     ListComponent,
     PaginationComponent,
-    FiltersComponent,
+    FiltersContainerComponent,
     ErrorSnackbarDirective,
   ],
   providers: [provideComponentStore(TaskboardStoreService)],
@@ -40,19 +35,9 @@ import { Priority, Status } from 'src/app/shared/enums';
         count: count$ | async,
         searchCriteria: searchCriteria$ | async,
         loading: loading$ | async,
-        priorities: priorities$ | async,
-        states: states$ | async,
-        filtersLoading: filtersLoading$ | async,
         error: error$ | async
       } as vm"
     >
-      <app-filters
-        [filters]="vm.searchCriteria!.filters"
-        [priorities]="vm.priorities!"
-        [states]="vm.states!"
-        [filtersLoading]="vm.filtersLoading!"
-        (filtersChange)="onFiltersChange($event)"
-      ></app-filters>
       <app-list
         [tasks]="vm.tasks!"
         [loading]="vm.loading!"
@@ -60,6 +45,11 @@ import { Priority, Status } from 'src/app/shared/enums';
         (sortingChange)="onSortingChange($event)"
         (taskRemoved)="onTaskRemoved($event)"
       ></app-list>
+      <app-filters-container
+        [filters]="vm.searchCriteria!.filters"
+        (filtersChange)="onFiltersChange($event)"
+      >
+      </app-filters-container>
       <app-pagination
         [pagination]="vm.searchCriteria!.pagination"
         [count]="vm.count!"
@@ -89,11 +79,7 @@ export class TaskboardContainerComponent {
   protected readonly searchCriteria$: Observable<SearchCriteria> =
     this.store.searchCriteria$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;
-  protected readonly priorities$: Observable<Option<Priority>[]> =
-    this.store.priorities$;
-  protected readonly states$: Observable<Option<Status>[]> = this.store.states$;
-  protected readonly filtersLoading$: Observable<boolean> =
-    this.store.filtersLoading$;
+
   protected readonly error$: Observable<string | undefined> = this.store.error$;
   protected readonly count$: Observable<number> = this.store.count$;
 
