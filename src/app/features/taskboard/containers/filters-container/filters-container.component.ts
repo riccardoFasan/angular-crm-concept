@@ -11,14 +11,24 @@ import { FiltersStoreService } from '../../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Priority, Status } from 'src/app/shared/enums';
 import { Filters, Option } from 'src/app/shared/models';
-import { Observable } from 'rxjs';
-import { FiltersComponent } from '../../presentation';
+import { Observable, map } from 'rxjs';
+import { FiltersComponent, MobileFiltersComponent } from '../../presentation';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
+import {
+  BreakpointObserver,
+  BreakpointState,
+  Breakpoints,
+} from '@angular/cdk/layout';
 
 @Component({
   selector: 'app-filters-container',
   standalone: true,
-  imports: [CommonModule, FiltersComponent, ErrorSnackbarDirective],
+  imports: [
+    CommonModule,
+    FiltersComponent,
+    MobileFiltersComponent,
+    ErrorSnackbarDirective,
+  ],
   template: `
     <ng-container
       *ngIf="{
@@ -26,16 +36,26 @@ import { ErrorSnackbarDirective } from 'src/app/shared/directives';
         priorities: priorities$ | async,
         states: states$ | async,
         optionsLoading: optionsLoading$ | async,
-        error: error$ | async
+        error: error$ | async,
+        mobile: mobile$ | async
       } as vm"
     >
       <app-filters
+        *ngIf="!vm.mobile"
         [filters]="vm.filters!"
         [priorities]="vm.priorities!"
         [states]="vm.states!"
         [optionsLoading]="vm.optionsLoading!"
         (filtersChange)="onFiltersChange($event)"
       ></app-filters>
+      <app-mobile-filters
+        *ngIf="vm.mobile"
+        [filters]="vm.filters!"
+        [priorities]="vm.priorities!"
+        [states]="vm.states!"
+        [optionsLoading]="vm.optionsLoading!"
+        (filtersChange)="onFiltersChange($event)"
+      ></app-mobile-filters>
       <app-error-snackbar
         *ngIf="vm.error"
         [message]="vm.error"
@@ -48,13 +68,15 @@ import { ErrorSnackbarDirective } from 'src/app/shared/directives';
   providers: [provideComponentStore(FiltersStoreService)],
 })
 export class FiltersContainerComponent {
+  private readonly store: FiltersStoreService = inject(FiltersStoreService);
+  private readonly breakpointObserver: BreakpointObserver =
+    inject(BreakpointObserver);
+
   @Input() set filters(filters: Filters) {
     this.store.updateFilters(filters);
   }
 
   @Output() filtersChange: EventEmitter<Filters> = new EventEmitter<Filters>();
-
-  private readonly store: FiltersStoreService = inject(FiltersStoreService);
 
   protected readonly filters$: Observable<Filters> = this.store.filters$;
   protected readonly priorities$: Observable<Option<Priority>[]> =
@@ -63,6 +85,11 @@ export class FiltersContainerComponent {
   protected readonly optionsLoading$: Observable<boolean> =
     this.store.optionsLoading$;
   protected readonly error$: Observable<string | undefined> = this.store.error$;
+
+  // ? should be part of store ?
+  protected readonly mobile$: Observable<boolean> = this.breakpointObserver
+    .observe([Breakpoints.XSmall])
+    .pipe(map((result: BreakpointState) => result.matches));
 
   protected onFiltersChange(filters: Filters): void {
     this.filtersChange.emit(filters);

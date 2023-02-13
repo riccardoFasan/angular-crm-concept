@@ -100,11 +100,16 @@ import { MatIconModule } from '@angular/material/icon';
   `,
   styles: [
     `
-      table tr td {
-        cursor: pointer;
+      :host {
+        max-width: 100%;
+        overflow-x: auto;
 
-        div.actions {
-          display: flex;
+        table tr td {
+          cursor: pointer;
+
+          div.actions {
+            display: flex;
+          }
         }
       }
     `,
