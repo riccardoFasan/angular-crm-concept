@@ -4,6 +4,9 @@ import {
   EventEmitter,
   Input,
   Output,
+  ViewChild,
+  ViewContainerRef,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Filters, Option } from 'src/app/shared/models';
@@ -13,7 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { SidebarStoreService } from 'src/app/shared/store';
 
 @Component({
   selector: 'app-mobile-filters',
@@ -25,7 +28,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     FormsModule,
     MatButtonModule,
     MatIconModule,
-    // MatSidenavModule,
   ],
   template: `
     <mat-form-field appearance="outline">
@@ -50,6 +52,10 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     <button (click)="openFilters()" mat-icon-button>
       <mat-icon>filter_alt</mat-icon>
     </button>
+
+    <ng-template #filters>
+      <button mat-button (click)="test()">Hey</button>
+    </ng-template>
   `,
   styles: [
     `
@@ -74,12 +80,18 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileFiltersComponent {
+  private readonly sidebarStore: SidebarStoreService =
+    inject(SidebarStoreService);
+
   @Input() filters!: Filters;
   @Input() priorities: Option<Priority>[] = [];
   @Input() states: Option<Status>[] = [];
   @Input() optionsLoading: boolean = false;
 
   @Output() filtersChange: EventEmitter<Filters> = new EventEmitter<Filters>();
+
+  @ViewChild('filters')
+  filtersRef!: ViewContainerRef;
 
   protected description: string = '';
   protected onDescriptionChange(): void {
@@ -92,5 +104,13 @@ export class MobileFiltersComponent {
     this.onDescriptionChange();
   }
 
-  protected openFilters(): void {}
+  protected test(): void {
+    console.log('hey');
+  }
+
+  protected openFilters(): void {
+    this.sidebarStore.updateTemplate(this.filtersRef);
+    this.sidebarStore.updatePosition('end');
+    this.sidebarStore.toggleOpen();
+  }
 }
