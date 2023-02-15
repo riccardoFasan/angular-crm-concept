@@ -31,7 +31,18 @@ import { SidebarStoreService } from '../../store';
       </mat-sidenav-container>
     </ng-container>
   `,
-  styles: [],
+  styles: [
+    `
+      :host {
+        display: block;
+
+        &,
+        mat-sidenav-container {
+          height: 100%;
+        }
+      }
+    `,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent {

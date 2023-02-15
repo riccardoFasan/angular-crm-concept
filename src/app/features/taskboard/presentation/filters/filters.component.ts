@@ -33,146 +33,128 @@ import { MatButtonModule } from '@angular/material/button';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <mat-form-field appearance="outline">
-      <mat-label>Description</mat-label>
-      <input
-        [(ngModel)]="description"
-        (input)="onDescriptionChange()"
-        matInput
-        type="text"
-      />
-      <button
-        *ngIf="description"
-        matSuffix
-        mat-icon-button
-        aria-label="Clear"
-        (click)="clearDecription()"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Status</mat-label>
-      <mat-select
-        [disabled]="optionsLoading"
-        [(ngModel)]="status"
-        (ngModelChange)="onStatusChange()"
-      >
-        <mat-option *ngFor="let state of states" [value]="state.value">
-          {{ state.label }}
-        </mat-option>
-      </mat-select>
-      <button
-        *ngIf="status"
-        matSuffix
-        mat-icon-button
-        aria-label="Clear"
-        (click)="clearStatus()"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Priority</mat-label>
-      <mat-select
-        [disabled]="optionsLoading"
-        [(ngModel)]="priority"
-        (ngModelChange)="onPriorityChange()"
-      >
-        <mat-option
-          *ngFor="let priority of priorities"
-          [value]="priority.value"
+    <div class="filters" [ngClass]="{ 'filters-mobile': mobile }">
+      <mat-form-field appearance="outline">
+        <mat-label>Status</mat-label>
+        <mat-select
+          [disabled]="optionsLoading"
+          [(ngModel)]="status"
+          (ngModelChange)="onStatusChange()"
         >
-          {{ priority.label }}
-        </mat-option>
-      </mat-select>
-      <button
-        *ngIf="priority"
-        matSuffix
-        mat-icon-button
-        aria-label="Clear"
-        (click)="clearPriority()"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
+          <mat-option *ngFor="let state of states" [value]="state.value">
+            {{ state.label }}
+          </mat-option>
+        </mat-select>
+        <button
+          *ngIf="status"
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+          (click)="clearStatus()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Deadline</mat-label>
-      <input
-        [(ngModel)]="deadline"
-        (ngModelChange)="onDeadlineChange()"
-        [matDatepicker]="picker"
-        matInput
-      />
-      <mat-hint>mm/dd/yyyy</mat-hint>
-      <mat-datepicker-toggle
-        matIconSuffix
-        [for]="picker"
-      ></mat-datepicker-toggle>
-      <button
-        *ngIf="deadline"
-        matSuffix
-        mat-icon-button
-        aria-label="Clear"
-        (click)="clearDeadline()"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Priority</mat-label>
+        <mat-select
+          [disabled]="optionsLoading"
+          [(ngModel)]="priority"
+          (ngModelChange)="onPriorityChange()"
+        >
+          <mat-option
+            *ngFor="let priority of priorities"
+            [value]="priority.value"
+          >
+            {{ priority.label }}
+          </mat-option>
+        </mat-select>
+        <button
+          *ngIf="priority"
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+          (click)="clearPriority()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Deadline</mat-label>
+        <input
+          [(ngModel)]="deadline"
+          (ngModelChange)="onDeadlineChange()"
+          [matDatepicker]="picker"
+          matInput
+        />
+        <mat-hint>mm/dd/yyyy</mat-hint>
+        <mat-datepicker-toggle
+          matIconSuffix
+          [for]="picker"
+        ></mat-datepicker-toggle>
+        <button
+          *ngIf="deadline"
+          matSuffix
+          mat-icon-button
+          aria-label="Clear"
+          (click)="clearDeadline()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
   `,
   styles: [
     `
       :host {
-        display: flex;
-        justify-content: stretch;
-        padding: 1rem 1rem 0 1rem;
-        margin-bottom: 2rem;
-        gap: 1rem;
+        &,
+        .filters {
+          display: flex;
+          flex-direction: row;
+          justify-content: stretch;
+          gap: 1rem;
+        }
 
         mat-form-field {
           flex: 1;
+        }
+
+        .filters.filters-mobile {
+          padding: 1rem 1rem 0 1rem;
+          flex-direction: column;
         }
       }
     `,
   ],
 })
 export class FiltersComponent {
-  @Input() filters!: Filters;
+  @Input() status?: Status;
+  @Input() priority?: Priority;
+  @Input() deadline?: Date;
+
   @Input() priorities: Option<Priority>[] = [];
   @Input() states: Option<Status>[] = [];
   @Input() optionsLoading: boolean = false;
+  @Input() mobile: boolean = false;
 
-  @Output() filtersChange: EventEmitter<Filters> = new EventEmitter<Filters>();
-
-  protected description: string = '';
-  protected status?: Status;
-  protected priority?: Priority;
-  protected deadline?: Date;
-
-  protected onDescriptionChange(): void {
-    if (this.description.length < 3 && this.description !== '') return;
-    this.filtersChange.emit({ ...this.filters, description: this.description });
-  }
+  @Output() statusChange: EventEmitter<Status> = new EventEmitter<Status>();
+  @Output() priorityChange: EventEmitter<Priority> =
+    new EventEmitter<Priority>();
+  @Output() deadlineChange: EventEmitter<Date> = new EventEmitter<Date>();
 
   protected onStatusChange(): void {
-    this.filtersChange.emit({ ...this.filters, status: this.status });
+    this.statusChange.emit(this.status);
   }
 
   protected onPriorityChange(): void {
-    this.filtersChange.emit({ ...this.filters, priority: this.priority });
+    this.priorityChange.emit(this.priority);
   }
 
   protected onDeadlineChange(): void {
-    this.filtersChange.emit({ ...this.filters, deadline: this.deadline });
-  }
-
-  protected clearDecription(): void {
-    this.description = '';
-    this.onDescriptionChange();
+    this.deadlineChange.emit(this.deadline);
   }
 
   protected clearStatus(): void {

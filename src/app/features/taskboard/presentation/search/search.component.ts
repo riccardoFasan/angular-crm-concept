@@ -9,25 +9,27 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SidebarStoreService } from 'src/app/shared/store';
 import { Filters, Option } from 'src/app/shared/models';
 import { Priority, Status } from 'src/app/shared/enums';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { SidebarStoreService } from 'src/app/shared/store';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { FiltersComponent } from '../filters/filters.component';
 
 @Component({
-  selector: 'app-mobile-filters',
+  selector: 'app-search',
   standalone: true,
   imports: [
     CommonModule,
-    MatInputModule,
-    MatFormFieldModule,
     FormsModule,
-    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatIconModule,
+    MatButtonModule,
+    FiltersComponent,
   ],
   template: `
     <mat-form-field appearance="outline">
@@ -43,43 +45,57 @@ import { SidebarStoreService } from 'src/app/shared/store';
         matSuffix
         mat-icon-button
         aria-label="Clear"
-        (click)="clearDecription()"
+        (click)="clearDescription()"
       >
         <mat-icon>close</mat-icon>
       </button>
     </mat-form-field>
 
-    <button (click)="openFilters()" mat-icon-button>
+    <button
+      *ngIf="mobile; else filters"
+      (click)="openFilters()"
+      mat-icon-button
+    >
       <mat-icon>filter_alt</mat-icon>
     </button>
 
     <ng-template #filters>
-      <button mat-button (click)="test()">Hey</button>
+      <app-filters
+        [status]="status"
+        [priority]="priority"
+        [deadline]="deadline"
+        [priorities]="priorities"
+        [states]="states"
+        [optionsLoading]="optionsLoading"
+        [mobile]="mobile"
+        (statusChange)="onFiltersChange({ status: $event })"
+        (priorityChange)="onFiltersChange({ priority: $event })"
+        (deadlineChange)="onFiltersChange({ deadline: $event })"
+      ></app-filters>
     </ng-template>
   `,
   styles: [
     `
       :host {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        flex-wrap: nowrap;
-        gap: 1rem;
         padding: 1rem 1rem 0 1rem;
+        margin-bottom: 2rem;
+        gap: 1rem;
 
         mat-form-field {
-          width: 100%;
+          flex: 1;
         }
 
-        & > button {
-          margin-bottom: 1.625rem;
+        app-filters {
+          flex: 3;
         }
       }
     `,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MobileFiltersComponent {
+export class SearchComponent {
   private readonly sidebarStore: SidebarStoreService =
     inject(SidebarStoreService);
 
@@ -87,6 +103,7 @@ export class MobileFiltersComponent {
   @Input() priorities: Option<Priority>[] = [];
   @Input() states: Option<Status>[] = [];
   @Input() optionsLoading: boolean = false;
+  @Input() mobile: boolean = false;
 
   @Output() filtersChange: EventEmitter<Filters> = new EventEmitter<Filters>();
 
@@ -94,18 +111,22 @@ export class MobileFiltersComponent {
   filtersRef!: ViewContainerRef;
 
   protected description: string = '';
+  protected status?: Status;
+  protected priority?: Priority;
+  protected deadline?: Date;
+
   protected onDescriptionChange(): void {
     if (this.description.length < 3 && this.description !== '') return;
     this.filtersChange.emit({ ...this.filters, description: this.description });
   }
 
-  protected clearDecription(): void {
-    this.description = '';
-    this.onDescriptionChange();
+  protected onFiltersChange(filters: Partial<Filters>): void {
+    this.filtersChange.emit({ ...this.filters, ...filters });
   }
 
-  protected test(): void {
-    console.log('hey');
+  protected clearDescription(): void {
+    this.description = '';
+    this.onDescriptionChange();
   }
 
   protected openFilters(): void {

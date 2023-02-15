@@ -12,23 +12,19 @@ import { provideComponentStore } from '@ngrx/component-store';
 import { Priority, Status } from 'src/app/shared/enums';
 import { Filters, Option } from 'src/app/shared/models';
 import { Observable, map } from 'rxjs';
-import { FiltersComponent, MobileFiltersComponent } from '../../presentation';
+import { FiltersComponent } from '../../presentation';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
 import {
   BreakpointObserver,
   BreakpointState,
   Breakpoints,
 } from '@angular/cdk/layout';
+import { SearchComponent } from '../../presentation/search/search.component';
 
 @Component({
   selector: 'app-filters-container',
   standalone: true,
-  imports: [
-    CommonModule,
-    FiltersComponent,
-    MobileFiltersComponent,
-    ErrorSnackbarDirective,
-  ],
+  imports: [CommonModule, SearchComponent, ErrorSnackbarDirective],
   template: `
     <ng-container
       *ngIf="{
@@ -40,22 +36,14 @@ import {
         mobile: mobile$ | async
       } as vm"
     >
-      <app-filters
-        *ngIf="!vm.mobile"
+      <app-search
         [filters]="vm.filters!"
         [priorities]="vm.priorities!"
         [states]="vm.states!"
         [optionsLoading]="vm.optionsLoading!"
+        [mobile]="!!vm.mobile"
         (filtersChange)="onFiltersChange($event)"
-      ></app-filters>
-      <app-mobile-filters
-        *ngIf="vm.mobile"
-        [filters]="vm.filters!"
-        [priorities]="vm.priorities!"
-        [states]="vm.states!"
-        [optionsLoading]="vm.optionsLoading!"
-        (filtersChange)="onFiltersChange($event)"
-      ></app-mobile-filters>
+      ></app-search>
       <app-error-snackbar
         *ngIf="vm.error"
         [message]="vm.error"

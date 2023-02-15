@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MobileFiltersComponent } from './mobile-filters.component';
+import { SearchComponent } from './search.component';
 
-describe('MobileFiltersComponent', () => {
-  let component: MobileFiltersComponent;
-  let fixture: ComponentFixture<MobileFiltersComponent>;
+describe('SearchComponent', () => {
+  let component: SearchComponent;
+  let fixture: ComponentFixture<SearchComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ MobileFiltersComponent ]
+      imports: [ SearchComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(MobileFiltersComponent);
+    fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
