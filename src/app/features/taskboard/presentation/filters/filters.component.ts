@@ -13,9 +13,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Filters, Option } from 'src/app/shared/models';
+import { Option } from 'src/app/shared/models';
 import { Priority, Status } from 'src/app/shared/enums';
 import { MatButtonModule } from '@angular/material/button';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
   selector: 'app-filters',
@@ -30,102 +31,98 @@ import { MatButtonModule } from '@angular/material/button';
     MatNativeDateModule,
     MatIconModule,
     MatButtonModule,
+    MatGridListModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="filters" [ngClass]="{ 'filters-mobile': mobile }">
-      <mat-form-field appearance="outline">
-        <mat-label>Status</mat-label>
-        <mat-select
-          [disabled]="optionsLoading"
-          [(ngModel)]="status"
-          (ngModelChange)="onStatusChange()"
-        >
-          <mat-option *ngFor="let state of states" [value]="state.value">
-            {{ state.label }}
-          </mat-option>
-        </mat-select>
-        <button
-          *ngIf="status"
-          matSuffix
-          mat-icon-button
-          aria-label="Clear"
-          (click)="clearStatus()"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Priority</mat-label>
-        <mat-select
-          [disabled]="optionsLoading"
-          [(ngModel)]="priority"
-          (ngModelChange)="onPriorityChange()"
-        >
-          <mat-option
-            *ngFor="let priority of priorities"
-            [value]="priority.value"
-          >
-            {{ priority.label }}
-          </mat-option>
-        </mat-select>
-        <button
-          *ngIf="priority"
-          matSuffix
-          mat-icon-button
-          aria-label="Clear"
-          (click)="clearPriority()"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>Deadline</mat-label>
-        <input
-          [(ngModel)]="deadline"
-          (ngModelChange)="onDeadlineChange()"
-          [matDatepicker]="picker"
-          matInput
-        />
-        <mat-hint>mm/dd/yyyy</mat-hint>
-        <mat-datepicker-toggle
-          matIconSuffix
-          [for]="picker"
-        ></mat-datepicker-toggle>
-        <button
-          *ngIf="deadline"
-          matSuffix
-          mat-icon-button
-          aria-label="Clear"
-          (click)="clearDeadline()"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-datepicker #picker></mat-datepicker>
-      </mat-form-field>
+      <mat-grid-list [cols]="mobile ? '1' : '3'" gutterSize="1rem">
+        <mat-grid-tile colspan="1" rowspan="1">
+          <mat-form-field appearance="outline">
+            <mat-label>Status</mat-label>
+            <mat-select
+              [disabled]="optionsLoading"
+              [(ngModel)]="status"
+              (ngModelChange)="onStatusChange()"
+            >
+              <mat-option *ngFor="let state of states" [value]="state.value">
+                {{ state.label }}
+              </mat-option>
+            </mat-select>
+            <button
+              *ngIf="status"
+              matSuffix
+              mat-icon-button
+              aria-label="Clear"
+              (click)="clearStatus()"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1">
+          <mat-form-field appearance="outline">
+            <mat-label>Priority</mat-label>
+            <mat-select
+              [disabled]="optionsLoading"
+              [(ngModel)]="priority"
+              (ngModelChange)="onPriorityChange()"
+            >
+              <mat-option
+                *ngFor="let priority of priorities"
+                [value]="priority.value"
+              >
+                {{ priority.label }}
+              </mat-option>
+            </mat-select>
+            <button
+              *ngIf="priority"
+              matSuffix
+              mat-icon-button
+              aria-label="Clear"
+              (click)="clearPriority()"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1">
+          <mat-form-field appearance="outline">
+            <mat-label>Deadline</mat-label>
+            <input
+              [(ngModel)]="deadline"
+              (ngModelChange)="onDeadlineChange()"
+              [matDatepicker]="picker"
+              matInput
+            />
+            <mat-hint>mm/dd/yyyy</mat-hint>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <button
+              *ngIf="deadline"
+              matSuffix
+              mat-icon-button
+              aria-label="Clear"
+              (click)="clearDeadline()"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-datepicker #picker></mat-datepicker>
+          </mat-form-field>
+        </mat-grid-tile>
+      </mat-grid-list>
     </div>
   `,
   styles: [
     `
-      :host {
-        &,
-        .filters {
-          display: flex;
-          flex-direction: row;
-          justify-content: stretch;
-          gap: 1rem;
-        }
+      .filters {
+        width: 100%;
+      }
 
-        mat-form-field {
-          flex: 1;
-        }
-
-        .filters.filters-mobile {
-          padding: 1rem 1rem 0 1rem;
-          flex-direction: column;
-        }
+      mat-form-field {
+        width: 100%;
       }
     `,
   ],

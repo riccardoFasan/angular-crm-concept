@@ -18,6 +18,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FiltersComponent } from '../filters/filters.component';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
   selector: 'app-search',
@@ -30,66 +31,61 @@ import { FiltersComponent } from '../filters/filters.component';
     MatIconModule,
     MatButtonModule,
     FiltersComponent,
+    MatGridListModule,
   ],
   template: `
-    <mat-form-field appearance="outline">
-      <mat-label>Description</mat-label>
-      <input
-        [(ngModel)]="description"
-        (input)="onDescriptionChange()"
-        matInput
-        type="text"
-      />
-      <button
-        *ngIf="description"
-        matSuffix
-        mat-icon-button
-        aria-label="Clear"
-        (click)="clearDescription()"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-    </mat-form-field>
+    <mat-grid-list cols="4" gutterSize="1rem">
+      <mat-grid-tile [colspan]="mobile ? '3' : '1'" rowspan="1">
+        <mat-form-field appearance="outline">
+          <mat-label>Description</mat-label>
+          <input
+            [(ngModel)]="description"
+            (input)="onDescriptionChange()"
+            matInput
+            type="text"
+          />
+          <button
+            *ngIf="description"
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            (click)="clearDescription()"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+      </mat-grid-tile>
 
-    <button
-      *ngIf="mobile; else filters"
-      (click)="openFilters()"
-      mat-icon-button
-    >
-      <mat-icon>filter_alt</mat-icon>
-    </button>
-
-    <ng-template #filters>
-      <app-filters
-        [status]="status"
-        [priority]="priority"
-        [deadline]="deadline"
-        [priorities]="priorities"
-        [states]="states"
-        [optionsLoading]="optionsLoading"
-        [mobile]="mobile"
-        (statusChange)="onFiltersChange({ status: $event })"
-        (priorityChange)="onFiltersChange({ priority: $event })"
-        (deadlineChange)="onFiltersChange({ deadline: $event })"
-      ></app-filters>
-    </ng-template>
+      <mat-grid-tile [colspan]="mobile ? '1' : '3'" rowspan="1">
+        <button
+          *ngIf="mobile; else filters"
+          (click)="openFilters()"
+          mat-icon-button
+        >
+          <mat-icon>filter_alt</mat-icon>
+        </button>
+        <ng-template #filters>
+          <app-filters
+            [status]="status"
+            [priority]="priority"
+            [deadline]="deadline"
+            [priorities]="priorities"
+            [states]="states"
+            [optionsLoading]="optionsLoading"
+            [mobile]="mobile"
+            (statusChange)="onFiltersChange({ status: $event })"
+            (priorityChange)="onFiltersChange({ priority: $event })"
+            (deadlineChange)="onFiltersChange({ deadline: $event })"
+          ></app-filters>
+        </ng-template>
+      </mat-grid-tile>
+    </mat-grid-list>
   `,
   styles: [
     `
-      :host {
-        display: flex;
-        justify-content: space-between;
-        padding: 1rem 1rem 0 1rem;
-        margin-bottom: 2rem;
-        gap: 1rem;
-
-        mat-form-field {
-          flex: 1;
-        }
-
-        app-filters {
-          flex: 3;
-        }
+      mat-form-field,
+      app-filters {
+        width: 100%;
       }
     `,
   ],

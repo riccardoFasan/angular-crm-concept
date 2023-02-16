@@ -51,6 +51,8 @@ export class SidebarComponent {
   protected readonly opened$ = this.store.opened$;
   protected readonly position$ = this.store.position$;
   protected readonly mode$ = this.store.mode$;
+
+  // TODO: refactor with cdk portal
   protected readonly template$ = this.store.template$;
 
   protected onSidebarClosed(): void {
