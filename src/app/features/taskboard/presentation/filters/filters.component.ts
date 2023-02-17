@@ -131,17 +131,22 @@ import { Observable } from 'rxjs';
         }
 
         mat-grid-list {
+          width: 100%;
+
           &[cols='3'] {
             height: $row-height;
-            width: 100%;
           }
 
           &[cols='1'] {
-            height: ($row-height + 0.65rem) * 3;
+            height: $row-height * 3;
           }
 
-          mat-form-field {
-            width: 100%;
+          mat-grid-tile {
+            padding: 1rem 0;
+
+            mat-form-field {
+              width: 100%;
+            }
           }
         }
       }
