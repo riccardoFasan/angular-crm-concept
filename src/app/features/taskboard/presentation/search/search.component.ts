@@ -34,8 +34,8 @@ import { MatGridListModule } from '@angular/material/grid-list';
     MatGridListModule,
   ],
   template: `
-    <mat-grid-list cols="4" gutterSize="1rem">
-      <mat-grid-tile [colspan]="mobile ? '3' : '1'" rowspan="1">
+    <mat-grid-list [cols]="mobile ? 6 : 4" gutterSize="1rem" rowHeight="fit">
+      <mat-grid-tile [colspan]="mobile ? '5' : '1'" rowspan="1">
         <mat-form-field appearance="outline">
           <mat-label>Description</mat-label>
           <input
@@ -83,9 +83,27 @@ import { MatGridListModule } from '@angular/material/grid-list';
   `,
   styles: [
     `
-      mat-form-field,
-      app-filters {
-        width: 100%;
+      :host {
+        $row-height: 5rem;
+
+        display: block;
+        padding: 1rem;
+
+        mat-grid-list {
+          margin: 0 auto;
+          height: $row-height;
+
+          mat-grid-tile {
+            &:last-child button {
+              margin-bottom: 1.375rem;
+            }
+
+            mat-form-field,
+            app-filters {
+              width: 100%;
+            }
+          }
+        }
       }
     `,
   ],
