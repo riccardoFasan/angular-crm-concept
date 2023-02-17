@@ -11,14 +11,9 @@ import { FiltersStoreService } from '../../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Priority, Status } from 'src/app/shared/enums';
 import { Filters, Option } from 'src/app/shared/models';
-import { Observable, map } from 'rxjs';
-import { FiltersComponent } from '../../presentation';
+import { Observable } from 'rxjs';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
-import {
-  BreakpointObserver,
-  BreakpointState,
-  Breakpoints,
-} from '@angular/cdk/layout';
+
 import { SearchComponent } from '../../presentation/search/search.component';
 
 @Component({
@@ -32,8 +27,7 @@ import { SearchComponent } from '../../presentation/search/search.component';
         priorities: priorities$ | async,
         states: states$ | async,
         optionsLoading: optionsLoading$ | async,
-        error: error$ | async,
-        mobile: mobile$ | async
+        error: error$ | async
       } as vm"
     >
       <app-search
@@ -41,7 +35,6 @@ import { SearchComponent } from '../../presentation/search/search.component';
         [priorities]="vm.priorities!"
         [states]="vm.states!"
         [optionsLoading]="vm.optionsLoading!"
-        [mobile]="!!vm.mobile"
         (filtersChange)="onFiltersChange($event)"
       ></app-search>
       <app-error-snackbar
@@ -57,8 +50,6 @@ import { SearchComponent } from '../../presentation/search/search.component';
 })
 export class FiltersContainerComponent {
   private readonly store: FiltersStoreService = inject(FiltersStoreService);
-  private readonly breakpointObserver: BreakpointObserver =
-    inject(BreakpointObserver);
 
   @Input() set filters(filters: Filters) {
     this.store.updateFilters(filters);
@@ -73,11 +64,6 @@ export class FiltersContainerComponent {
   protected readonly optionsLoading$: Observable<boolean> =
     this.store.optionsLoading$;
   protected readonly error$: Observable<string | undefined> = this.store.error$;
-
-  // ? should be part of store ?
-  protected readonly mobile$: Observable<boolean> = this.breakpointObserver
-    .observe([Breakpoints.XSmall])
-    .pipe(map((result: BreakpointState) => result.matches));
 
   protected onFiltersChange(filters: Filters): void {
     this.filtersChange.emit(filters);

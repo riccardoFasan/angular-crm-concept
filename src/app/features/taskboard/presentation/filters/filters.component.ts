@@ -4,6 +4,7 @@ import {
   EventEmitter,
   Input,
   Output,
+  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +18,8 @@ import { Option } from 'src/app/shared/models';
 import { Priority, Status } from 'src/app/shared/enums';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MobileObserverService } from 'src/app/shared/services';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-filters',
@@ -35,10 +38,9 @@ import { MatGridListModule } from '@angular/material/grid-list';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h3 *ngIf="mobile">Advanced Filters</h3>
-
     <mat-grid-list
-      [cols]="mobile ? '1' : '3'"
+      *ngIf="{ mobile: mobile$ | async } as vm"
+      [cols]="vm.mobile ? '1' : '3'"
       gutterSize="1rem"
       rowHeight="fit"
     >
@@ -142,17 +144,15 @@ import { MatGridListModule } from '@angular/material/grid-list';
             width: 100%;
           }
         }
-
-        &:has(mat-grid-list[cols='1']) {
-          display: block;
-          padding: 1rem;
-          width: 75vw;
-        }
       }
     `,
   ],
 })
 export class FiltersComponent {
+  private readonly mobileObserver: MobileObserverService = inject(
+    MobileObserverService
+  );
+
   @Input() status?: Status;
   @Input() priority?: Priority;
   @Input() deadline?: Date;
@@ -160,12 +160,13 @@ export class FiltersComponent {
   @Input() priorities: Option<Priority>[] = [];
   @Input() states: Option<Status>[] = [];
   @Input() optionsLoading: boolean = false;
-  @Input() mobile: boolean = false;
 
   @Output() statusChange: EventEmitter<Status> = new EventEmitter<Status>();
   @Output() priorityChange: EventEmitter<Priority> =
     new EventEmitter<Priority>();
   @Output() deadlineChange: EventEmitter<Date> = new EventEmitter<Date>();
+
+  protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
 
   protected onStatusChange(): void {
     this.statusChange.emit(this.status);

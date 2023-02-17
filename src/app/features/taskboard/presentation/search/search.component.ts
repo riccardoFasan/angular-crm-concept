@@ -19,6 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FiltersComponent } from '../filters/filters.component';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MobileObserverService } from 'src/app/shared/services';
+import { Observable, tap } from 'rxjs';
 
 @Component({
   selector: 'app-search',
@@ -34,8 +36,13 @@ import { MatGridListModule } from '@angular/material/grid-list';
     MatGridListModule,
   ],
   template: `
-    <mat-grid-list [cols]="mobile ? 6 : 4" gutterSize="1rem" rowHeight="fit">
-      <mat-grid-tile [colspan]="mobile ? '5' : '1'" rowspan="1">
+    <mat-grid-list
+      *ngIf="{ mobile: mobile$ | async } as vm"
+      [cols]="vm.mobile ? 6 : 4"
+      gutterSize="1rem"
+      rowHeight="fit"
+    >
+      <mat-grid-tile [colspan]="vm.mobile ? '5' : '1'" rowspan="1">
         <mat-form-field appearance="outline">
           <mat-label>Description</mat-label>
           <input
@@ -56,9 +63,9 @@ import { MatGridListModule } from '@angular/material/grid-list';
         </mat-form-field>
       </mat-grid-tile>
 
-      <mat-grid-tile [colspan]="mobile ? '1' : '3'" rowspan="1">
+      <mat-grid-tile [colspan]="vm.mobile ? '1' : '3'" rowspan="1">
         <button
-          *ngIf="mobile; else filters"
+          *ngIf="vm.mobile; else filters"
           (click)="openFilters()"
           mat-icon-button
         >
@@ -72,7 +79,6 @@ import { MatGridListModule } from '@angular/material/grid-list';
             [priorities]="priorities"
             [states]="states"
             [optionsLoading]="optionsLoading"
-            [mobile]="mobile"
             (statusChange)="onFiltersChange({ status: $event })"
             (priorityChange)="onFiltersChange({ priority: $event })"
             (deadlineChange)="onFiltersChange({ deadline: $event })"
@@ -112,17 +118,26 @@ import { MatGridListModule } from '@angular/material/grid-list';
 export class SearchComponent {
   private readonly sidebarStore: SidebarStoreService =
     inject(SidebarStoreService);
+  private readonly mobileObserver: MobileObserverService = inject(
+    MobileObserverService
+  );
 
   @Input() filters!: Filters;
   @Input() priorities: Option<Priority>[] = [];
   @Input() states: Option<Status>[] = [];
   @Input() optionsLoading: boolean = false;
-  @Input() mobile: boolean = false;
 
   @Output() filtersChange: EventEmitter<Filters> = new EventEmitter<Filters>();
 
   @ViewChild('filters')
   filtersRef!: ViewContainerRef;
+
+  protected readonly mobile$: Observable<boolean> =
+    this.mobileObserver.mobile$.pipe(
+      tap((mobile: boolean) => {
+        if (!mobile) this.sidebarStore.close();
+      })
+    );
 
   protected description: string = '';
   protected status?: Status;
@@ -146,6 +161,7 @@ export class SearchComponent {
   protected openFilters(): void {
     this.sidebarStore.updateTemplate(this.filtersRef);
     this.sidebarStore.updatePosition('end');
-    this.sidebarStore.toggleOpen();
+    this.sidebarStore.updateTitle('Advanced Filters');
+    this.sidebarStore.open();
   }
 }
