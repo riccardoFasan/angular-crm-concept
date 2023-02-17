@@ -139,14 +139,14 @@ import { Observable } from 'rxjs';
 
           &[cols='1'] {
             height: $row-height * 3;
+
+            mat-grid-tile {
+              padding: 1rem 0;
+            }
           }
 
-          mat-grid-tile {
-            padding: 1rem 0;
-
-            mat-form-field {
-              width: 100%;
-            }
+          mat-grid-tile mat-form-field {
+            width: 100%;
           }
         }
       }
