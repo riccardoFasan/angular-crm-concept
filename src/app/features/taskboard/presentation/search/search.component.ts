@@ -73,6 +73,7 @@ import { Observable, tap } from 'rxjs';
         </button>
         <ng-template #filters>
           <app-filters
+            [mobile]="!!vm.mobile"
             [status]="status"
             [priority]="priority"
             [deadline]="deadline"

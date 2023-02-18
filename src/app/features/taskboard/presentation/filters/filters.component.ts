@@ -18,8 +18,6 @@ import { Option } from 'src/app/shared/models';
 import { Priority, Status } from 'src/app/shared/enums';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MobileObserverService } from 'src/app/shared/services';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-filters',
@@ -39,8 +37,7 @@ import { Observable } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-grid-list
-      *ngIf="{ mobile: mobile$ | async } as vm"
-      [cols]="vm.mobile ? '1' : '3'"
+      [cols]="mobile ? '1' : '3'"
       gutterSize="1rem"
       rowHeight="fit"
     >
@@ -154,9 +151,7 @@ import { Observable } from 'rxjs';
   ],
 })
 export class FiltersComponent {
-  private readonly mobileObserver: MobileObserverService = inject(
-    MobileObserverService
-  );
+  @Input() mobile: boolean = false;
 
   @Input() status?: Status;
   @Input() priority?: Priority;
@@ -170,8 +165,6 @@ export class FiltersComponent {
   @Output() priorityChange: EventEmitter<Priority> =
     new EventEmitter<Priority>();
   @Output() deadlineChange: EventEmitter<Date> = new EventEmitter<Date>();
-
-  protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
 
   protected onStatusChange(): void {
     this.statusChange.emit(this.status);

@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  OnDestroy,
+  OnInit,
   ViewChild,
   ViewContainerRef,
   inject,
@@ -13,14 +15,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SidebarStoreService } from '../../store';
 import { MobileObserverService } from '../../services';
-import { Observable, tap } from 'rxjs';
+import { Observable, Subject, combineLatest, takeUntil, tap } from 'rxjs';
 import { NavigationComponent } from '../navigation/navigation.component';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
+import { Event } from '@angular/router';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     MatToolbarModule,
     MatButtonModule,
     MatProgressBarModule,
@@ -51,7 +56,7 @@ import { NavigationComponent } from '../navigation/navigation.component';
         <h1 class="mat-h2">Material taskbaord</h1>
         <ng-container *ngIf="vm.mobile; else navigation"></ng-container>
         <ng-template #navigation>
-          <app-navigation (pageChange)="onPageChanged()"></app-navigation>
+          <app-navigation [mobile]="!!vm.mobile"></app-navigation>
         </ng-template>
       </mat-toolbar-row>
     </mat-toolbar>
@@ -69,9 +74,11 @@ import { NavigationComponent } from '../navigation/navigation.component';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   private readonly sidebarStore: SidebarStoreService =
     inject(SidebarStoreService);
+  private readonly router: Router = inject(Router);
+
   private readonly mobileObserver: MobileObserverService = inject(
     MobileObserverService
   );
@@ -81,21 +88,32 @@ export class HeaderComponent {
   @ViewChild('navigation')
   navigationRef!: ViewContainerRef;
 
-  protected readonly mobile$: Observable<boolean> =
-    this.mobileObserver.mobile$.pipe(
-      tap((mobile: boolean) => {
-        if (!mobile) this.sidebarStore.close();
-      })
-    );
+  protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
+  private readonly routerEvents$: Observable<Event> = this.router.events;
+  private readonly destroy$: Subject<void> = new Subject<void>();
+
+  private readonly closeSidebar$: Observable<[boolean, Event]> = combineLatest([
+    this.mobile$,
+    this.routerEvents$,
+  ]).pipe(
+    takeUntil(this.destroy$),
+    tap(([mobile, events]: [boolean, Event]) => {
+      if (!mobile || events instanceof NavigationEnd) this.sidebarStore.close();
+    })
+  );
+
+  ngOnInit(): void {
+    this.closeSidebar$.subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
 
   protected openNavigation(): void {
     this.sidebarStore.updateTemplate(this.navigationRef);
     this.sidebarStore.updatePosition('start');
     this.sidebarStore.updateTitle('Menu');
     this.sidebarStore.open();
-  }
-
-  protected onPageChanged(): void {
-    this.sidebarStore.close();
   }
 }

@@ -2,16 +2,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
+  Input,
   Output,
-  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MobileObserverService } from '../../services';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-navigation',
@@ -24,17 +22,14 @@ import { Observable } from 'rxjs';
     MatListModule,
   ],
   template: `
-    <mat-list
-      *ngIf="{ mobile: mobile$ | async } as vm"
-      [ngClass]="{ 'inline-nav': !vm.mobile }"
-    >
+    <mat-list [ngClass]="{ 'inline-nav': !mobile }">
       <mat-list-item>
-        <button mat-button color="accent" (click)="navigate('taskboard')">
+        <button mat-button color="accent" [routerLink]="['taskboard']">
           Taskboard
         </button>
       </mat-list-item>
       <mat-list-item>
-        <button mat-button color="accent" (click)="navigate('taskboard/new')">
+        <button mat-button color="accent" [routerLink]="['taskboard', 'new']">
           Create new task
         </button>
       </mat-list-item>
@@ -65,17 +60,6 @@ import { Observable } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavigationComponent {
-  private readonly mobileObserver: MobileObserverService = inject(
-    MobileObserverService
-  );
-  private readonly router: Router = inject(Router);
-
+  @Input() mobile: boolean = false;
   @Output() pageChange: EventEmitter<void> = new EventEmitter<void>();
-
-  protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
-
-  protected navigate(url: string): void {
-    this.router.navigateByUrl(url);
-    this.pageChange.emit();
-  }
 }
