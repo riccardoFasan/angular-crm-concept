@@ -24,12 +24,24 @@ import { MatIconModule } from '@angular/material/icon';
   template: `
     <mat-list [ngClass]="{ 'inline-nav': !mobile }">
       <mat-list-item>
-        <button mat-button color="accent" [routerLink]="['taskboard']">
+        <button
+          mat-button
+          color="accent"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [routerLink]="['taskboard']"
+        >
           Taskboard
         </button>
       </mat-list-item>
       <mat-list-item>
-        <button mat-button color="accent" [routerLink]="['taskboard', 'new']">
+        <button
+          mat-button
+          color="accent"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [routerLink]="['taskboard', 'new']"
+        >
           Create new task
         </button>
       </mat-list-item>
@@ -37,6 +49,8 @@ import { MatIconModule } from '@angular/material/icon';
   `,
   styles: [
     `
+      $border-style: 0.125rem solid transparent;
+
       mat-list {
         mat-list-item {
           padding: 0;
@@ -44,6 +58,7 @@ import { MatIconModule } from '@angular/material/icon';
           button {
             width: 100%;
             justify-content: flex-start;
+            border-left: $border-style;
           }
         }
 
@@ -52,6 +67,18 @@ import { MatIconModule } from '@angular/material/icon';
 
           mat-list-item {
             width: unset;
+
+            button {
+              border-left: 0;
+              border-bottom: $border-style;
+            }
+          }
+        }
+
+        &,
+        &.inline-nav {
+          mat-list-item button.active {
+            border-color: #69f0ae;
           }
         }
       }
