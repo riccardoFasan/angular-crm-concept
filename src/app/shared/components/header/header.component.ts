@@ -17,7 +17,7 @@ import { SidebarStoreService } from '../../store';
 import { MobileObserverService } from '../../services';
 import { Observable, Subject, combineLatest, takeUntil, tap } from 'rxjs';
 import { NavigationComponent } from '../navigation/navigation.component';
-import { Router, NavigationEnd, RouterModule } from '@angular/router';
+import { Router, NavigationStart, RouterModule } from '@angular/router';
 import { Event } from '@angular/router';
 
 @Component({
@@ -98,7 +98,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ]).pipe(
     takeUntil(this.destroy$),
     tap(([mobile, events]: [boolean, Event]) => {
-      if (!mobile || events instanceof NavigationEnd) this.sidebarStore.close();
+      if (!mobile || events instanceof NavigationStart)
+        this.sidebarStore.close();
     })
   );
 

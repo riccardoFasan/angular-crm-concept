@@ -51,24 +51,22 @@ import { MobileObserverService } from 'src/app/shared/services';
           (filtersChange)="onFiltersChange($event)"
         >
         </app-filters-container>
-      </mat-card>
-      <mat-card *ngIf="!vm.mobile">
-        <app-list
-          [tasks]="vm.tasks!"
-          [sorting]="vm.searchCriteria!.sorting"
-          (sortingChange)="onSortingChange($event)"
-          (taskRemoved)="onTaskRemoved($event)"
-        ></app-list>
+        <ng-container *ngIf="!vm.mobile">
+          <app-list
+            [tasks]="vm.tasks!"
+            [sorting]="vm.searchCriteria!.sorting"
+            (sortingChange)="onSortingChange($event)"
+            (taskRemoved)="onTaskRemoved($event)"
+          ></app-list>
+          <app-pagination
+            [pagination]="vm.searchCriteria!.pagination"
+            [count]="vm.count!"
+            [loading]="vm.loading!"
+            (paginationChange)="onPaginationChange($event)"
+          ></app-pagination>
+        </ng-container>
       </mat-card>
       <app-cards *ngIf="vm.mobile" [tasks]="vm.tasks!"></app-cards>
-      <mat-card [ngClass]="{ fixed: vm.mobile }">
-        <app-pagination
-          [pagination]="vm.searchCriteria!.pagination"
-          [count]="vm.count!"
-          [loading]="vm.loading!"
-          (paginationChange)="onPaginationChange($event)"
-        ></app-pagination>
-      </mat-card>
       <app-error-snackbar
         *ngIf="vm.error"
         [message]="vm.error"
@@ -83,22 +81,10 @@ import { MobileObserverService } from 'src/app/shared/services';
         margin-top: 1rem;
       }
 
-      mat-card.fixed {
-        &:first-child,
-        &:last-child {
-          margin-left: -1rem;
-          margin-right: -1rem;
-        }
-
-        &:first-child {
-          margin-top: -1rem;
-        }
-
-        &:last-child {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-        }
+      mat-card:has(app-filters-container).fixed {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        margin-top: -1rem;
       }
     `,
   ],

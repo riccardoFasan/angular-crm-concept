@@ -6,7 +6,7 @@ import { importProvidersFrom } from '@angular/core';
 export const TASK_EDIT_ROUTES: Routes = [
   {
     path: '',
-    title: 'Task - Material taskboard',
+    title: 'Task',
     providers: [MatDialog, importProvidersFrom(MatDialogModule)],
     canDeactivate: [canLeaveForm],
     loadComponent: () =>

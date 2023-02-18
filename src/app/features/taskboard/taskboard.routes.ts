@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const TASKBOARD_ROUTES: Routes = [
   {
     path: '',
-    title: 'Taskboard - Material taskboard',
+    title: 'Taskboard',
     loadComponent: () =>
       import(
         './containers/taskboard-container/taskboard-container.component'
