@@ -9,11 +9,16 @@ import {
   Sorting,
   Task,
 } from 'src/app/shared/models';
-import { ListComponent, PaginationComponent } from '../../presentation';
+import {
+  CardsComponent,
+  ListComponent,
+  PaginationComponent,
+} from '../../presentation';
 import { TaskboardStoreService } from '../../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
 import { FiltersContainerComponent } from '../filters-container/filters-container.component';
+import { MobileObserverService } from 'src/app/shared/services';
 
 @Component({
   selector: 'app-taskboard-container',
@@ -22,6 +27,7 @@ import { FiltersContainerComponent } from '../filters-container/filters-containe
     CommonModule,
     MatCardModule,
     ListComponent,
+    CardsComponent,
     PaginationComponent,
     FiltersContainerComponent,
     ErrorSnackbarDirective,
@@ -29,39 +35,46 @@ import { FiltersContainerComponent } from '../filters-container/filters-containe
   providers: [provideComponentStore(TaskboardStoreService)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <mat-card
+    <ng-container
       *ngIf="{
         tasks: tasks$ | async,
         count: count$ | async,
         searchCriteria: searchCriteria$ | async,
         loading: loading$ | async,
-        error: error$ | async
+        error: error$ | async,
+        mobile: mobile$ | async
       } as vm"
     >
-      <app-filters-container
-        [filters]="vm.searchCriteria!.filters"
-        (filtersChange)="onFiltersChange($event)"
-      >
-      </app-filters-container>
-      <app-list
-        [tasks]="vm.tasks!"
-        [loading]="vm.loading!"
-        [sorting]="vm.searchCriteria!.sorting"
-        (sortingChange)="onSortingChange($event)"
-        (taskRemoved)="onTaskRemoved($event)"
-      ></app-list>
-      <app-pagination
-        [pagination]="vm.searchCriteria!.pagination"
-        [count]="vm.count!"
-        [loading]="vm.loading!"
-        (paginationChange)="onPaginationChange($event)"
-      ></app-pagination>
+      <mat-card [ngClass]="{ fixed: vm.mobile }">
+        <app-filters-container
+          [filters]="vm.searchCriteria!.filters"
+          (filtersChange)="onFiltersChange($event)"
+        >
+        </app-filters-container>
+      </mat-card>
+      <mat-card *ngIf="!vm.mobile">
+        <app-list
+          [tasks]="vm.tasks!"
+          [sorting]="vm.searchCriteria!.sorting"
+          (sortingChange)="onSortingChange($event)"
+          (taskRemoved)="onTaskRemoved($event)"
+        ></app-list>
+      </mat-card>
+      <app-cards *ngIf="vm.mobile" [tasks]="vm.tasks!"></app-cards>
+      <mat-card [ngClass]="{ fixed: vm.mobile }">
+        <app-pagination
+          [pagination]="vm.searchCriteria!.pagination"
+          [count]="vm.count!"
+          [loading]="vm.loading!"
+          (paginationChange)="onPaginationChange($event)"
+        ></app-pagination>
+      </mat-card>
       <app-error-snackbar
         *ngIf="vm.error"
         [message]="vm.error"
         (dismissed)="onSnackbardDismissed()"
       ></app-error-snackbar>
-    </mat-card>
+    </ng-container>
   `,
   styles: [
     `
@@ -69,11 +82,32 @@ import { FiltersContainerComponent } from '../filters-container/filters-containe
         display: inline-block;
         margin-top: 1rem;
       }
+
+      mat-card.fixed {
+        &:first-child,
+        &:last-child {
+          margin-left: -1rem;
+          margin-right: -1rem;
+        }
+
+        &:first-child {
+          margin-top: -1rem;
+        }
+
+        &:last-child {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+        }
+      }
     `,
   ],
 })
 export class TaskboardContainerComponent {
   private readonly store: TaskboardStoreService = inject(TaskboardStoreService);
+  private readonly mobileObserver: MobileObserverService = inject(
+    MobileObserverService
+  );
 
   protected readonly tasks$: Observable<Task[]> = this.store.tasks$;
   protected readonly searchCriteria$: Observable<SearchCriteria> =
@@ -82,6 +116,8 @@ export class TaskboardContainerComponent {
 
   protected readonly error$: Observable<string | undefined> = this.store.error$;
   protected readonly count$: Observable<number> = this.store.count$;
+
+  protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
 
   protected onFiltersChange(filters: Filters): void {
     this.store.filter(filters);

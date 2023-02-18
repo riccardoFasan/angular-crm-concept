@@ -117,7 +117,6 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class ListComponent {
   @Input() tasks: Task[] = [];
-  @Input() loading: boolean = false;
   @Input() sorting?: Sorting;
 
   @Output() sortingChange: EventEmitter<Sorting> = new EventEmitter<Sorting>();
