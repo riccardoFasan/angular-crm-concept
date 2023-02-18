@@ -6,12 +6,14 @@ import { Observable, filter, map, switchMap, take } from 'rxjs';
 import { Task, TaskFormData } from 'src/app/shared/models';
 import { EditingMode } from 'src/app/shared/enums';
 import { TaskFormComponent } from '../../presentation';
+import { provideComponentStore } from '@ngrx/component-store';
 import { CanLeave } from 'src/app/shared/interfaces';
 
 @Component({
   selector: 'app-task-edit-container',
   standalone: true,
   imports: [CommonModule, MatCardModule, TaskFormComponent],
+  providers: [provideComponentStore(TaskEditStoreService)],
   template: `
     <mat-card
       *ngIf="{

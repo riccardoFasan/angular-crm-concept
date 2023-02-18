@@ -1,8 +1,11 @@
 import { inject, Injectable } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { ActivatedRoute, Params } from '@angular/router';
+import { ComponentStore, OnStateInit } from '@ngrx/component-store';
 import {
+  distinctUntilChanged,
   EMPTY,
   iif,
+  map,
   Observable,
   pipe,
   switchMap,
@@ -11,16 +14,21 @@ import {
 } from 'rxjs';
 import { EditingMode } from 'src/app/shared/enums';
 import { Task, TaskFormData } from 'src/app/shared/models';
-import { ApiService } from 'src/app/shared/services';
+import { ApiService, TitleService } from 'src/app/shared/services';
 import { areEqualObjects } from 'src/utilities';
 import { INITIAL_TASK_EDIT_STATE, TaskEditState } from '../state';
 import { LoadingStoreService } from 'src/app/shared/store';
 
 @Injectable()
-export class TaskEditStoreService extends ComponentStore<TaskEditState> {
+export class TaskEditStoreService
+  extends ComponentStore<TaskEditState>
+  implements OnStateInit
+{
   private readonly api: ApiService = inject(ApiService);
+  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private readonly loadingStore: LoadingStoreService =
     inject(LoadingStoreService);
+  private readonly title: TitleService = inject(TitleService);
 
   readonly formData$: Observable<TaskFormData> = this.select(
     (state: TaskEditState) => state.formData
@@ -71,6 +79,7 @@ export class TaskEditStoreService extends ComponentStore<TaskEditState> {
         next: (task: Task) => {
           this.syncLoading(false);
           this.updateTask(task);
+          this.syncTitle(task);
         },
         error: (message: string) => {
           this.updateError(message);
@@ -84,25 +93,38 @@ export class TaskEditStoreService extends ComponentStore<TaskEditState> {
     pipe(tap(() => this.updateError(undefined)))
   );
 
-  readonly getTask = this.effect<string>(
-    pipe(
-      tap(() => this.syncLoading(true)),
-      switchMap((taskId: string) =>
-        this.api.getTask(taskId).pipe(
-          tap({
-            next: (task: Task) => {
-              this.syncLoading(false);
-              this.updateFormData(task);
-              this.updateTask(task);
-            },
-            error: (message: string) => {
-              this.updateError(message);
-              this.syncLoading(false);
-            },
-          })
-        )
+  private readonly taskId$: Observable<string | undefined> =
+    this.activatedRoute.params.pipe(
+      map((params: Params) => {
+        const id: string | undefined = params['id'];
+        if (Boolean(id) && id !== 'new') return id;
+        return undefined;
+      }),
+      distinctUntilChanged()
+    );
+
+  private readonly getTask = this.effect(
+    (taskId$: Observable<string | undefined>) =>
+      taskId$.pipe(
+        switchMap((taskId: string | undefined) => {
+          if (!taskId) return EMPTY;
+          this.syncLoading(true);
+          return this.api.getTask(taskId).pipe(
+            tap({
+              next: (task: Task) => {
+                this.syncLoading(false);
+                this.updateFormData(task);
+                this.updateTask(task);
+                this.syncTitle(task);
+              },
+              error: (message: string) => {
+                this.updateError(message);
+                this.syncLoading(false);
+              },
+            })
+          );
+        })
       )
-    )
   );
 
   private readonly syncLoading = this.effect<boolean>(
@@ -112,6 +134,10 @@ export class TaskEditStoreService extends ComponentStore<TaskEditState> {
         this.loadingStore.updateLoading(loading);
       })
     )
+  );
+
+  private readonly syncTitle = this.effect<Task>(
+    pipe(tap((task: Task) => this.title.setTitle(task.description)))
   );
 
   private readonly updateTask = this.updater(
@@ -134,5 +160,9 @@ export class TaskEditStoreService extends ComponentStore<TaskEditState> {
 
   constructor() {
     super(INITIAL_TASK_EDIT_STATE);
+  }
+
+  ngrxOnStateInit(): void {
+    this.getTask(this.taskId$);
   }
 }
