@@ -1,11 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, Params } from '@angular/router';
-import { ComponentStore, OnStateInit } from '@ngrx/component-store';
+import { ComponentStore } from '@ngrx/component-store';
 import {
-  distinctUntilChanged,
   EMPTY,
   iif,
-  map,
   Observable,
   pipe,
   switchMap,
@@ -20,12 +17,8 @@ import { INITIAL_TASK_EDIT_STATE, TaskEditState } from '../state';
 import { LoadingStoreService } from 'src/app/shared/store';
 
 @Injectable()
-export class TaskEditStoreService
-  extends ComponentStore<TaskEditState>
-  implements OnStateInit
-{
+export class TaskEditStoreService extends ComponentStore<TaskEditState> {
   private readonly api: ApiService = inject(ApiService);
-  private readonly activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private readonly loadingStore: LoadingStoreService =
     inject(LoadingStoreService);
 
@@ -91,37 +84,25 @@ export class TaskEditStoreService
     pipe(tap(() => this.updateError(undefined)))
   );
 
-  private readonly taskId$: Observable<string | undefined> =
-    this.activatedRoute.params.pipe(
-      map((params: Params) => {
-        const id: string | undefined = params['id'];
-        if (Boolean(id) && id !== 'new') return id;
-        return undefined;
-      }),
-      distinctUntilChanged()
-    );
-
-  private readonly getTask = this.effect(
-    (taskId$: Observable<string | undefined>) =>
-      taskId$.pipe(
-        switchMap((taskId: string | undefined) => {
-          if (!taskId) return EMPTY;
-          this.syncLoading(true);
-          return this.api.getTask(taskId).pipe(
-            tap({
-              next: (task: Task) => {
-                this.syncLoading(false);
-                this.updateFormData(task);
-                this.updateTask(task);
-              },
-              error: (message: string) => {
-                this.updateError(message);
-                this.syncLoading(false);
-              },
-            })
-          );
-        })
+  readonly getTask = this.effect<string>(
+    pipe(
+      tap(() => this.syncLoading(true)),
+      switchMap((taskId: string) =>
+        this.api.getTask(taskId).pipe(
+          tap({
+            next: (task: Task) => {
+              this.syncLoading(false);
+              this.updateFormData(task);
+              this.updateTask(task);
+            },
+            error: (message: string) => {
+              this.updateError(message);
+              this.syncLoading(false);
+            },
+          })
+        )
       )
+    )
   );
 
   private readonly syncLoading = this.effect<boolean>(
@@ -153,9 +134,5 @@ export class TaskEditStoreService
 
   constructor() {
     super(INITIAL_TASK_EDIT_STATE);
-  }
-
-  ngrxOnStateInit(): void {
-    this.getTask(this.taskId$);
   }
 }

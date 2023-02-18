@@ -3,12 +3,18 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { canLeaveForm } from 'src/app/shared/guards';
 import { importProvidersFrom } from '@angular/core';
 import { TaskTitleResolver } from './resolvers/task-title.resolver';
+import { TaskEditStoreService } from './store';
+import { provideComponentStore } from '@ngrx/component-store';
 
 export const TASK_EDIT_ROUTES: Routes = [
   {
     path: '',
     title: TaskTitleResolver,
-    providers: [MatDialog, importProvidersFrom(MatDialogModule)],
+    providers: [
+      MatDialog,
+      importProvidersFrom(MatDialogModule),
+      TaskEditStoreService,
+    ],
     canDeactivate: [canLeaveForm],
     loadComponent: () =>
       import(
