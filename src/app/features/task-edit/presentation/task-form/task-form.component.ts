@@ -46,7 +46,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
   template: `
     <div>
       <app-back></app-back>
-      <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'New task' }}</h1>
+      <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'Create task' }}</h1>
     </div>
     <form [formGroup]="form">
       <mat-grid-list
