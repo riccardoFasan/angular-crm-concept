@@ -1,19 +1,32 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  ViewChild,
+  ViewContainerRef,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import { SidebarStoreService } from '../../store';
+import { MobileObserverService } from '../../services';
+import { Observable, tap } from 'rxjs';
+import { NavigationComponent } from '../navigation/navigation.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule,
     MatToolbarModule,
     MatButtonModule,
     MatProgressBarModule,
+    MatButtonModule,
+    MatIconModule,
+    NavigationComponent,
   ],
   template: `
     <mat-progress-bar
@@ -22,17 +35,24 @@ import { RouterModule } from '@angular/router';
       mode="indeterminate"
     ></mat-progress-bar>
     <mat-toolbar
+      *ngIf="{ mobile: mobile$ | async } as vm"
       [ngStyle]="{ 'marginTop.px': !loading ? '0' : '-4' }"
       color="primary"
     >
       <mat-toolbar-row>
+        <button
+          *ngIf="vm.mobile"
+          mat-icon-button
+          (click)="openNavigation()"
+          aria-label="Example icon button with a menu icon"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
         <h1 class="mat-h2">Material taskbaord</h1>
-        <button mat-button color="accent" [routerLink]="['taskboard']">
-          Taskboard
-        </button>
-        <button mat-button color="accent" [routerLink]="['taskboard', 'new']">
-          Create new task
-        </button>
+        <ng-container *ngIf="vm.mobile; else navigation"></ng-container>
+        <ng-template #navigation>
+          <app-navigation></app-navigation>
+        </ng-template>
       </mat-toolbar-row>
     </mat-toolbar>
   `,
@@ -50,5 +70,28 @@ import { RouterModule } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
+  private readonly sidebarStore: SidebarStoreService =
+    inject(SidebarStoreService);
+  private readonly mobileObserver: MobileObserverService = inject(
+    MobileObserverService
+  );
+
   @Input() loading: boolean = false;
+
+  @ViewChild('navigation')
+  navigationRef!: ViewContainerRef;
+
+  protected readonly mobile$: Observable<boolean> =
+    this.mobileObserver.mobile$.pipe(
+      tap((mobile: boolean) => {
+        if (!mobile) this.sidebarStore.close();
+      })
+    );
+
+  protected openNavigation(): void {
+    this.sidebarStore.updateTemplate(this.navigationRef);
+    this.sidebarStore.updatePosition('start');
+    this.sidebarStore.updateTitle('Menu');
+    this.sidebarStore.open();
+  }
 }
