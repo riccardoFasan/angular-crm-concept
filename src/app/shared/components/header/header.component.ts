@@ -51,7 +51,7 @@ import { NavigationComponent } from '../navigation/navigation.component';
         <h1 class="mat-h2">Material taskbaord</h1>
         <ng-container *ngIf="vm.mobile; else navigation"></ng-container>
         <ng-template #navigation>
-          <app-navigation></app-navigation>
+          <app-navigation (pageChange)="onPageChanged()"></app-navigation>
         </ng-template>
       </mat-toolbar-row>
     </mat-toolbar>
@@ -93,5 +93,9 @@ export class HeaderComponent {
     this.sidebarStore.updatePosition('start');
     this.sidebarStore.updateTitle('Menu');
     this.sidebarStore.open();
+  }
+
+  protected onPageChanged(): void {
+    this.sidebarStore.close();
   }
 }
