@@ -11,17 +11,15 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, HeaderComponent, SidebarComponent, RouterModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-sidebar>
-      <ng-container
-        *ngIf="{
-          loading: loading$ | async
-        } as vm"
-      >
-        <app-header [loading]="!!vm.loading"></app-header>
-        <main>
-          <router-outlet></router-outlet>
-        </main>
-      </ng-container>
+    <app-sidebar
+      *ngIf="{
+        loading: loading$ | async
+      } as vm"
+    >
+      <app-header [loading]="!!vm.loading"></app-header>
+      <main>
+        <router-outlet></router-outlet>
+      </main>
     </app-sidebar>
   `,
   styles: [

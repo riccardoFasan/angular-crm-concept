@@ -66,7 +66,13 @@ import { MobileObserverService } from 'src/app/shared/services';
           ></app-pagination>
         </ng-container>
       </mat-card>
-      <app-cards *ngIf="vm.mobile" [tasks]="vm.tasks!"></app-cards>
+      <app-cards
+        *ngIf="vm.mobile"
+        [tasks]="vm.tasks!"
+        [count]="vm.count!"
+        [pagination]="vm.searchCriteria!.pagination"
+        (paginationChange)="onPaginationChange($event)"
+      ></app-cards>
       <app-error-snackbar
         *ngIf="vm.error"
         [message]="vm.error"
