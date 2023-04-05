@@ -11,8 +11,8 @@ export const canLeaveForm = (component: CanLeave) => {
   const navigation: NavigationService = inject(NavigationService);
 
   return component.canLeave$.pipe(
-    switchMap((synchronized: boolean) => {
-      if (synchronized) return of(true);
+    switchMap((canLeave: boolean) => {
+      if (canLeave) return of(true);
       const dialogRef: MatDialogRef<LeaveFormDialogComponent> = dialog.open(
         LeaveFormDialogComponent
       );

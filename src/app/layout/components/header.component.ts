@@ -14,9 +14,9 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SidebarStoreService } from '../store';
-import { MobileObserverService } from '../services';
+import { MobileObserverService } from 'src/app/shared/services';
 import { Observable, Subject, combineLatest, takeUntil, tap } from 'rxjs';
-import { NavigationComponent } from '.';
+import { NavigationComponent } from './navigation.component';
 import { Router, NavigationStart, RouterModule } from '@angular/router';
 import { Event } from '@angular/router';
 

@@ -9,7 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SidebarStoreService } from 'src/app/shared/store';
+import { SidebarStoreService } from 'src/app/layout/store';
 import { Filters, Option } from 'src/app/shared/models';
 import { Priority, Status } from 'src/app/shared/enums';
 import { FormsModule } from '@angular/forms';

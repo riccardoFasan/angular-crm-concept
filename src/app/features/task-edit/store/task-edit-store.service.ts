@@ -46,8 +46,8 @@ export class TaskEditStoreService
     (state: TaskEditState) => state.error
   );
 
-  readonly synchronized$: Observable<boolean> = this.select(
-    (state: TaskEditState) => areEqualObjects(state.task, state.formData)
+  readonly saved$: Observable<boolean> = this.select((state: TaskEditState) =>
+    areEqualObjects(state.task, state.formData)
   );
 
   readonly editingMode$: Observable<EditingMode> = this.select(
@@ -65,10 +65,10 @@ export class TaskEditStoreService
   readonly saveTask = this.effect<TaskFormData>(
     pipe(
       tap(() => this.syncLoading(true)),
-      withLatestFrom(this.synchronized$, this.editingMode$),
-      switchMap(([formData, synchronized, editingMode]) =>
+      withLatestFrom(this.saved$, this.editingMode$),
+      switchMap(([formData, saved, editingMode]) =>
         iif(
-          () => synchronized !== true,
+          () => saved !== true,
           editingMode === EditingMode.Creating
             ? this.api.createTask(formData)
             : this.api.updateTask(formData as Task),

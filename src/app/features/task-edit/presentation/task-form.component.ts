@@ -159,7 +159,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
             padding: 1rem 0;
 
             mat-form-field {
-              width: 100%;
+              width: calc(100% - 1px);
             }
 
             &:last-child div {
@@ -184,7 +184,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   private readonly destroy$: Subject<void> = new Subject<void>();
 
   @Input() loading: boolean = false;
-  @Input() synchronized: boolean = false;
+  @Input() saved: boolean = false;
   @Input() editingMode: EditingMode = EditingMode.Editing;
   @Input() task?: Task;
   @Input() set formData(formData: TaskFormData) {
@@ -220,8 +220,10 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.destroy$.next();
   }
 
-  protected save(): void {
-    if (this.form.invalid && !this.synchronized) return;
+  save(): void {
+    this.form.markAllAsTouched();
+    this.form.updateValueAndValidity();
+    if (this.cannotSave) return;
     this.onSave.emit({ ...this.task, ...this.form.value });
   }
 
@@ -231,5 +233,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       return;
     }
     this.form.reset();
+  }
+
+  private get cannotSave(): boolean {
+    return this.saved || this.form.invalid;
   }
 }

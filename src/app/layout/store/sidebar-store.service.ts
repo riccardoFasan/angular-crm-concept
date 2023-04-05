@@ -1,6 +1,6 @@
 import { Injectable, TemplateRef } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { INITIAL_SIDEBAR_STATE, SidebarState } from '../state';
+import { INITIAL_SIDEBAR_STATE, SidebarState } from '../../shared/state';
 import { MatDrawerMode } from '@angular/material/sidenav';
 import { Observable, filter, pipe, tap, withLatestFrom } from 'rxjs';
 

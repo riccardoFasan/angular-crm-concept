@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, Observable, take, timer } from 'rxjs';
+import { first, map, Observable, timer } from 'rxjs';
 import { randomBoolean } from 'src/utilities';
 import { Priority, SortOrder, Status } from '../enums';
 import {
@@ -17,7 +17,7 @@ import { FAKE_PRIORITIES, FAKE_STATES, FAKE_TASKS } from './data';
   providedIn: 'root',
 })
 export class ApiService {
-  private readonly fakeRequest$: Observable<number> = timer(300).pipe(take(1));
+  private readonly fakeRequest$: Observable<number> = timer(500).pipe(first());
 
   getTasks(
     searchCriteria: SearchCriteria

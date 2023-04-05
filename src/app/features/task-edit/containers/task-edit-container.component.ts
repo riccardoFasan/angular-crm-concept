@@ -1,8 +1,25 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaskEditStoreService } from '../store';
 import { MatCardModule } from '@angular/material/card';
-import { Observable, filter, map, switchMap, take } from 'rxjs';
+import {
+  EMPTY,
+  Observable,
+  combineLatest,
+  distinctUntilChanged,
+  filter,
+  first,
+  map,
+  skip,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { Task, TaskFormData } from 'src/app/shared/models';
 import { EditingMode } from 'src/app/shared/enums';
 import { TaskFormComponent } from '../presentation';
@@ -20,7 +37,7 @@ import { CanLeave } from 'src/app/shared/interfaces';
         formData: formData$ | async,
         task: task$ | async,
         loading: loading$ | async,
-        synchronized: synchronized$ | async,
+        saved: saved$ | async,
         editingMode: editingMode$ | async
       } as vm"
     >
@@ -28,7 +45,7 @@ import { CanLeave } from 'src/app/shared/interfaces';
         [loading]="vm.loading!"
         [formData]="vm.formData!"
         [task]="vm.task!"
-        [synchronized]="vm.synchronized!"
+        [saved]="vm.saved!"
         [editingMode]="vm.editingMode!"
         (formDataChange)="onFormDataChanged($event)"
         (onSave)="onFormSaved($event)"
@@ -39,6 +56,8 @@ import { CanLeave } from 'src/app/shared/interfaces';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaskEditContainerComponent implements CanLeave {
+  @ViewChild(TaskFormComponent) private taskForm!: TaskFormComponent;
+
   private readonly store: TaskEditStoreService = inject(TaskEditStoreService);
 
   readonly targetPath: string = '/taskboard';
@@ -46,24 +65,39 @@ export class TaskEditContainerComponent implements CanLeave {
   protected readonly formData$: Observable<TaskFormData> = this.store.formData$;
   protected readonly task$: Observable<Task | undefined> = this.store.task$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;
-  protected readonly synchronized$: Observable<boolean> =
-    this.store.synchronized$;
+  protected readonly saved$: Observable<boolean> = this.store.saved$;
   protected readonly editingMode$: Observable<EditingMode> =
     this.store.editingMode$;
 
-  readonly canLeave$: Observable<boolean> = this.store.synchronized$;
+  readonly canLeave$: Observable<boolean> = this.store.saved$;
 
-  beforeLeave(): Observable<TaskFormData> {
-    return this.formData$.pipe(
-      take(1),
-      switchMap((formData: TaskFormData) => {
-        this.onFormSaved(formData);
-        return this.synchronized$.pipe(
-          filter((synchronized: boolean) => synchronized === true),
-          map(() => formData)
-        );
-      })
+  // combineLatest([
+  //   this.saved$,
+  //   this.loading$,
+  // ]).pipe(
+  //   map(([saved, loading]) => saved && !loading),
+  //   distinctUntilChanged()
+  // );
+
+  beforeLeave(): Observable<any> {
+    this.taskForm.save();
+    return this.canLeave$.pipe(
+      tap(console.log),
+      skip(1),
+      filter((canLeave: boolean) => canLeave === true),
+      first(),
+      tap(console.log)
     );
+    // return this.formData$.pipe(
+    //   take(1),
+    //   switchMap((formData: TaskFormData) => {
+    //     this.onFormSaved(formData);
+    //     return this.saved$.pipe(
+    //       filter((saved: boolean) => saved === true),
+    //       map(() => formData)
+    //     );
+    //   })
+    // );
   }
 
   protected onFormDataChanged(formData: TaskFormData): void {
