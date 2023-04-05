@@ -13,10 +13,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { SidebarStoreService } from '../../store';
-import { MobileObserverService } from '../../services';
+import { SidebarStoreService } from '../store';
+import { MobileObserverService } from '../services';
 import { Observable, Subject, combineLatest, takeUntil, tap } from 'rxjs';
-import { NavigationComponent } from '../navigation/navigation.component';
+import { NavigationComponent } from '.';
 import { Router, NavigationStart, RouterModule } from '@angular/router';
 import { Event } from '@angular/router';
 

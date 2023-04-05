@@ -1,1 +1,1 @@
-export * from './task-edit-container/task-edit-container.component';
+export * from './task-edit-container.component';

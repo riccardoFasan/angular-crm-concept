@@ -8,8 +8,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Pagination, Task } from 'src/app/shared/models';
 import { MatCardModule } from '@angular/material/card';
-import { StatusChipComponent } from '../status-chip/status-chip.component';
-import { PriorityChipComponent } from '../priority-chip/priority-chip.component';
+import { StatusChipComponent, PriorityChipComponent } from '.';
 import { RouterModule } from '@angular/router';
 import { MatRippleModule } from '@angular/material/core';
 import { ScrollingModule } from '@angular/cdk/scrolling';

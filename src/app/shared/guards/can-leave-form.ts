@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { Observable, map, of, race, switchMap, tap } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { LeaveFormDialogComponent } from 'src/app/features/task-edit/presentation/leave-form-dialog/leave-form-dialog.component';
+import { LeaveFormDialogComponent } from 'src/app/features/task-edit/presentation';
 import { DialogAction } from '../enums';
 import { CanLeave } from '../interfaces';
 import { NavigationService } from '../services';

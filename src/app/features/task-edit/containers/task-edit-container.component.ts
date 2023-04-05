@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TaskEditStoreService } from '../../store';
+import { TaskEditStoreService } from '../store';
 import { MatCardModule } from '@angular/material/card';
 import { Observable, filter, map, switchMap, take } from 'rxjs';
 import { Task, TaskFormData } from 'src/app/shared/models';
 import { EditingMode } from 'src/app/shared/enums';
-import { TaskFormComponent } from '../../presentation';
+import { TaskFormComponent } from '../presentation';
 import { provideComponentStore } from '@ngrx/component-store';
 import { CanLeave } from 'src/app/shared/interfaces';
 

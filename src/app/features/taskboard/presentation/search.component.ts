@@ -17,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { FiltersComponent } from '../filters/filters.component';
+import { FiltersComponent } from '.';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MobileObserverService } from 'src/app/shared/services';
 import { Observable, tap } from 'rxjs';

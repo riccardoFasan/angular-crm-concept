@@ -13,11 +13,11 @@ import {
   CardsComponent,
   ListComponent,
   PaginationComponent,
-} from '../../presentation';
-import { TaskboardStoreService } from '../../store';
+} from '../presentation';
+import { TaskboardStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
-import { FiltersContainerComponent } from '../filters-container/filters-container.component';
+import { FiltersContainerComponent } from '.';
 import { MobileObserverService } from 'src/app/shared/services';
 
 @Component({

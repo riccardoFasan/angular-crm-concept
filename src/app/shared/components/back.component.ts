@@ -7,7 +7,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { NavigationService } from '../../services';
+import { NavigationService } from '../services';
 
 @Component({
   selector: 'app-back',

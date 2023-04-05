@@ -7,14 +7,13 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FiltersStoreService } from '../../store';
+import { FiltersStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Priority, Status } from 'src/app/shared/enums';
 import { Filters, Option } from 'src/app/shared/models';
 import { Observable } from 'rxjs';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
-
-import { SearchComponent } from '../../presentation/search/search.component';
+import { SearchComponent } from '../presentation/search.component';
 
 @Component({
   selector: 'app-filters-container',
