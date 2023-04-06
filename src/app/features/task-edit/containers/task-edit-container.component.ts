@@ -8,14 +8,13 @@ import { CommonModule } from '@angular/common';
 import { TaskEditStoreService } from '../store';
 import { MatCardModule } from '@angular/material/card';
 import {
-  EMPTY,
   Observable,
   combineLatest,
   distinctUntilChanged,
   filter,
-  first,
+  last,
   map,
-  skip,
+  of,
   switchMap,
   take,
   tap,
@@ -60,8 +59,6 @@ export class TaskEditContainerComponent implements CanLeave {
 
   private readonly store: TaskEditStoreService = inject(TaskEditStoreService);
 
-  readonly targetPath: string = '/taskboard';
-
   protected readonly formData$: Observable<TaskFormData> = this.store.formData$;
   protected readonly task$: Observable<Task | undefined> = this.store.task$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;
@@ -69,35 +66,30 @@ export class TaskEditContainerComponent implements CanLeave {
   protected readonly editingMode$: Observable<EditingMode> =
     this.store.editingMode$;
 
-  readonly canLeave$: Observable<boolean> = this.store.saved$;
+  readonly canLeave$: Observable<boolean> = combineLatest([
+    this.saved$,
+    this.loading$,
+  ]).pipe(
+    map(([saved, loading]) => saved && !loading),
+    distinctUntilChanged()
+  );
 
-  // combineLatest([
-  //   this.saved$,
-  //   this.loading$,
-  // ]).pipe(
-  //   map(([saved, loading]) => saved && !loading),
-  //   distinctUntilChanged()
-  // );
-
-  beforeLeave(): Observable<any> {
-    this.taskForm.save();
-    return this.canLeave$.pipe(
-      tap(console.log),
-      skip(1),
-      filter((canLeave: boolean) => canLeave === true),
-      first(),
-      tap(console.log)
+  beforeLeave(): Observable<boolean> {
+    return this.formData$.pipe(
+      take(1),
+      switchMap((formData: TaskFormData) => {
+        if (this.taskForm.cannotSave) {
+          this.taskForm.touch();
+          return of(false);
+        }
+        this.onFormSaved(formData);
+        return this.loading$.pipe(
+          tap(console.log)
+          // last((loading: boolean) => loading === false),
+          // map(() => true)
+        );
+      })
     );
-    // return this.formData$.pipe(
-    //   take(1),
-    //   switchMap((formData: TaskFormData) => {
-    //     this.onFormSaved(formData);
-    //     return this.saved$.pipe(
-    //       filter((saved: boolean) => saved === true),
-    //       map(() => formData)
-    //     );
-    //   })
-    // );
   }
 
   protected onFormDataChanged(formData: TaskFormData): void {

@@ -220,9 +220,17 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.destroy$.next();
   }
 
-  save(): void {
+  get cannotSave(): boolean {
+    return this.saved || this.form.invalid;
+  }
+
+  touch(): void {
     this.form.markAllAsTouched();
     this.form.updateValueAndValidity();
+  }
+
+  protected save(): void {
+    this.touch();
     if (this.cannotSave) return;
     this.onSave.emit({ ...this.task, ...this.form.value });
   }
@@ -233,9 +241,5 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       return;
     }
     this.form.reset();
-  }
-
-  private get cannotSave(): boolean {
-    return this.saved || this.form.invalid;
   }
 }
