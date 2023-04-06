@@ -89,6 +89,8 @@ import { MatIconModule } from '@angular/material/icon';
       <app-cards
         *ngIf="vm.mobile"
         [tasks]="vm.tasks!"
+        [tasks]="vm.tasks!"
+        [loading]="!!vm.loading"
         [count]="vm.count!"
         [pagination]="vm.searchCriteria!.pagination"
         (paginationChange)="onPaginationChange($event)"
