@@ -19,6 +19,9 @@ import { provideComponentStore } from '@ngrx/component-store';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
 import { FiltersContainerComponent } from '.';
 import { MobileObserverService } from 'src/app/shared/services';
+import { RouterModule } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-taskboard-container',
@@ -26,6 +29,9 @@ import { MobileObserverService } from 'src/app/shared/services';
   imports: [
     CommonModule,
     MatCardModule,
+    RouterModule,
+    MatButtonModule,
+    MatIconModule,
     ListComponent,
     CardsComponent,
     PaginationComponent,
@@ -63,9 +69,23 @@ import { MobileObserverService } from 'src/app/shared/services';
             [count]="vm.count!"
             [loading]="vm.loading!"
             (paginationChange)="onPaginationChange($event)"
-          ></app-pagination>
+          >
+            <button mat-button color="accent" [routerLink]="['new']">
+              Create new task
+            </button>
+          </app-pagination>
         </ng-container>
       </mat-card>
+      <button
+        *ngIf="vm.mobile"
+        mat-fab
+        color="primary"
+        aria-label="Example Create new task"
+        color="accent"
+        [routerLink]="['new']"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
       <app-cards
         *ngIf="vm.mobile"
         [tasks]="vm.tasks!"
@@ -85,6 +105,17 @@ import { MobileObserverService } from 'src/app/shared/services';
       app-pagination {
         display: inline-block;
         margin-top: 1rem;
+
+        button {
+          margin-left: 0.5rem;
+        }
+      }
+
+      button[mat-fab] {
+        position: fixed;
+        right: 1rem;
+        bottom: 20vh;
+        z-index: 100;
       }
 
       mat-card:has(app-filters-container).fixed {

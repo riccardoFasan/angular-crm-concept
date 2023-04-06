@@ -4,7 +4,6 @@ import {
   EventEmitter,
   Input,
   Output,
-  inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';

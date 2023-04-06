@@ -16,21 +16,36 @@ import { Pagination } from 'src/app/shared/models';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, MatPaginatorModule, FilterPaginationOptionsPipe],
   template: `
-    <mat-paginator
-      showFirstLastButtons
-      [pageSizeOptions]="pageSizeOptions | filterPaginationOptions : count"
-      [pageSize]="pagination.pageSize"
-      [pageIndex]="pagination.pageIndex"
-      [disabled]="loading"
-      [length]="count"
-      (page)="onPaginationChange($event)"
-    >
-    </mat-paginator>
+    <section>
+      <div>
+        <ng-content></ng-content>
+      </div>
+      <mat-paginator
+        showFirstLastButtons
+        [pageSizeOptions]="pageSizeOptions | filterPaginationOptions : count"
+        [pageSize]="pagination.pageSize"
+        [pageIndex]="pagination.pageIndex"
+        [disabled]="loading"
+        [length]="count"
+        (page)="onPaginationChange($event)"
+      >
+      </mat-paginator>
+    </section>
   `,
   styles: [
     `
       :host {
         width: 100%;
+
+        section {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+
+          mat-paginator {
+            display: flex;
+          }
+        }
       }
     `,
   ],

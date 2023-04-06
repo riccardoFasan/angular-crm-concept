@@ -12,12 +12,10 @@ import {
   combineLatest,
   distinctUntilChanged,
   filter,
-  last,
   map,
   of,
   switchMap,
   take,
-  tap,
 } from 'rxjs';
 import { Task, TaskFormData } from 'src/app/shared/models';
 import { EditingMode } from 'src/app/shared/enums';

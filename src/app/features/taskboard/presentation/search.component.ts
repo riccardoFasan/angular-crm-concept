@@ -107,7 +107,7 @@ import { Observable, tap } from 'rxjs';
 
             mat-form-field,
             app-filters {
-              width: 100%;
+              width: calc(100% - 1px);
             }
           }
         }

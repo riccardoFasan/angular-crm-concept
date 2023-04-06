@@ -34,17 +34,6 @@ import { MatIconModule } from '@angular/material/icon';
           Taskboard
         </button>
       </mat-list-item>
-      <mat-list-item>
-        <button
-          mat-button
-          color="accent"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          [routerLink]="['taskboard', 'new']"
-        >
-          Create new task
-        </button>
-      </mat-list-item>
     </mat-list>
   `,
   styles: [
@@ -59,6 +48,7 @@ import { MatIconModule } from '@angular/material/icon';
             width: 100%;
             justify-content: flex-start;
             border-left: $border-style;
+            border-radius: 0;
           }
         }
 
