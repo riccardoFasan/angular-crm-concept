@@ -84,9 +84,8 @@ export class TaskEditContainerComponent implements CanLeave {
         }
         this.onFormSaved(formData);
         return this.loading$.pipe(
-          tap(console.log)
-          // last((loading: boolean) => loading === false),
-          // map(() => true)
+          filter((loading) => loading === false),
+          map(() => true)
         );
       })
     );
