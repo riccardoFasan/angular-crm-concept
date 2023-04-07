@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Priority } from 'src/app/shared/enums';
+import { Priority } from 'src/app/core/enums';
 
 @Pipe({
   name: 'priority',

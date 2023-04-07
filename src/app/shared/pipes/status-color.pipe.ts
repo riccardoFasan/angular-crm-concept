@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Status } from 'src/app/shared/enums';
+import { Status } from 'src/app/core/enums';
 @Pipe({
   name: 'status',
   standalone: true,

@@ -12,14 +12,14 @@ export const APP_ROUTES: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('./features/taskboard/taskboard.routes').then(
+          import('./features/tasks/taskboard/taskboard.routes').then(
             (m) => m.TASKBOARD_ROUTES
           ),
       },
       {
         path: ':id',
         loadChildren: () =>
-          import('./features/task-edit/task-edit.routes').then(
+          import('./features/tasks/task-edit/task-edit.routes').then(
             (m) => m.TASK_EDIT_ROUTES
           ),
       },

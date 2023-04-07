@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent, SidebarComponent } from './layout/components';
-import { LoadingStoreService } from './shared/store';
+import { LoadingStoreService } from './core/store';
 import { Observable } from 'rxjs';
 
 @Component({

@@ -8,7 +8,7 @@ import {
 } from '@angular/router';
 import { AppComponent } from './app/app.component';
 import { APP_ROUTES } from './app/app.routes';
-import { TaskboardTitleStrategy } from './app/shared/strategies';
+import { TaskboardTitleStrategy } from './app/core/strategies';
 
 bootstrapApplication(AppComponent, {
   providers: [
