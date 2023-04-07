@@ -1,6 +1,6 @@
 import { Priority, Status } from '../enums';
 
-export interface Filters {
+export interface TasksFilters {
   description?: string;
   status?: Status;
   priority?: Priority;

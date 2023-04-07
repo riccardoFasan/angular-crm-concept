@@ -4,7 +4,7 @@ import { FiltersState, INITIAL_FILTERS_STATE } from '../state';
 import { Priority, Status } from 'src/app/core/enums';
 import { ApiService } from 'src/app/core/services';
 import { Observable, forkJoin, pipe, switchMap, tap } from 'rxjs';
-import { Filters, Option } from 'src/app/core/models';
+import { TasksFilters, Option } from 'src/app/core/models';
 
 @Injectable()
 export class FiltersStoreService
@@ -13,7 +13,7 @@ export class FiltersStoreService
 {
   private readonly api: ApiService = inject(ApiService);
 
-  readonly filters$: Observable<Filters> = this.select(
+  readonly filters$: Observable<TasksFilters> = this.select(
     (state: FiltersState) => state.filters
   );
 
@@ -38,7 +38,7 @@ export class FiltersStoreService
   );
 
   readonly updateFilters = this.updater(
-    (state: FiltersState, filters: Filters) => ({
+    (state: FiltersState, filters: TasksFilters) => ({
       ...state,
       filters,
     })

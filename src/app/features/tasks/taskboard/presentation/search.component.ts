@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarStoreService } from 'src/app/layout/store';
-import { Filters, Option } from 'src/app/core/models';
+import { TasksFilters, Option } from 'src/app/core/models';
 import { Priority, Status } from 'src/app/core/enums';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -123,12 +123,13 @@ export class SearchComponent {
     MobileObserverService
   );
 
-  @Input() filters!: Filters;
+  @Input() filters!: TasksFilters;
   @Input() priorities: Option<Priority>[] = [];
   @Input() states: Option<Status>[] = [];
   @Input() optionsLoading: boolean = false;
 
-  @Output() filtersChange: EventEmitter<Filters> = new EventEmitter<Filters>();
+  @Output() filtersChange: EventEmitter<TasksFilters> =
+    new EventEmitter<TasksFilters>();
 
   @ViewChild('filters')
   filtersRef!: ViewContainerRef;
@@ -150,7 +151,7 @@ export class SearchComponent {
     this.filtersChange.emit({ ...this.filters, description: this.description });
   }
 
-  protected onFiltersChange(filters: Partial<Filters>): void {
+  protected onFiltersChange(filters: Partial<TasksFilters>): void {
     this.filtersChange.emit({ ...this.filters, ...filters });
   }
 

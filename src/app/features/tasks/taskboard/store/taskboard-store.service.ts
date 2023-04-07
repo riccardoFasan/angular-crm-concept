@@ -9,9 +9,9 @@ import {
   withLatestFrom,
 } from 'rxjs';
 import {
-  Filters,
+  TasksFilters,
   Pagination,
-  SearchCriteria,
+  TasksSearchCriteria,
   Sorting,
   Task,
 } from 'src/app/core/models';
@@ -36,7 +36,7 @@ export class TaskboardStoreService
     (state: TaskboardState) => state.count
   );
 
-  readonly searchCriteria$: Observable<SearchCriteria> = this.select(
+  readonly searchCriteria$: Observable<TasksSearchCriteria> = this.select(
     (state: TaskboardState) => state.searchCriteria
   );
 
@@ -57,7 +57,7 @@ export class TaskboardStoreService
     )
   );
 
-  readonly filter = this.effect<Filters>(
+  readonly filter = this.effect<TasksFilters>(
     pipe(
       withLatestFrom(this.searchCriteria$),
       tap(([filters, searchCriteria]) =>
@@ -104,7 +104,7 @@ export class TaskboardStoreService
   );
 
   private readonly getTasks = this.effect(
-    (searchCriteria$: Observable<SearchCriteria>) =>
+    (searchCriteria$: Observable<TasksSearchCriteria>) =>
       searchCriteria$.pipe(
         tap(() => this.syncLoading(true)),
         exhaustMap((searchCriteria) =>
@@ -156,7 +156,7 @@ export class TaskboardStoreService
   );
 
   private readonly updateSearchCriteria = this.updater(
-    (state: TaskboardState, searchCriteria: SearchCriteria) => ({
+    (state: TaskboardState, searchCriteria: TasksSearchCriteria) => ({
       ...state,
       searchCriteria,
     })

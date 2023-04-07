@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { Observable } from 'rxjs';
 import {
-  Filters,
+  TasksFilters,
   Pagination,
-  SearchCriteria,
+  TasksSearchCriteria,
   Sorting,
   Task,
 } from 'src/app/core/models';
@@ -135,7 +135,7 @@ export class TaskboardContainerComponent {
   );
 
   protected readonly tasks$: Observable<Task[]> = this.store.tasks$;
-  protected readonly searchCriteria$: Observable<SearchCriteria> =
+  protected readonly searchCriteria$: Observable<TasksSearchCriteria> =
     this.store.searchCriteria$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;
 
@@ -144,7 +144,7 @@ export class TaskboardContainerComponent {
 
   protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
 
-  protected onFiltersChange(filters: Filters): void {
+  protected onFiltersChange(filters: TasksFilters): void {
     this.store.filter(filters);
   }
 

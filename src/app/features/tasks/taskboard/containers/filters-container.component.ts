@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { FiltersStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Priority, Status } from 'src/app/core/enums';
-import { Filters, Option } from 'src/app/core/models';
+import { TasksFilters, Option } from 'src/app/core/models';
 import { Observable } from 'rxjs';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
 import { SearchComponent } from '../presentation/search.component';
@@ -50,13 +50,14 @@ import { SearchComponent } from '../presentation/search.component';
 export class FiltersContainerComponent {
   private readonly store: FiltersStoreService = inject(FiltersStoreService);
 
-  @Input() set filters(filters: Filters) {
+  @Input() set filters(filters: TasksFilters) {
     this.store.updateFilters(filters);
   }
 
-  @Output() filtersChange: EventEmitter<Filters> = new EventEmitter<Filters>();
+  @Output() filtersChange: EventEmitter<TasksFilters> =
+    new EventEmitter<TasksFilters>();
 
-  protected readonly filters$: Observable<Filters> = this.store.filters$;
+  protected readonly filters$: Observable<TasksFilters> = this.store.filters$;
   protected readonly priorities$: Observable<Option<Priority>[]> =
     this.store.priorities$;
   protected readonly states$: Observable<Option<Status>[]> = this.store.states$;
@@ -64,7 +65,7 @@ export class FiltersContainerComponent {
     this.store.optionsLoading$;
   protected readonly error$: Observable<string | undefined> = this.store.error$;
 
-  protected onFiltersChange(filters: Filters): void {
+  protected onFiltersChange(filters: TasksFilters): void {
     this.filtersChange.emit(filters);
   }
 

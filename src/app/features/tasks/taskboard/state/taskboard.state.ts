@@ -1,8 +1,8 @@
-import { Task, SearchCriteria } from 'src/app/core/models';
+import { Task, TasksSearchCriteria } from 'src/app/core/models';
 
 export interface TaskboardState {
   tasks: Task[];
-  searchCriteria: SearchCriteria;
+  searchCriteria: TasksSearchCriteria;
   count: number;
   loading: boolean;
   error?: string;
