@@ -14,38 +14,39 @@ import {
   TasksSearchCriteria,
   Sorting,
   Task,
+  List,
 } from 'src/app/core/models';
 import { ApiService } from 'src/app/core/services';
-import { INITIAL_TASKBOARD_STATE, TaskboardState } from '../state';
+import { INITIAL_TASKS_LIST_STATE, TasksListState } from '../state';
 import { LoadingStoreService } from 'src/app/core/store';
 
 @Injectable()
-export class TaskboardStoreService
-  extends ComponentStore<TaskboardState>
+export class TasksListStoreService
+  extends ComponentStore<TasksListState>
   implements OnStateInit
 {
   private readonly api: ApiService = inject(ApiService);
   private readonly loadingStore: LoadingStoreService =
     inject(LoadingStoreService);
 
-  readonly tasks$: Observable<Task[]> = this.select(
-    (state: TaskboardState) => state.tasks
+  readonly items$: Observable<Task[]> = this.select(
+    (state: TasksListState) => state.items
   );
 
   readonly count$: Observable<number> = this.select(
-    (state: TaskboardState) => state.count
+    (state: TasksListState) => state.count
   );
 
   readonly searchCriteria$: Observable<TasksSearchCriteria> = this.select(
-    (state: TaskboardState) => state.searchCriteria
+    (state: TasksListState) => state.searchCriteria
   );
 
   readonly loading$: Observable<boolean> = this.select(
-    (state: TaskboardState) => state.loading
+    (state: TasksListState) => state.loading
   );
 
   readonly error$: Observable<string | undefined> = this.select(
-    (state: TaskboardState) => state.error
+    (state: TasksListState) => state.error
   );
 
   readonly paginate = this.effect<Pagination>(
@@ -78,15 +79,15 @@ export class TaskboardStoreService
   readonly removeTask = this.effect<Task>(
     pipe(
       tap(() => this.syncLoading(true)),
-      withLatestFrom(this.tasks$),
-      concatMap(([task, tasks]) =>
+      withLatestFrom(this.items$),
+      concatMap(([task, items]) =>
         this.api.removeTask(task).pipe(
           tap({
             next: (response: Task) => {
-              const remainingTasks: Task[] = tasks.filter(
+              const remainingItems: Task[] = items.filter(
                 (task: Task) => task.id !== response.id
               );
-              this.updateTasks(remainingTasks);
+              this.updateItems(remainingItems);
               this.syncLoading(false);
             },
             error: (message: string) => {
@@ -103,15 +104,15 @@ export class TaskboardStoreService
     pipe(tap(() => this.updateError(undefined)))
   );
 
-  private readonly getTasks = this.effect(
+  private readonly getItems = this.effect(
     (searchCriteria$: Observable<TasksSearchCriteria>) =>
       searchCriteria$.pipe(
         tap(() => this.syncLoading(true)),
         exhaustMap((searchCriteria) =>
           this.api.getTasks(searchCriteria).pipe(
             tap({
-              next: (response: { tasks: Task[]; count: number }) => {
-                this.updateTasks(response.tasks);
+              next: (response: List<Task>) => {
+                this.updateItems(response.items);
                 this.updateCount(response.count);
                 this.syncLoading(false);
               },
@@ -135,45 +136,45 @@ export class TaskboardStoreService
   );
 
   private readonly updateLoading = this.updater(
-    (state: TaskboardState, loading: boolean) => ({
+    (state: TasksListState, loading: boolean) => ({
       ...state,
       loading,
     })
   );
 
   private readonly updateCount = this.updater(
-    (state: TaskboardState, count: number) => ({
+    (state: TasksListState, count: number) => ({
       ...state,
       count,
     })
   );
 
-  private readonly updateTasks = this.updater(
-    (state: TaskboardState, tasks: Task[]) => ({
+  private readonly updateItems = this.updater(
+    (state: TasksListState, items: Task[]) => ({
       ...state,
-      tasks,
+      items,
     })
   );
 
   private readonly updateSearchCriteria = this.updater(
-    (state: TaskboardState, searchCriteria: TasksSearchCriteria) => ({
+    (state: TasksListState, searchCriteria: TasksSearchCriteria) => ({
       ...state,
       searchCriteria,
     })
   );
 
   private readonly updateError = this.updater(
-    (state: TaskboardState, error?: string) => ({
+    (state: TasksListState, error?: string) => ({
       ...state,
       error,
     })
   );
 
   constructor() {
-    super(INITIAL_TASKBOARD_STATE);
+    super(INITIAL_TASKS_LIST_STATE);
   }
 
   ngrxOnStateInit(): void {
-    this.getTasks(this.searchCriteria$);
+    this.getItems(this.searchCriteria$);
   }
 }

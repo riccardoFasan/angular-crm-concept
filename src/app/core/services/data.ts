@@ -1,7 +1,7 @@
 import { AssignmentRole, EmployeeRole, Priority, Status } from '../enums';
 import { Assignment, Employee, Option, Task } from '../models';
 
-const FAKE_TASK_1 = {
+const FAKE_TASK_1: Task = {
   id: '1',
   description: 'delectus aut autem',
   status: Status.Completed,
@@ -9,7 +9,7 @@ const FAKE_TASK_1 = {
   deadline: new Date(),
 };
 
-const FAKE_TASK_2 = {
+const FAKE_TASK_2: Task = {
   id: '2',
   description: 'quis ut nam facilis et officia qui',
   status: Status.NotStarted,
@@ -17,7 +17,7 @@ const FAKE_TASK_2 = {
   deadline: new Date(),
 };
 
-const FAKE_TASK_3 = {
+const FAKE_TASK_3: Task = {
   id: '3',
   description: 'fugiat veniam minus',
   status: Status.InProgress,
@@ -25,7 +25,7 @@ const FAKE_TASK_3 = {
   deadline: new Date(),
 };
 
-const FAKE_TASK_4 = {
+const FAKE_TASK_4: Task = {
   id: '4',
   description: 'et porro tempora',
   status: Status.NotStarted,
@@ -33,7 +33,7 @@ const FAKE_TASK_4 = {
   deadline: new Date(),
 };
 
-const FAKE_TASK_5 = {
+const FAKE_TASK_5: Task = {
   id: '5',
   description:
     'laboriosam mollitia et enim quasi adipisci quia provident illum',
@@ -42,7 +42,7 @@ const FAKE_TASK_5 = {
   deadline: new Date(),
 };
 
-const FAKE_TASK_6 = {
+const FAKE_TASK_6: Task = {
   id: '6',
   description: 'qui ullam ratione quibusdam voluptatem quia omnis',
   status: Status.InProgress,
@@ -50,7 +50,7 @@ const FAKE_TASK_6 = {
   deadline: new Date(),
 };
 
-const FAKE_TASK_7 = {
+const FAKE_TASK_7: Task = {
   id: '7',
   description: 'illo expedita consequatur quia in',
   status: Status.NotStarted,
@@ -58,7 +58,7 @@ const FAKE_TASK_7 = {
   deadline: new Date(),
 };
 
-const FAKE_TASK_8 = {
+const FAKE_TASK_8: Task = {
   id: '8',
   description: 'quo adipisci enim quam ut ab',
   status: Status.Completed,
@@ -66,7 +66,7 @@ const FAKE_TASK_8 = {
   deadline: new Date(),
 };
 
-const FAKE_TASK_9 = {
+const FAKE_TASK_9: Task = {
   id: '9',
   description: 'molestiae perspiciatis ipsa',
   status: Status.NotStarted,
@@ -74,7 +74,7 @@ const FAKE_TASK_9 = {
   deadline: new Date(),
 };
 
-const FAKE_TASK_10 = {
+const FAKE_TASK_10: Task = {
   id: '10',
   description: 'illo est ratione doloremque quia maiores aut',
   status: Status.Completed,

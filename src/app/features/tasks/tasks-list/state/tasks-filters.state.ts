@@ -1,7 +1,7 @@
 import { Priority, Status } from 'src/app/core/enums';
 import { TasksFilters, Option } from 'src/app/core/models';
 
-export interface FiltersState {
+export interface TasksFiltersState {
   filters: TasksFilters;
   priorities: Option<Priority>[];
   states: Option<Status>[];
@@ -9,7 +9,7 @@ export interface FiltersState {
   error?: string;
 }
 
-export const INITIAL_FILTERS_STATE: FiltersState = {
+export const INITIAL_TASKS_FILTERS_STATE: TasksFiltersState = {
   filters: {},
   priorities: [],
   states: [],

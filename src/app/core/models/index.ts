@@ -10,3 +10,4 @@ export * from './employee.model';
 export * from './employee-form-data.model';
 export * from './employees-filters.model';
 export * from './employees-search-criteria.model';
+export * from './list.model';

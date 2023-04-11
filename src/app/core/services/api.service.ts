@@ -19,6 +19,7 @@ import {
   Task,
   TaskFormData,
   EmployeesFilters,
+  List,
 } from '../models';
 import {
   ASSIGNMENT_ROLES,
@@ -35,9 +36,7 @@ import {
 export class ApiService {
   private readonly fakeRequest$: Observable<number> = timer(500).pipe(first());
 
-  getTasks(
-    searchCriteria: TasksSearchCriteria
-  ): Observable<{ tasks: Task[]; count: number }> {
+  getTasks(searchCriteria: TasksSearchCriteria): Observable<List<Task>> {
     const sortedTasks: Task[] = this.getSortedItems(
       FAKE_TASKS,
       searchCriteria.sorting
@@ -49,7 +48,7 @@ export class ApiService {
     const toIndex: number = this.getToIndex(searchCriteria.pagination);
     return this.request({
       count: filteredTasks.length,
-      tasks: filteredTasks.slice(fromIndex, toIndex),
+      items: filteredTasks.slice(fromIndex, toIndex),
     });
   }
 
@@ -83,7 +82,7 @@ export class ApiService {
 
   getEmployees(
     searchCriteria: EmployeesSearchCriteria
-  ): Observable<{ employees: Employee[]; count: number }> {
+  ): Observable<List<Employee>> {
     const sortedEmployees: Employee[] = this.getSortedItems(
       FAKE_EMPLOYEES,
       searchCriteria.sorting
@@ -96,7 +95,7 @@ export class ApiService {
     const toIndex: number = this.getToIndex(searchCriteria.pagination);
     return this.request({
       count: filteredTasks.length,
-      employees: filteredTasks.slice(fromIndex, toIndex),
+      items: filteredTasks.slice(fromIndex, toIndex),
     });
   }
 

@@ -14,7 +14,7 @@ import {
   ListComponent,
   PaginationComponent,
 } from '../presentation';
-import { TaskboardStoreService } from '../store';
+import { TasksListStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
 import { FiltersContainerComponent } from '.';
@@ -38,12 +38,12 @@ import { MatIconModule } from '@angular/material/icon';
     FiltersContainerComponent,
     ErrorSnackbarDirective,
   ],
-  providers: [provideComponentStore(TaskboardStoreService)],
+  providers: [provideComponentStore(TasksListStoreService)],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ng-container
       *ngIf="{
-        tasks: tasks$ | async,
+        items: items$ | async,
         count: count$ | async,
         searchCriteria: searchCriteria$ | async,
         loading: loading$ | async,
@@ -59,7 +59,7 @@ import { MatIconModule } from '@angular/material/icon';
         </app-filters-container>
         <ng-container *ngIf="!vm.mobile">
           <app-list
-            [tasks]="vm.tasks!"
+            [tasks]="vm.items!"
             [sorting]="vm.searchCriteria!.sorting"
             (sortingChange)="onSortingChange($event)"
             (taskRemoved)="onTaskRemoved($event)"
@@ -88,8 +88,8 @@ import { MatIconModule } from '@angular/material/icon';
       </button>
       <app-cards
         *ngIf="vm.mobile"
-        [tasks]="vm.tasks!"
-        [tasks]="vm.tasks!"
+        [tasks]="vm.items!"
+        [tasks]="vm.items!"
         [loading]="!!vm.loading"
         [count]="vm.count!"
         [pagination]="vm.searchCriteria!.pagination"
@@ -129,12 +129,12 @@ import { MatIconModule } from '@angular/material/icon';
   ],
 })
 export class TaskboardContainerComponent {
-  private readonly store: TaskboardStoreService = inject(TaskboardStoreService);
+  private readonly store: TasksListStoreService = inject(TasksListStoreService);
   private readonly mobileObserver: MobileObserverService = inject(
     MobileObserverService
   );
 
-  protected readonly tasks$: Observable<Task[]> = this.store.tasks$;
+  protected readonly items$: Observable<Task[]> = this.store.items$;
   protected readonly searchCriteria$: Observable<TasksSearchCriteria> =
     this.store.searchCriteria$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;

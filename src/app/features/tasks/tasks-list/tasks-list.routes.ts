@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const TASKBOARD_ROUTES: Routes = [
+export const TASKS_LIST_ROUTES: Routes = [
   {
     path: '',
     title: 'Taskboard',

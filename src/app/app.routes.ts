@@ -4,16 +4,16 @@ export const APP_ROUTES: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'taskboard',
+    redirectTo: 'tasks',
   },
   {
-    path: 'taskboard',
+    path: 'tasks',
     children: [
       {
         path: '',
         loadChildren: () =>
-          import('./features/tasks/taskboard/taskboard.routes').then(
-            (m) => m.TASKBOARD_ROUTES
+          import('./features/tasks/tasks-list/tasks-list.routes').then(
+            (m) => m.TASKS_LIST_ROUTES
           ),
       },
       {

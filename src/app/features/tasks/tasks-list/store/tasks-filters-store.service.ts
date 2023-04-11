@@ -1,36 +1,36 @@
 import { Injectable, inject } from '@angular/core';
 import { ComponentStore, OnStateInit } from '@ngrx/component-store';
-import { FiltersState, INITIAL_FILTERS_STATE } from '../state';
+import { TasksFiltersState, INITIAL_TASKS_FILTERS_STATE } from '../state';
 import { Priority, Status } from 'src/app/core/enums';
 import { ApiService } from 'src/app/core/services';
 import { Observable, forkJoin, pipe, switchMap, tap } from 'rxjs';
 import { TasksFilters, Option } from 'src/app/core/models';
 
 @Injectable()
-export class FiltersStoreService
-  extends ComponentStore<FiltersState>
+export class TasksFiltersStoreService
+  extends ComponentStore<TasksFiltersState>
   implements OnStateInit
 {
   private readonly api: ApiService = inject(ApiService);
 
   readonly filters$: Observable<TasksFilters> = this.select(
-    (state: FiltersState) => state.filters
+    (state: TasksFiltersState) => state.filters
   );
 
   readonly priorities$: Observable<Option<Priority>[]> = this.select(
-    (state: FiltersState) => state.priorities
+    (state: TasksFiltersState) => state.priorities
   );
 
   readonly states$: Observable<Option<Status>[]> = this.select(
-    (state: FiltersState) => state.states
+    (state: TasksFiltersState) => state.states
   );
 
   readonly optionsLoading$: Observable<boolean> = this.select(
-    (state: FiltersState) => state.optionsLoading
+    (state: TasksFiltersState) => state.optionsLoading
   );
 
   readonly error$: Observable<string | undefined> = this.select(
-    (state: FiltersState) => state.error
+    (state: TasksFiltersState) => state.error
   );
 
   readonly clearError = this.effect<void>(
@@ -38,7 +38,7 @@ export class FiltersStoreService
   );
 
   readonly updateFilters = this.updater(
-    (state: FiltersState, filters: TasksFilters) => ({
+    (state: TasksFiltersState, filters: TasksFilters) => ({
       ...state,
       filters,
     })
@@ -65,35 +65,35 @@ export class FiltersStoreService
   );
 
   private readonly updatePriorites = this.updater(
-    (state: FiltersState, priorities: Option<Priority>[]) => ({
+    (state: TasksFiltersState, priorities: Option<Priority>[]) => ({
       ...state,
       priorities,
     })
   );
 
   private readonly updateStates = this.updater(
-    (state: FiltersState, states: Option<Status>[]) => ({
+    (state: TasksFiltersState, states: Option<Status>[]) => ({
       ...state,
       states,
     })
   );
 
   private readonly updateOptionsLoading = this.updater(
-    (state: FiltersState, optionsLoading: boolean) => ({
+    (state: TasksFiltersState, optionsLoading: boolean) => ({
       ...state,
       optionsLoading,
     })
   );
 
   private readonly updateError = this.updater(
-    (state: FiltersState, error?: string) => ({
+    (state: TasksFiltersState, error?: string) => ({
       ...state,
       error,
     })
   );
 
   constructor() {
-    super(INITIAL_FILTERS_STATE);
+    super(INITIAL_TASKS_FILTERS_STATE);
   }
 
   ngrxOnStateInit(): void {

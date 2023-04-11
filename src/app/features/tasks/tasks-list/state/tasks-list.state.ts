@@ -1,15 +1,15 @@
 import { Task, TasksSearchCriteria } from 'src/app/core/models';
 
-export interface TaskboardState {
-  tasks: Task[];
+export interface TasksListState {
+  items: Task[];
   searchCriteria: TasksSearchCriteria;
   count: number;
   loading: boolean;
   error?: string;
 }
 
-export const INITIAL_TASKBOARD_STATE: TaskboardState = {
-  tasks: [],
+export const INITIAL_TASKS_LIST_STATE: TasksListState = {
+  items: [],
   count: 0,
   searchCriteria: {
     filters: {},

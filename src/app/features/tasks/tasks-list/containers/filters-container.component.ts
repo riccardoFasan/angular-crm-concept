@@ -7,7 +7,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FiltersStoreService } from '../store';
+import { TasksFiltersStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { Priority, Status } from 'src/app/core/enums';
 import { TasksFilters, Option } from 'src/app/core/models';
@@ -45,10 +45,12 @@ import { SearchComponent } from '../presentation/search.component';
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [provideComponentStore(FiltersStoreService)],
+  providers: [provideComponentStore(TasksFiltersStoreService)],
 })
 export class FiltersContainerComponent {
-  private readonly store: FiltersStoreService = inject(FiltersStoreService);
+  private readonly store: TasksFiltersStoreService = inject(
+    TasksFiltersStoreService
+  );
 
   @Input() set filters(filters: TasksFilters) {
     this.store.updateFilters(filters);
