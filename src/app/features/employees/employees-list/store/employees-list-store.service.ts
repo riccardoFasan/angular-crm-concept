@@ -21,7 +21,7 @@ import { LoadingStoreService } from 'src/app/core/store';
 import { EmployeesListState, INITIAL_EMPLOYEES_LIST_STATE } from '../state';
 
 @Injectable()
-export class TasksListStoreService
+export class EmployeesListStoreService
   extends ComponentStore<EmployeesListState>
   implements OnStateInit
 {
@@ -76,7 +76,7 @@ export class TasksListStoreService
     )
   );
 
-  readonly removeTask = this.effect<Employee>(
+  readonly removeEmployee = this.effect<Employee>(
     pipe(
       tap(() => this.syncLoading(true)),
       withLatestFrom(this.items$),

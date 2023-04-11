@@ -10,20 +10,20 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarStoreService } from 'src/app/layout/store';
-import { TasksFilters, Option } from 'src/app/core/models';
-import { Priority, Status } from 'src/app/core/enums';
+import { Option, EmployeesFilters } from 'src/app/core/models';
+import { AssignmentRole, EmployeeRole } from 'src/app/core/enums';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { FiltersComponent } from '.';
+import { EmployeesFiltersComponent } from '.';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MobileObserverService } from 'src/app/shared/services';
 import { Observable, tap } from 'rxjs';
 
 @Component({
-  selector: 'app-search',
+  selector: 'app-employees-search',
   standalone: true,
   imports: [
     CommonModule,
@@ -32,7 +32,7 @@ import { Observable, tap } from 'rxjs';
     MatInputModule,
     MatIconModule,
     MatButtonModule,
-    FiltersComponent,
+    EmployeesFiltersComponent,
     MatGridListModule,
   ],
   template: `
@@ -44,15 +44,15 @@ import { Observable, tap } from 'rxjs';
     >
       <mat-grid-tile [colspan]="vm.mobile ? '5' : '1'" rowspan="1">
         <mat-form-field appearance="outline">
-          <mat-label>Description</mat-label>
+          <mat-label>Name</mat-label>
           <input
-            [(ngModel)]="description"
+            [(ngModel)]="name"
             (input)="onDescriptionChange()"
             matInput
             type="text"
           />
           <button
-            *ngIf="description"
+            *ngIf="name"
             matSuffix
             mat-icon-button
             aria-label="Clear"
@@ -72,18 +72,16 @@ import { Observable, tap } from 'rxjs';
           <mat-icon>filter_alt</mat-icon>
         </button>
         <ng-template #filters>
-          <app-filters
+          <app-employees-filters
             [mobile]="!!vm.mobile"
-            [status]="status"
-            [priority]="priority"
-            [deadline]="deadline"
-            [priorities]="priorities"
-            [states]="states"
+            [assignment]="assignment"
+            [job]="job"
+            [assignments]="assignments"
+            [jobs]="jobs"
             [optionsLoading]="optionsLoading"
-            (statusChange)="onFiltersChange({ status: $event })"
-            (priorityChange)="onFiltersChange({ priority: $event })"
-            (deadlineChange)="onFiltersChange({ deadline: $event })"
-          ></app-filters>
+            (assignmentChange)="onFiltersChange({ assignment: $event })"
+            (jobChange)="onFiltersChange({ role: $event })"
+          ></app-employees-filters>
         </ng-template>
       </mat-grid-tile>
     </mat-grid-list>
@@ -116,23 +114,23 @@ import { Observable, tap } from 'rxjs';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchComponent {
+export class EmployeesSearchComponent {
   private readonly sidebarStore: SidebarStoreService =
     inject(SidebarStoreService);
   private readonly mobileObserver: MobileObserverService = inject(
     MobileObserverService
   );
 
-  @Input() filters!: TasksFilters;
-  @Input() priorities: Option<Priority>[] = [];
-  @Input() states: Option<Status>[] = [];
+  @Input() filters!: EmployeesFilters;
+  @Input() assignments: Option<AssignmentRole>[] = [];
+  @Input() jobs: Option<EmployeeRole>[] = [];
   @Input() optionsLoading: boolean = false;
 
-  @Output() filtersChange: EventEmitter<TasksFilters> =
-    new EventEmitter<TasksFilters>();
+  @Output() filtersChange: EventEmitter<EmployeesFilters> =
+    new EventEmitter<EmployeesFilters>();
 
   @ViewChild('filters')
-  filtersRef!: ViewContainerRef;
+  private filtersRef!: ViewContainerRef;
 
   protected readonly mobile$: Observable<boolean> =
     this.mobileObserver.mobile$.pipe(
@@ -141,22 +139,21 @@ export class SearchComponent {
       })
     );
 
-  protected description: string = '';
-  protected status?: Status;
-  protected priority?: Priority;
-  protected deadline?: Date;
+  protected name: string = '';
+  protected assignment?: AssignmentRole;
+  protected job?: EmployeeRole;
 
   protected onDescriptionChange(): void {
-    if (this.description.length < 3 && this.description !== '') return;
-    this.filtersChange.emit({ ...this.filters, description: this.description });
+    if (this.name.length < 3 && this.name !== '') return;
+    this.filtersChange.emit({ ...this.filters, name: this.name });
   }
 
-  protected onFiltersChange(filters: Partial<TasksFilters>): void {
+  protected onFiltersChange(filters: Partial<EmployeesFilters>): void {
     this.filtersChange.emit({ ...this.filters, ...filters });
   }
 
   protected clearDescription(): void {
-    this.description = '';
+    this.name = '';
     this.onDescriptionChange();
   }
 

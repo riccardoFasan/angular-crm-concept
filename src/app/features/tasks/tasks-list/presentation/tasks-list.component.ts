@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-list',
+  selector: 'app-tasks-list',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -34,50 +34,52 @@ import { MatIconModule } from '@angular/material/icon';
       mat-table
       matSort
       (matSortChange)="onSortChange($event)"
-      [dataSource]="tasks"
+      [dataSource]="items"
     >
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>ID</th>
-        <td mat-cell *matCellDef="let task">#{{ task.id }}</td>
+        <td mat-cell *matCellDef="let item">#{{ item.id }}</td>
       </ng-container>
 
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Description</th>
-        <td mat-cell *matCellDef="let task" [routerLink]="[task.id]">
-          {{ task.description }}
+        <td mat-cell *matCellDef="let item">
+          <a [routerLink]="[item.id]">
+            {{ item.description }}
+          </a>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-        <td mat-cell *matCellDef="let task">
-          <app-status-chip [status]="task.status"></app-status-chip>
+        <td mat-cell *matCellDef="let item">
+          <app-status-chip [status]="item.status"></app-status-chip>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="priority">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Priority</th>
-        <td mat-cell *matCellDef="let task">
-          <app-priority-chip [priority]="task.priority"></app-priority-chip>
+        <td mat-cell *matCellDef="let item">
+          <app-priority-chip [priority]="item.priority"></app-priority-chip>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="deadline">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Deadline</th>
-        <td mat-cell *matCellDef="let task">
-          {{ task.deadline | date : 'dd MMMM YYYY' }}
+        <td mat-cell *matCellDef="let item">
+          {{ item.deadline | date : 'dd MMMM YYYY' }}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-        <td mat-cell *matCellDef="let task">
+        <td mat-cell *matCellDef="let item">
           <div class="actions">
             <button
               mat-icon-button
               color="accent"
               aria-label="Edit task"
-              [routerLink]="[task.id]"
+              [routerLink]="[item.id]"
             >
               <mat-icon>edit</mat-icon>
             </button>
@@ -85,7 +87,7 @@ import { MatIconModule } from '@angular/material/icon';
               mat-icon-button
               color="warn"
               aria-label="Remove task"
-              (click)="remove(task)"
+              (click)="remove(item)"
             >
               <mat-icon>delete</mat-icon>
             </button>
@@ -104,7 +106,11 @@ import { MatIconModule } from '@angular/material/icon';
         overflow-x: auto;
 
         table tr td {
-          cursor: pointer;
+          padding: 0.5rem;
+
+          a {
+            color: #3cb1ff;
+          }
 
           div.actions {
             display: flex;
@@ -114,12 +120,12 @@ import { MatIconModule } from '@angular/material/icon';
     `,
   ],
 })
-export class ListComponent {
-  @Input() tasks: Task[] = [];
+export class TasksListComponent {
+  @Input() items: Task[] = [];
   @Input() sorting?: Sorting;
 
   @Output() sortingChange: EventEmitter<Sorting> = new EventEmitter<Sorting>();
-  @Output() taskRemoved: EventEmitter<Task> = new EventEmitter<Task>();
+  @Output() itemRemoved: EventEmitter<Task> = new EventEmitter<Task>();
 
   protected readonly columns: string[] = [
     'id',
@@ -135,8 +141,8 @@ export class ListComponent {
     this.sortingChange.emit({ property: e.active, order });
   }
 
-  protected remove(task: Task): void {
-    this.taskRemoved.emit(task);
+  protected remove(item: Task): void {
+    this.itemRemoved.emit(item);
   }
 
   private mapSortDirection(direction: SortDirection): SortOrder {

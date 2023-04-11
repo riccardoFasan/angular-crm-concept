@@ -25,4 +25,16 @@ export const APP_ROUTES: Routes = [
       },
     ],
   },
+  {
+    path: 'employees',
+    children: [
+      {
+        path: '',
+        loadChildren: () =>
+          import(
+            './features/employees/employees-list/employees-list.routes'
+          ).then((m) => m.EMPLOYEES_LIST_ROUTES),
+      },
+    ],
+  },
 ];

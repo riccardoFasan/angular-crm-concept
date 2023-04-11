@@ -10,7 +10,7 @@ import {
 } from '../state';
 
 @Injectable()
-export class FiltersStoreService
+export class EmployeesFiltersStoreService
   extends ComponentStore<EmployeesFiltersState>
   implements OnStateInit
 {

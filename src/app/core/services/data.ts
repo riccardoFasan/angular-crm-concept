@@ -168,7 +168,8 @@ const FAKE_EMPLOYEE_1: Employee = {
   lastName: 'Sawyer',
   email: 'james.sawyer@company.com',
   roles: [EmployeeRole.ProjectManager, EmployeeRole.Developer],
-  pictureUrl: 'https://unsplash.com/photos/pAtA8xe_iVM',
+  pictureUrl:
+    'https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80',
   assignments: [FAKE_ASSIGNMENT_1, FAKE_ASSIGNMENT_5],
 };
 
@@ -178,7 +179,8 @@ const FAKE_EMPLOYEE_2: Employee = {
   lastName: 'Shepard',
   email: 'jack.shepard@company.com',
   roles: [EmployeeRole.Tester, undefined],
-  pictureUrl: 'https://unsplash.com/photos/EI50ZDA-l8Y',
+  pictureUrl:
+    'https://images.unsplash.com/photo-1507537297725-24a1c029d3ca?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80',
   assignments: [FAKE_ASSIGNMENT_2, FAKE_ASSIGNMENT_4],
 };
 
@@ -188,7 +190,8 @@ const FAKE_EMPLOYEE_3: Employee = {
   lastName: 'Austen',
   email: 'kate.auster@company.com',
   roles: [EmployeeRole.ProjectManager, EmployeeRole.Designer],
-  pictureUrl: 'https://unsplash.com/photos/urVHqIv-__4',
+  pictureUrl:
+    'https://images.unsplash.com/photo-1560439450-57df7ac6dbef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
   assignments: [
     FAKE_ASSIGNMENT_10,
     FAKE_ASSIGNMENT_3,
@@ -203,7 +206,8 @@ const FAKE_EMPLOYEE_4: Employee = {
   lastName: 'Burke',
   email: 'juliet.burke@company.com',
   roles: [EmployeeRole.Designer, EmployeeRole.Developer],
-  pictureUrl: 'https://unsplash.com/photos/_5_CBVCLBsY',
+  pictureUrl:
+    'https://images.unsplash.com/photo-1573497491765-dccce02b29df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80',
   assignments: [],
 };
 
@@ -213,7 +217,8 @@ const FAKE_EMPLOYEE_5: Employee = {
   lastName: 'Littleton',
   email: 'claire.littleton@company.com',
   roles: [EmployeeRole.Tester, undefined],
-  pictureUrl: 'https://unsplash.com/photos/QgYvORVDdd8',
+  pictureUrl:
+    'https://images.unsplash.com/photo-1590650153855-d9e808231d41?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
   assignments: [FAKE_ASSIGNMENT_8, FAKE_ASSIGNMENT_9],
 };
 

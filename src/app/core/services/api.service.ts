@@ -180,15 +180,14 @@ export class ApiService {
     const matchName: boolean =
       !filters.name ||
       `${employee.firstName} ${employee.lastName}`.includes(filters.name);
-    const matchRoles: boolean =
-      !filters.roles ||
-      filters.roles.some((role) => filters.roles!.includes(role));
-    const matchAssignments: boolean =
-      !filters.assignments ||
-      filters.assignments.some((assignment) =>
-        filters.assignments!.includes(assignment)
+    const matchRole: boolean =
+      !filters.role || employee.roles!.includes(filters.role);
+    const matchAssignment: boolean =
+      !filters.assignment ||
+      employee.assignments!.some(
+        (assignment) => assignment.role === filters.assignment
       );
-    return matchName && matchRoles && matchAssignments;
+    return matchName && matchRole && matchAssignment;
   }
 
   private getFromIndex(pagination: Pagination): number {

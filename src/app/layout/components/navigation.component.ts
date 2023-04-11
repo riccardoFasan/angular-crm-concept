@@ -29,9 +29,20 @@ import { MatIconModule } from '@angular/material/icon';
           color="accent"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
-          [routerLink]="['taskboard']"
+          [routerLink]="['tasks']"
         >
           Taskboard
+        </button>
+      </mat-list-item>
+      <mat-list-item>
+        <button
+          mat-button
+          color="accent"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          [routerLink]="['employees']"
+        >
+          Employees
         </button>
       </mat-list-item>
     </mat-list>

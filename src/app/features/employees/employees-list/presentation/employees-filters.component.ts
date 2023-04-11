@@ -14,12 +14,17 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Option } from 'src/app/core/models';
-import { Priority, Status } from 'src/app/core/enums';
+import {
+  AssignmentRole,
+  EmployeeRole,
+  Priority,
+  Status,
+} from 'src/app/core/enums';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
-  selector: 'app-filters',
+  selector: 'app-employees-filters',
   standalone: true,
   imports: [
     CommonModule,
@@ -42,18 +47,21 @@ import { MatGridListModule } from '@angular/material/grid-list';
     >
       <mat-grid-tile colspan="1" rowspan="1">
         <mat-form-field appearance="outline">
-          <mat-label>Status</mat-label>
+          <mat-label>Assignment</mat-label>
           <mat-select
             [disabled]="optionsLoading"
-            [(ngModel)]="status"
-            (ngModelChange)="onStatusChange()"
+            [(ngModel)]="assignment"
+            (ngModelChange)="onAssignmentChange()"
           >
-            <mat-option *ngFor="let state of states" [value]="state.value">
-              {{ state.label }}
+            <mat-option
+              *ngFor="let assignment of assignments"
+              [value]="assignment.value"
+            >
+              {{ assignment.label }}
             </mat-option>
           </mat-select>
           <button
-            *ngIf="status"
+            *ngIf="assignment"
             matSuffix
             mat-icon-button
             aria-label="Clear"
@@ -65,21 +73,18 @@ import { MatGridListModule } from '@angular/material/grid-list';
       </mat-grid-tile>
       <mat-grid-tile colspan="1" rowspan="1">
         <mat-form-field appearance="outline">
-          <mat-label>Priority</mat-label>
+          <mat-label>Job</mat-label>
           <mat-select
             [disabled]="optionsLoading"
-            [(ngModel)]="priority"
-            (ngModelChange)="onPriorityChange()"
+            [(ngModel)]="job"
+            (ngModelChange)="onJobChange()"
           >
-            <mat-option
-              *ngFor="let priority of priorities"
-              [value]="priority.value"
-            >
-              {{ priority.label }}
+            <mat-option *ngFor="let job of jobs" [value]="job.value">
+              {{ job.label }}
             </mat-option>
           </mat-select>
           <button
-            *ngIf="priority"
+            *ngIf="job"
             matSuffix
             mat-icon-button
             aria-label="Clear"
@@ -87,32 +92,6 @@ import { MatGridListModule } from '@angular/material/grid-list';
           >
             <mat-icon>close</mat-icon>
           </button>
-        </mat-form-field>
-      </mat-grid-tile>
-      <mat-grid-tile colspan="1" rowspan="1">
-        <mat-form-field appearance="outline">
-          <mat-label>Deadline</mat-label>
-          <input
-            [(ngModel)]="deadline"
-            (ngModelChange)="onDeadlineChange()"
-            [matDatepicker]="picker"
-            matInput
-          />
-          <mat-hint>mm/dd/yyyy</mat-hint>
-          <mat-datepicker-toggle
-            matIconSuffix
-            [for]="picker"
-          ></mat-datepicker-toggle>
-          <button
-            *ngIf="deadline"
-            matSuffix
-            mat-icon-button
-            aria-label="Clear"
-            (click)="clearDeadline()"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-datepicker #picker></mat-datepicker>
         </mat-form-field>
       </mat-grid-tile>
     </mat-grid-list>
@@ -149,46 +128,36 @@ import { MatGridListModule } from '@angular/material/grid-list';
     `,
   ],
 })
-export class FiltersComponent {
+export class EmployeesFiltersComponent {
   @Input() mobile: boolean = false;
 
-  @Input() status?: Status;
-  @Input() priority?: Priority;
-  @Input() deadline?: Date;
+  @Input() assignment?: AssignmentRole;
+  @Input() job?: EmployeeRole;
 
-  @Input() priorities: Option<Priority>[] = [];
-  @Input() states: Option<Status>[] = [];
+  @Input() assignments: Option<AssignmentRole>[] = [];
+  @Input() jobs: Option<EmployeeRole>[] = [];
   @Input() optionsLoading: boolean = false;
 
-  @Output() statusChange: EventEmitter<Status> = new EventEmitter<Status>();
-  @Output() priorityChange: EventEmitter<Priority> =
-    new EventEmitter<Priority>();
-  @Output() deadlineChange: EventEmitter<Date> = new EventEmitter<Date>();
+  @Output() assignmentChange: EventEmitter<AssignmentRole> =
+    new EventEmitter<AssignmentRole>();
+  @Output() jobChange: EventEmitter<EmployeeRole> =
+    new EventEmitter<EmployeeRole>();
 
-  protected onStatusChange(): void {
-    this.statusChange.emit(this.status);
+  protected onAssignmentChange(): void {
+    this.assignmentChange.emit(this.assignment);
   }
 
-  protected onPriorityChange(): void {
-    this.priorityChange.emit(this.priority);
-  }
-
-  protected onDeadlineChange(): void {
-    this.deadlineChange.emit(this.deadline);
+  protected onJobChange(): void {
+    this.jobChange.emit(this.job);
   }
 
   protected clearStatus(): void {
-    this.status = undefined;
-    this.onStatusChange();
+    this.assignment = undefined;
+    this.onAssignmentChange();
   }
 
   protected clearPriority(): void {
-    this.priority = undefined;
-    this.onPriorityChange();
-  }
-
-  protected clearDeadline(): void {
-    this.deadline = undefined;
-    this.onDeadlineChange();
+    this.job = undefined;
+    this.onJobChange();
   }
 }

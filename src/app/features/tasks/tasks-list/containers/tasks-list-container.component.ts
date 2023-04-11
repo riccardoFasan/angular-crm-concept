@@ -9,22 +9,19 @@ import {
   Sorting,
   Task,
 } from 'src/app/core/models';
-import {
-  CardsComponent,
-  ListComponent,
-  PaginationComponent,
-} from '../presentation';
+import { CardsComponent, TasksListComponent } from '../presentation';
 import { TasksListStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
-import { FiltersContainerComponent } from '.';
+import { TasksFiltersContainerComponent } from '.';
 import { MobileObserverService } from 'src/app/shared/services';
 import { RouterModule } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { PaginationComponent } from 'src/app/shared/components';
 
 @Component({
-  selector: 'app-taskboard-container',
+  selector: 'app-tasks-list-container',
   standalone: true,
   imports: [
     CommonModule,
@@ -32,10 +29,10 @@ import { MatIconModule } from '@angular/material/icon';
     RouterModule,
     MatButtonModule,
     MatIconModule,
-    ListComponent,
+    TasksListComponent,
     CardsComponent,
     PaginationComponent,
-    FiltersContainerComponent,
+    TasksFiltersContainerComponent,
     ErrorSnackbarDirective,
   ],
   providers: [provideComponentStore(TasksListStoreService)],
@@ -52,18 +49,18 @@ import { MatIconModule } from '@angular/material/icon';
       } as vm"
     >
       <mat-card [ngClass]="{ fixed: vm.mobile }">
-        <app-filters-container
+        <app-tasks-filters-container
           [filters]="vm.searchCriteria!.filters"
           (filtersChange)="onFiltersChange($event)"
         >
-        </app-filters-container>
+        </app-tasks-filters-container>
         <ng-container *ngIf="!vm.mobile">
-          <app-list
-            [tasks]="vm.items!"
+          <app-tasks-list
+            [items]="vm.items!"
             [sorting]="vm.searchCriteria!.sorting"
             (sortingChange)="onSortingChange($event)"
-            (taskRemoved)="onTaskRemoved($event)"
-          ></app-list>
+            (itemRemoved)="onTaskRemoved($event)"
+          ></app-tasks-list>
           <app-pagination
             [pagination]="vm.searchCriteria!.pagination"
             [count]="vm.count!"
@@ -80,7 +77,7 @@ import { MatIconModule } from '@angular/material/icon';
         *ngIf="vm.mobile"
         mat-fab
         color="primary"
-        aria-label="Example Create new task"
+        aria-label="Create new task"
         color="accent"
         [routerLink]="['new']"
       >
@@ -128,7 +125,7 @@ import { MatIconModule } from '@angular/material/icon';
     `,
   ],
 })
-export class TaskboardContainerComponent {
+export class TasksListContainerComponent {
   private readonly store: TasksListStoreService = inject(TasksListStoreService);
   private readonly mobileObserver: MobileObserverService = inject(
     MobileObserverService

@@ -1,8 +1,7 @@
-import { EmployeeRole } from '../enums';
-import { Assignment } from './assignment.model';
+import { AssignmentRole, EmployeeRole } from '../enums';
 
 export interface EmployeesFilters {
   name?: string;
-  assignments?: Assignment[];
-  roles?: EmployeeRole[];
+  assignment?: AssignmentRole;
+  role?: EmployeeRole;
 }
