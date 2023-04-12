@@ -179,7 +179,9 @@ export class ApiService {
   ): boolean {
     const matchName: boolean =
       !filters.name ||
-      `${employee.firstName} ${employee.lastName}`.includes(filters.name);
+      `${employee.firstName} ${employee.lastName}`
+        .toLowerCase()
+        .includes(filters.name.toLowerCase());
     const matchRole: boolean =
       !filters.role || employee.roles!.includes(filters.role);
     const matchAssignment: boolean =

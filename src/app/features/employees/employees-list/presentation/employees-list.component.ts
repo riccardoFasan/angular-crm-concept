@@ -41,7 +41,7 @@ import { EmployeeRoleChipComponent } from './employee-role-chip.component';
       </ng-container>
 
       <ng-container matColumnDef="picture">
-        <th mat-header-cell *matHeaderCellDef>Profile Picture</th>
+        <th mat-header-cell *matHeaderCellDef>Picture</th>
         <td mat-cell *matCellDef="let item" [routerLink]="[item.id]">
           <img
             [src]="item.pictureUrl"

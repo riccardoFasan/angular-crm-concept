@@ -38,7 +38,7 @@ import { Observable, tap } from 'rxjs';
   template: `
     <mat-grid-list
       *ngIf="{ mobile: mobile$ | async } as vm"
-      [cols]="vm.mobile ? 6 : 4"
+      [cols]="vm.mobile ? 6 : 3"
       gutterSize="1rem"
       rowHeight="fit"
     >
@@ -63,7 +63,7 @@ import { Observable, tap } from 'rxjs';
         </mat-form-field>
       </mat-grid-tile>
 
-      <mat-grid-tile [colspan]="vm.mobile ? '1' : '3'" rowspan="1">
+      <mat-grid-tile [colspan]="vm.mobile ? '1' : '2'" rowspan="1">
         <button
           *ngIf="vm.mobile; else filters"
           (click)="openFilters()"
@@ -104,7 +104,7 @@ import { Observable, tap } from 'rxjs';
             }
 
             mat-form-field,
-            app-filters {
+            app-employees-filters {
               width: calc(100% - 1px);
             }
           }

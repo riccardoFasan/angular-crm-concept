@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ComponentStore, OnStateInit } from '@ngrx/component-store';
 import {
   concatMap,
-  exhaustMap,
+  switchMap,
   Observable,
   pipe,
   tap,
@@ -108,7 +108,7 @@ export class TasksListStoreService
     (searchCriteria$: Observable<TasksSearchCriteria>) =>
       searchCriteria$.pipe(
         tap(() => this.syncLoading(true)),
-        exhaustMap((searchCriteria) =>
+        switchMap((searchCriteria) =>
           this.api.getTasks(searchCriteria).pipe(
             tap({
               next: (response: List<Task>) => {

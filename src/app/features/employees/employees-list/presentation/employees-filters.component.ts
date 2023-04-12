@@ -14,12 +14,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Option } from 'src/app/core/models';
-import {
-  AssignmentRole,
-  EmployeeRole,
-  Priority,
-  Status,
-} from 'src/app/core/enums';
+import { AssignmentRole, EmployeeRole } from 'src/app/core/enums';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 
@@ -41,7 +36,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <mat-grid-list
-      [cols]="mobile ? '1' : '3'"
+      [cols]="mobile ? '1' : '2'"
       gutterSize="1rem"
       rowHeight="fit"
     >
@@ -108,7 +103,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
         mat-grid-list {
           width: 100%;
 
-          &[cols='3'] {
+          &[cols='2'] {
             height: $row-height;
           }
 

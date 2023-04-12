@@ -2,9 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { ComponentStore, OnStateInit } from '@ngrx/component-store';
 import {
   concatMap,
-  exhaustMap,
+  distinctUntilChanged,
   Observable,
   pipe,
+  switchMap,
   tap,
   withLatestFrom,
 } from 'rxjs';
@@ -108,7 +109,7 @@ export class EmployeesListStoreService
     (searchCriteria$: Observable<EmployeesSearchCriteria>) =>
       searchCriteria$.pipe(
         tap(() => this.syncLoading(true)),
-        exhaustMap((searchCriteria) =>
+        switchMap((searchCriteria) =>
           this.api.getEmployees(searchCriteria).pipe(
             tap({
               next: (response: List<Employee>) => {
