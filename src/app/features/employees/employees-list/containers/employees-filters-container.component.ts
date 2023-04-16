@@ -23,16 +23,16 @@ import { EmployeesSearchComponent } from '../presentation/employees-search.compo
     <ng-container
       *ngIf="{
         filters: filters$ | async,
-        assignments: assignments$ | async,
-        jobs: jobs$ | async,
+        assignmentRoles: assignmentRoles$ | async,
+        employeeRoles: employeeRoles$ | async,
         optionsLoading: optionsLoading$ | async,
         error: error$ | async
       } as vm"
     >
       <app-employees-search
         [filters]="vm.filters!"
-        [assignments]="vm.assignments!"
-        [jobs]="vm.jobs!"
+        [assignmentRoles]="vm.assignmentRoles!"
+        [employeeRoles]="vm.employeeRoles!"
         [optionsLoading]="vm.optionsLoading!"
         (filtersChange)="onFiltersChange($event)"
       ></app-employees-search>
@@ -61,10 +61,10 @@ export class EmployeesFiltersContainerComponent {
 
   protected readonly filters$: Observable<EmployeesFilters> =
     this.store.filters$;
-  protected readonly assignments$: Observable<Option<AssignmentRole>[]> =
-    this.store.assignments$;
-  protected readonly jobs$: Observable<Option<EmployeeRole>[]> =
-    this.store.jobs$;
+  protected readonly assignmentRoles$: Observable<Option<AssignmentRole>[]> =
+    this.store.assignmentRoles$;
+  protected readonly employeeRoles$: Observable<Option<EmployeeRole>[]> =
+    this.store.employeeRoles$;
   protected readonly optionsLoading$: Observable<boolean> =
     this.store.optionsLoading$;
   protected readonly error$: Observable<string | undefined> = this.store.error$;

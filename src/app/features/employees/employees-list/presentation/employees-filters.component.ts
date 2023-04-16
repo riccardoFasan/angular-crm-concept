@@ -45,22 +45,22 @@ import { MatGridListModule } from '@angular/material/grid-list';
           <mat-label>Assignment</mat-label>
           <mat-select
             [disabled]="optionsLoading"
-            [(ngModel)]="assignment"
-            (ngModelChange)="onAssignmentChange()"
+            [(ngModel)]="assignmentRole"
+            (ngModelChange)="onAssignmentRoleChange()"
           >
             <mat-option
-              *ngFor="let assignment of assignments"
-              [value]="assignment.value"
+              *ngFor="let assignmentRole of assignmentRoles"
+              [value]="assignmentRole.value"
             >
-              {{ assignment.label }}
+              {{ assignmentRole.label }}
             </mat-option>
           </mat-select>
           <button
-            *ngIf="assignment"
+            *ngIf="assignmentRole"
             matSuffix
             mat-icon-button
             aria-label="Clear"
-            (click)="clearStatus()"
+            (click)="clearAssignmentRole()"
           >
             <mat-icon>close</mat-icon>
           </button>
@@ -71,19 +71,22 @@ import { MatGridListModule } from '@angular/material/grid-list';
           <mat-label>Job</mat-label>
           <mat-select
             [disabled]="optionsLoading"
-            [(ngModel)]="job"
-            (ngModelChange)="onJobChange()"
+            [(ngModel)]="employeeRole"
+            (ngModelChange)="onEmployeeRoleChange()"
           >
-            <mat-option *ngFor="let job of jobs" [value]="job.value">
-              {{ job.label }}
+            <mat-option
+              *ngFor="let employeeRole of employeeRoles"
+              [value]="employeeRole.value"
+            >
+              {{ employeeRole.label }}
             </mat-option>
           </mat-select>
           <button
-            *ngIf="job"
+            *ngIf="employeeRole"
             matSuffix
             mat-icon-button
             aria-label="Clear"
-            (click)="clearPriority()"
+            (click)="clearEmployeeRole()"
           >
             <mat-icon>close</mat-icon>
           </button>
@@ -126,33 +129,33 @@ import { MatGridListModule } from '@angular/material/grid-list';
 export class EmployeesFiltersComponent {
   @Input() mobile: boolean = false;
 
-  @Input() assignment?: AssignmentRole;
-  @Input() job?: EmployeeRole;
+  @Input() assignmentRole?: AssignmentRole;
+  @Input() employeeRole?: EmployeeRole;
 
-  @Input() assignments: Option<AssignmentRole>[] = [];
-  @Input() jobs: Option<EmployeeRole>[] = [];
+  @Input() assignmentRoles: Option<AssignmentRole>[] = [];
+  @Input() employeeRoles: Option<EmployeeRole>[] = [];
   @Input() optionsLoading: boolean = false;
 
-  @Output() assignmentChange: EventEmitter<AssignmentRole> =
+  @Output() assignmentRoleChange: EventEmitter<AssignmentRole> =
     new EventEmitter<AssignmentRole>();
-  @Output() jobChange: EventEmitter<EmployeeRole> =
+  @Output() employeeRoleChange: EventEmitter<EmployeeRole> =
     new EventEmitter<EmployeeRole>();
 
-  protected onAssignmentChange(): void {
-    this.assignmentChange.emit(this.assignment);
+  protected onAssignmentRoleChange(): void {
+    this.assignmentRoleChange.emit(this.assignmentRole);
   }
 
-  protected onJobChange(): void {
-    this.jobChange.emit(this.job);
+  protected onEmployeeRoleChange(): void {
+    this.employeeRoleChange.emit(this.employeeRole);
   }
 
-  protected clearStatus(): void {
-    this.assignment = undefined;
-    this.onAssignmentChange();
+  protected clearAssignmentRole(): void {
+    this.assignmentRole = undefined;
+    this.onAssignmentRoleChange();
   }
 
-  protected clearPriority(): void {
-    this.job = undefined;
-    this.onJobChange();
+  protected clearEmployeeRole(): void {
+    this.employeeRole = undefined;
+    this.onEmployeeRoleChange();
   }
 }

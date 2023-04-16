@@ -14,6 +14,7 @@ import {
   Assignment,
   Employee,
   EmployeeFormData,
+  Option,
   Task,
   TaskFormData,
 } from 'src/app/core/models';
@@ -34,6 +35,8 @@ import { BackComponent } from 'src/app/shared/components';
 import { Observable, Subject, takeUntil, tap } from 'rxjs';
 import { MobileObserverService } from 'src/app/shared/services';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { provideComponentStore } from '@ngrx/component-store';
+import { EmployeeEditOptionsStoreService } from '../store';
 
 @Component({
   selector: 'app-employee-form',
@@ -105,7 +108,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 
         div:first-child {
           display: flex;
-          justify-content: start;
+          justify-content: flex-start;
           align-items: center;
           margin-bottom: 2rem;
 
@@ -144,11 +147,16 @@ import { MatGridListModule } from '@angular/material/grid-list';
       }
     `,
   ],
+  providers: [provideComponentStore(EmployeeEditOptionsStoreService)],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmployeeFormComponent implements OnInit, OnDestroy {
   private readonly mobileObserver: MobileObserverService = inject(
     MobileObserverService
+  );
+
+  private readonly optionsStore: EmployeeEditOptionsStoreService = inject(
+    EmployeeEditOptionsStoreService
   );
 
   private readonly destroy$: Subject<void> = new Subject<void>();
@@ -170,6 +178,14 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
 
   @Output() onSave: EventEmitter<EmployeeFormData> =
     new EventEmitter<EmployeeFormData>();
+
+  protected readonly searchingTasks$: Observable<boolean> =
+    this.optionsStore.searchingTasks$;
+  protected readonly assignmentRoles$: Observable<Option<AssignmentRole>[]> =
+    this.optionsStore.assignmentRoles$;
+  protected readonly employeeRoles$: Observable<Option<EmployeeRole>[]> =
+    this.optionsStore.employeeRoles$;
+  protected readonly tasks$: Observable<Task[]> = this.optionsStore.tasks$;
 
   protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
 

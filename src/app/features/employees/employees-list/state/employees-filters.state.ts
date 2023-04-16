@@ -3,15 +3,15 @@ import { Option, EmployeesFilters } from 'src/app/core/models';
 
 export interface EmployeesFiltersState {
   filters: EmployeesFilters;
-  assignments: Option<AssignmentRole>[];
-  jobs: Option<EmployeeRole>[];
+  assignmentRoles: Option<AssignmentRole>[];
+  employeeRoles: Option<EmployeeRole>[];
   optionsLoading: boolean;
   error?: string;
 }
 
 export const INITIAL_EMPLOYEES_FILTERS_STATE: EmployeesFiltersState = {
   filters: {},
-  assignments: [],
-  jobs: [],
+  assignmentRoles: [],
+  employeeRoles: [],
   optionsLoading: false,
 };

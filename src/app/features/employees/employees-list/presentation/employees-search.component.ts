@@ -74,13 +74,13 @@ import { Observable, tap } from 'rxjs';
         <ng-template #filters>
           <app-employees-filters
             [mobile]="!!vm.mobile"
-            [assignment]="assignment"
-            [job]="job"
-            [assignments]="assignments"
-            [jobs]="jobs"
+            [assignmentRole]="assignmentRole"
+            [employeeRole]="employeeRole"
+            [assignmentRoles]="assignmentRoles"
+            [employeeRoles]="employeeRoles"
             [optionsLoading]="optionsLoading"
-            (assignmentChange)="onFiltersChange({ assignment: $event })"
-            (jobChange)="onFiltersChange({ role: $event })"
+            (assignmentRoleChange)="onFiltersChange({ assignmentRole: $event })"
+            (employeeRoleChange)="onFiltersChange({ employeeRole: $event })"
           ></app-employees-filters>
         </ng-template>
       </mat-grid-tile>
@@ -122,8 +122,8 @@ export class EmployeesSearchComponent {
   );
 
   @Input() filters!: EmployeesFilters;
-  @Input() assignments: Option<AssignmentRole>[] = [];
-  @Input() jobs: Option<EmployeeRole>[] = [];
+  @Input() assignmentRoles: Option<AssignmentRole>[] = [];
+  @Input() employeeRoles: Option<EmployeeRole>[] = [];
   @Input() optionsLoading: boolean = false;
 
   @Output() filtersChange: EventEmitter<EmployeesFilters> =
@@ -140,8 +140,8 @@ export class EmployeesSearchComponent {
     );
 
   protected name: string = '';
-  protected assignment?: AssignmentRole;
-  protected job?: EmployeeRole;
+  protected assignmentRole?: AssignmentRole;
+  protected employeeRole?: EmployeeRole;
 
   protected onDescriptionChange(): void {
     if (this.name.length < 3 && this.name !== '') return;

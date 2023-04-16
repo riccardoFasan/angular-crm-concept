@@ -191,11 +191,11 @@ export class ApiService {
         .toLowerCase()
         .includes(filters.name.toLowerCase());
     const matchRole: boolean =
-      !filters.role || employee.roles!.includes(filters.role);
+      !filters.employeeRole || employee.roles!.includes(filters.employeeRole);
     const matchAssignment: boolean =
-      !filters.assignment ||
+      !filters.assignmentRole ||
       employee.assignments!.some(
-        (assignment) => assignment.role === filters.assignment
+        (assignment) => assignment.role === filters.assignmentRole
       );
     return matchName && matchRole && matchAssignment;
   }

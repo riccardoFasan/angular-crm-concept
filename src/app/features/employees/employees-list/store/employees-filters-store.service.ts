@@ -20,12 +20,12 @@ export class EmployeesFiltersStoreService
     (state: EmployeesFiltersState) => state.filters
   );
 
-  readonly assignments$: Observable<Option<AssignmentRole>[]> = this.select(
-    (state: EmployeesFiltersState) => state.assignments
+  readonly assignmentRoles$: Observable<Option<AssignmentRole>[]> = this.select(
+    (state: EmployeesFiltersState) => state.assignmentRoles
   );
 
-  readonly jobs$: Observable<Option<EmployeeRole>[]> = this.select(
-    (state: EmployeesFiltersState) => state.jobs
+  readonly employeeRoles$: Observable<Option<EmployeeRole>[]> = this.select(
+    (state: EmployeesFiltersState) => state.employeeRoles
   );
 
   readonly optionsLoading$: Observable<boolean> = this.select(
@@ -55,8 +55,8 @@ export class EmployeesFiltersStoreService
       ),
       tap({
         next: ([assignments, jobs]) => {
-          this.updateAssignments(assignments);
-          this.updateRoles(jobs);
+          this.updateAssignmentRoles(assignments);
+          this.updateEmployeeRoles(jobs);
           this.updateOptionsLoading(false);
         },
         error: (message: string) => {
@@ -67,17 +67,20 @@ export class EmployeesFiltersStoreService
     )
   );
 
-  private readonly updateAssignments = this.updater(
-    (state: EmployeesFiltersState, assignments: Option<AssignmentRole>[]) => ({
+  private readonly updateAssignmentRoles = this.updater(
+    (
+      state: EmployeesFiltersState,
+      assignmentRoles: Option<AssignmentRole>[]
+    ) => ({
       ...state,
-      assignments,
+      assignmentRoles,
     })
   );
 
-  private readonly updateRoles = this.updater(
-    (state: EmployeesFiltersState, jobs: Option<EmployeeRole>[]) => ({
+  private readonly updateEmployeeRoles = this.updater(
+    (state: EmployeesFiltersState, employeeRoles: Option<EmployeeRole>[]) => ({
       ...state,
-      jobs,
+      employeeRoles,
     })
   );
 
