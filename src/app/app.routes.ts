@@ -35,6 +35,13 @@ export const APP_ROUTES: Routes = [
             './features/employees/employees-list/employees-list.routes'
           ).then((m) => m.EMPLOYEES_LIST_ROUTES),
       },
+      {
+        path: ':id',
+        loadChildren: () =>
+          import(
+            './features/employees/employee-edit/employee-edit.routes'
+          ).then((m) => m.EMPLOYEE_EDIT_ROUTES),
+      },
     ],
   },
 ];

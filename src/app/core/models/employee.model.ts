@@ -6,7 +6,7 @@ export interface Employee {
   firstName: string;
   lastName: string;
   email: string;
-  roles: [EmployeeRole, EmployeeRole | undefined];
   pictureUrl?: string;
+  roles: [EmployeeRole, EmployeeRole | undefined];
   assignments: Assignment[];
 }

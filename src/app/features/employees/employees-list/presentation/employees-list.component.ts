@@ -123,7 +123,8 @@ import { EmployeeRoleChipComponent } from './employee-role-chip.component';
         overflow-x: auto;
 
         table tr td {
-          padding: 0.5rem;
+          padding-top: 0.75rem;
+          padding-bottom: 0.75rem;
 
           img {
             object-fit: cover;

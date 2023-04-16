@@ -106,7 +106,8 @@ import { MatIconModule } from '@angular/material/icon';
         overflow-x: auto;
 
         table tr td {
-          padding: 0.5rem;
+          padding-top: 0.75rem;
+          padding-bottom: 0.75rem;
 
           a {
             color: #3cb1ff;

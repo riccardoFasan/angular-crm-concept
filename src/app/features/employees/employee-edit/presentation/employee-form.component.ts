@@ -9,8 +9,14 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EditingMode, Priority, Status } from 'src/app/core/enums';
-import { Task, TaskFormData } from 'src/app/core/models';
+import { AssignmentRole, EditingMode, EmployeeRole } from 'src/app/core/enums';
+import {
+  Assignment,
+  Employee,
+  EmployeeFormData,
+  Task,
+  TaskFormData,
+} from 'src/app/core/models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -18,6 +24,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
+  FormArray,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
@@ -29,7 +36,7 @@ import { MobileObserverService } from 'src/app/shared/services';
 import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
-  selector: 'app-task-form',
+  selector: 'app-employee-form',
   standalone: true,
   imports: [
     CommonModule,
@@ -46,7 +53,9 @@ import { MatGridListModule } from '@angular/material/grid-list';
   template: `
     <div>
       <app-back></app-back>
-      <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'Create task' }}</h1>
+      <h1>
+        {{ editingMode === 'EDITING' ? 'Edit employee' : 'Create employee' }}
+      </h1>
     </div>
     <form [formGroup]="form">
       <mat-grid-list
@@ -55,52 +64,13 @@ import { MatGridListModule } from '@angular/material/grid-list';
         gutterSize="1rem"
         rowHeight="fit"
       >
-        <mat-grid-tile colspan="1" rowspan="1">
-          <mat-form-field appearance="outline">
-            <mat-label>Description</mat-label>
-            <input formControlName="description" matInput type="text" />
-          </mat-form-field>
-        </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1"> </mat-grid-tile>
 
-        <mat-grid-tile colspan="1" rowspan="1">
-          <mat-form-field appearance="outline">
-            <mat-label>Status</mat-label>
-            <mat-select formControlName="status">
-              <mat-option value="NOT_STARTED">Not Started</mat-option>
-              <mat-option value="IN_PROGRESS">In Progress</mat-option>
-              <mat-option value="IN_REVIEW">In Review</mat-option>
-              <mat-option value="COMPLETED">Completed</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1"> </mat-grid-tile>
 
-        <mat-grid-tile colspan="1" rowspan="1">
-          <mat-form-field appearance="outline">
-            <mat-label>Priority</mat-label>
-            <mat-select formControlName="priority">
-              <mat-option value="LOW">Low</mat-option>
-              <mat-option value="MEDIUM">Medium</mat-option>
-              <mat-option value="TOP">Top</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1"> </mat-grid-tile>
 
-        <mat-grid-tile colspan="1" rowspan="1">
-          <mat-form-field appearance="outline">
-            <mat-label>Deadline</mat-label>
-            <input
-              formControlName="deadline"
-              [matDatepicker]="picker"
-              matInput
-            />
-            <mat-hint>mm/dd/yyyy</mat-hint>
-            <mat-datepicker-toggle
-              matIconSuffix
-              [for]="picker"
-            ></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-          </mat-form-field>
-        </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1"> </mat-grid-tile>
 
         <mat-grid-tile [colspan]="vm.mobile ? 1 : 2" rowspan="1">
           <div>
@@ -176,7 +146,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaskFormComponent implements OnInit, OnDestroy {
+export class EmployeeFormComponent implements OnInit, OnDestroy {
   private readonly mobileObserver: MobileObserverService = inject(
     MobileObserverService
   );
@@ -186,30 +156,57 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input() loading: boolean = false;
   @Input() saved: boolean = false;
   @Input() editingMode: EditingMode = EditingMode.Editing;
-  @Input() task?: Task;
-  @Input() set formData(formData: TaskFormData) {
+  @Input() employee?: Employee;
+  @Input() set formData(formData: EmployeeFormData) {
     this.form.patchValue(formData);
+    const assignments: Assignment[] = formData.assignments || [];
+    assignments.forEach((assignment: Assignment, i: number) =>
+      this.insertAssignment(assignment, i)
+    );
   }
 
-  @Output() formDataChange: EventEmitter<TaskFormData> =
-    new EventEmitter<TaskFormData>();
+  @Output() formDataChange: EventEmitter<EmployeeFormData> =
+    new EventEmitter<EmployeeFormData>();
 
-  @Output() onSave: EventEmitter<TaskFormData> =
-    new EventEmitter<TaskFormData>();
+  @Output() onSave: EventEmitter<EmployeeFormData> =
+    new EventEmitter<EmployeeFormData>();
 
   protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
 
   protected readonly form: FormGroup = new FormGroup({
-    description: new FormControl<string>('', [Validators.required]),
-    status: new FormControl<Status | null>(null, [Validators.required]),
-    priority: new FormControl<Priority | null>(null, [Validators.required]),
-    deadline: new FormControl<Date | null>(null),
+    firstName: new FormControl<string>('', [
+      Validators.required,
+      Validators.minLength(3),
+    ]),
+    lastName: new FormControl<string>('', [
+      Validators.required,
+      Validators.minLength(3),
+    ]),
+    email: new FormControl<string>('', [Validators.required, Validators.email]),
+    pictureUrl: new FormControl<string | null>(null, []), // sent to BE as dataURL // TODO: add size and format validators
+    roles: new FormControl<EmployeeRole[]>(
+      [],
+      [Validators.min(1), Validators.max(2)] // TODO: add custom validator for role combination
+    ),
+    assignments: new FormArray( // TODO: disable if no roles
+      [
+        new FormGroup({
+          task: new FormControl<Task | null>(null, [Validators.required]),
+          role: new FormControl<AssignmentRole | null>(null, [
+            Validators.required,
+          ]), // TODO: add custom validator for role combination and for task status
+          fromDate: new FormControl<Date | null>(null, [Validators.required]),
+          dueDate: new FormControl<Date | null>(null, [Validators.required]),
+        }),
+      ],
+      []
+    ),
   });
 
-  private readonly valueChanges$: Observable<TaskFormData> =
+  private readonly valueChanges$: Observable<EmployeeFormData> =
     this.form.valueChanges.pipe(
       takeUntil(this.destroy$),
-      tap((formData: TaskFormData) => this.formDataChange.emit(formData))
+      tap((formData: EmployeeFormData) => this.formDataChange.emit(formData))
     );
 
   ngOnInit(): void {
@@ -229,17 +226,43 @@ export class TaskFormComponent implements OnInit, OnDestroy {
     this.form.updateValueAndValidity();
   }
 
+  protected insertAssignment(assignment: Assignment, index: number = 0): void {
+    const group: FormGroup = new FormGroup({
+      task: new FormControl<Task | null>(assignment.task || null, [
+        Validators.required,
+      ]),
+      role: new FormControl<AssignmentRole | null>(assignment.role || null, [
+        Validators.required,
+      ]),
+      fromDate: new FormControl<Date | null>(assignment.fromDate || null, [
+        Validators.required,
+      ]),
+      dueDate: new FormControl<Date | null>(assignment.dueDate || null, [
+        Validators.required,
+      ]),
+    });
+    this.assignments.insert(index, group);
+  }
+
+  protected removeAssignment(index: number): void {
+    this.assignments.removeAt(index);
+  }
+
   protected save(): void {
     this.touch();
     if (this.cannotSave) return;
-    this.onSave.emit({ ...this.task, ...this.form.value });
+    this.onSave.emit({ ...this.employee, ...this.form.value });
   }
 
   protected reset(): void {
-    if (this.editingMode === EditingMode.Editing && this.task) {
-      this.form.patchValue(this.task);
+    if (this.editingMode === EditingMode.Editing && this.employee) {
+      this.form.patchValue(this.employee);
       return;
     }
     this.form.reset();
+  }
+
+  private get assignments(): FormArray {
+    return this.form.get('assignments') as FormArray;
   }
 }

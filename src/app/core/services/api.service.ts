@@ -99,6 +99,14 @@ export class ApiService {
     });
   }
 
+  getEmployee(employeeId: string): Observable<Employee> {
+    const employee: Employee | undefined = FAKE_EMPLOYEES.find(
+      (employee) => employee.id === employeeId
+    );
+    if (!employee) throw Error(`Cannot find a employee with id ${employeeId}`);
+    return this.request(employee);
+  }
+
   createEmployee(employee: EmployeeFormData): Observable<Employee> {
     const greatestId: number = Math.max(
       ...FAKE_TASKS.map((task) => parseInt(task.id!))
