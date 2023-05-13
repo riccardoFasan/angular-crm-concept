@@ -29,9 +29,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { BackComponent } from 'src/app/shared/components';
-import { Observable, Subject, filter, takeUntil, tap } from 'rxjs';
+import { Observable, Subject, filter, takeUntil, tap, map } from 'rxjs';
 import { MobileObserverService } from 'src/app/shared/services';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatStepperModule } from '@angular/material/stepper';
 import { provideComponentStore } from '@ngrx/component-store';
 import { EmployeeEditOptionsStoreService } from '../store';
 import { AssignmentFormComponent } from './assignment-form.component';
@@ -48,6 +49,7 @@ import { areEqualObjects } from 'src/utilities';
     MatSelectModule,
     MatButtonModule,
     MatGridListModule,
+    MatStepperModule,
     BackComponent,
     AssignmentFormComponent,
   ],
@@ -59,83 +61,112 @@ import { areEqualObjects } from 'src/utilities';
       </h1>
     </div>
     <form *ngIf="{ mobile: mobile$ | async } as vm" [formGroup]="form">
+      <mat-stepper orientation="vertical" #stepper>
+        <mat-step
+          label="Employee info"
+          formGroupName="employee"
+          [stepControl]="$any(form.get('employee'))"
+        >
+          <mat-grid-list
+            [cols]="vm.mobile ? 1 : 2"
+            gutterSize="1rem"
+            rowHeight="fit"
+          >
+            <mat-grid-tile colspan="1" rowspan="1">
+              <mat-form-field appearance="outline">
+                <mat-label>Firstname</mat-label>
+                <input formControlName="firstName" matInput type="text" />
+              </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile colspan="1" rowspan="1">
+              <mat-form-field appearance="outline">
+                <mat-label>Lastname</mat-label>
+                <input formControlName="lastName" matInput type="text" />
+              </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile colspan="1" rowspan="1">
+              <mat-form-field appearance="outline">
+                <mat-label>Email</mat-label>
+                <input formControlName="email" matInput type="email" />
+              </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile colspan="1" rowspan="1">
+              <mat-form-field appearance="outline">
+                <mat-label>Picture</mat-label>
+                <input formControlName="pictureUrl" matInput type="email" />
+              </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile colspan="2" rowspan="1">
+              <mat-form-field appearance="outline">
+                <mat-label>Roles</mat-label>
+                <mat-select multiple formControlName="roles">
+                  <mat-option value="PROJECT_MANAGER">
+                    Project manager
+                  </mat-option>
+                  <mat-option value="DESIGNER">Designer</mat-option>
+                  <mat-option value="DEVELOPER">Developer</mat-option>
+                  <mat-option value="TESTER">Tester</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </mat-grid-tile>
+
+            <mat-grid-tile colspan="1" rowspan="1">
+              <div class="stepper-nav">
+                <button mat-button matStepperNext>Next</button>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
+        </mat-step>
+
+        <mat-step
+          label="Assignments"
+          formArrayName="assignments"
+          [stepControl]="$any(form.get('assignments'))"
+        >
+          <app-assignment-form
+            *ngFor="let assignment of assignments.controls; index as i"
+            [form]="$any(assignment)"
+            (removed)="removeAssignment(i)"
+          >
+          </app-assignment-form>
+
+          <mat-grid-list
+            [cols]="vm.mobile ? 1 : 2"
+            gutterSize="1rem"
+            rowHeight="2rem"
+          >
+            <mat-grid-tile colspan="1" rowspan="1">
+              <div class="stepper-nav">
+                <button mat-button matStepperPrevious>Back</button>
+                <button mat-button matStepperNext>Next</button>
+              </div>
+            </mat-grid-tile>
+
+            <mat-grid-tile colspan="1" rowspan="1">
+              <div class="add-assignment">
+                <button
+                  (click)="addAssignment()"
+                  [disabled]="loading"
+                  mat-button
+                  mat-flat-button
+                  type="button"
+                >
+                  Add assignment
+                </button>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
+        </mat-step>
+      </mat-stepper>
+
       <mat-grid-list
         [cols]="vm.mobile ? 1 : 2"
         gutterSize="1rem"
         rowHeight="fit"
-      >
-        <mat-grid-tile colspan="1" rowspan="1">
-          <mat-form-field appearance="outline">
-            <mat-label>Firstname</mat-label>
-            <input formControlName="firstName" matInput type="text" />
-          </mat-form-field>
-        </mat-grid-tile>
-
-        <mat-grid-tile colspan="1" rowspan="1">
-          <mat-form-field appearance="outline">
-            <mat-label>Lastname</mat-label>
-            <input formControlName="lastName" matInput type="text" />
-          </mat-form-field>
-        </mat-grid-tile>
-
-        <mat-grid-tile colspan="1" rowspan="1">
-          <mat-form-field appearance="outline">
-            <mat-label>Email</mat-label>
-            <input formControlName="email" matInput type="email" />
-          </mat-form-field>
-        </mat-grid-tile>
-
-        <mat-grid-tile colspan="1" rowspan="1">
-          <mat-form-field appearance="outline">
-            <mat-label>Picture</mat-label>
-            <input formControlName="pictureUrl" matInput type="email" />
-          </mat-form-field>
-        </mat-grid-tile>
-
-        <mat-grid-tile colspan="1" rowspan="1">
-          <mat-form-field appearance="outline">
-            <mat-label>Roles</mat-label>
-            <mat-select multiple formControlName="roles">
-              <mat-option value="PROJECT_MANAGER">Project manager</mat-option>
-              <mat-option value="DESIGNER">Designer</mat-option>
-              <mat-option value="DEVELOPER">Developer</mat-option>
-              <mat-option value="TESTER">Tester</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </mat-grid-tile>
-      </mat-grid-list>
-
-      <ng-container formArrayName="assignments">
-        <h2>Assignments</h2>
-        <app-assignment-form
-          *ngFor="let assignment of assignments.controls; index as i"
-          [form]="$any(assignment)"
-          (removed)="removeAssignment(i)"
-        >
-        </app-assignment-form>
-      </ng-container>
-      <mat-grid-list
-        [cols]="vm.mobile ? 1 : 2"
-        gutterSize="1rem"
-        rowHeight="5rem"
-      >
-        <mat-grid-tile [colspan]="vm.mobile ? 1 : 2" rowspan="1">
-          <button
-            (click)="addAssignment()"
-            [disabled]="loading"
-            mat-button
-            mat-flat-button
-            type="button"
-          >
-            Add assignment
-          </button>
-        </mat-grid-tile>
-      </mat-grid-list>
-
-      <mat-grid-list
-        [cols]="vm.mobile ? 1 : 2"
-        gutterSize="1rem"
-        rowHeight="5rem"
       >
         <mat-grid-tile [colspan]="vm.mobile ? 1 : 2" rowspan="1">
           <div>
@@ -153,7 +184,7 @@ import { areEqualObjects } from 'src/utilities';
               [disabled]="loading"
               mat-flat-button
               color="primary"
-              type="submit"
+              type="button"
             >
               Save
             </button>
@@ -165,7 +196,7 @@ import { areEqualObjects } from 'src/utilities';
   styles: [
     `
       :host {
-        $row-height: 6rem;
+        $row-height: 8rem;
         padding: 1rem;
 
         div:first-child {
@@ -200,6 +231,21 @@ import { areEqualObjects } from 'src/utilities';
             input[type='file'] {
               margin-left: 1rem;
             }
+
+            .add-assignment,
+            .stepper-nav {
+              width: 100%;
+              display: flex;
+              justify-content: flex-start;
+            }
+
+            .stepper-nav {
+              justify-content: flex-start;
+            }
+
+            .add-assignment {
+              justify-content: flex-end;
+            }
           }
 
           &:last-child div {
@@ -232,7 +278,17 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
   @Input({ required: true }) editingMode: EditingMode = EditingMode.Editing;
   @Input({ required: true }) employee?: Employee;
   @Input({ required: true }) set formData(formData: EmployeeFormData) {
-    this.form.patchValue(formData);
+    const data: any = {
+      employee: {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        pictureUrl: formData.pictureUrl,
+        roles: formData.roles,
+      },
+      assignments: formData.assignments,
+    };
+    this.form.patchValue(data);
     const assignments: Assignment[] = formData.assignments || [];
     assignments.forEach((assignment: Assignment, i: number) =>
       this.insertAssignment(assignment, i)
@@ -256,29 +312,35 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
   protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
 
   protected readonly form: FormGroup = new FormGroup({
-    firstName: new FormControl<string>('', [
-      Validators.required,
-      Validators.minLength(3),
-    ]),
-    lastName: new FormControl<string>('', [
-      Validators.required,
-      Validators.minLength(3),
-    ]),
-    email: new FormControl<string>('', [Validators.required, Validators.email]),
-    pictureUrl: new FormControl<string | null>(null, []), // sent to BE as dataURL // TODO: add size and format validators
-    roles: new FormControl<EmployeeRole[]>(
-      [],
-      [Validators.min(1), Validators.max(2)] // TODO: add custom validator for role combination
-    ),
+    employee: new FormGroup({
+      firstName: new FormControl<string>('', [
+        Validators.required,
+        Validators.minLength(3),
+      ]),
+      lastName: new FormControl<string>('', [
+        Validators.required,
+        Validators.minLength(3),
+      ]),
+      email: new FormControl<string>('', [
+        Validators.required,
+        Validators.email,
+      ]),
+      pictureUrl: new FormControl<string | null>(null, []), // sent to BE as dataURL // TODO: add size and format validators
+      roles: new FormControl<EmployeeRole[]>(
+        [],
+        [Validators.min(1), Validators.max(2)] // TODO: add custom validator for role combination
+      ),
+    }),
     assignments: new FormArray([], []), // TODO: disable if no roles
   });
 
   private readonly valueChanges$: Observable<EmployeeFormData> =
     this.form.valueChanges.pipe(
-      filter(
-        (formData: EmployeeFormData) =>
-          !areEqualObjects(formData, this.form.value)
-      ),
+      filter((formData: any) => !areEqualObjects(formData, this.form.value)),
+      map((formData: any) => ({
+        ...formData.employee,
+        assignments: formData.assignments,
+      })),
       tap((formData: EmployeeFormData) => this.formDataChange.emit(formData)),
       takeUntil(this.destroy$)
     );
