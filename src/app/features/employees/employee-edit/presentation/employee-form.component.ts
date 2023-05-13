@@ -133,6 +133,12 @@ import { AssignmentValidators } from '../validators/assignment.validators';
                 >
                   An employee should have a maximum of 2 roles
                 </mat-error>
+                <mat-hint
+                  *ngIf="form.hasError('cannotBeAReviewerIfIsAProjectManager')"
+                >
+                  There are some assignment with a reviewer role, that is not
+                  allowed if the employee is a project manager
+                </mat-hint>
               </mat-form-field>
             </mat-grid-tile>
 
@@ -153,6 +159,9 @@ import { AssignmentValidators } from '../validators/assignment.validators';
             *ngFor="let assignment of assignments.controls; index as i"
             [form]="$any(assignment)"
             (removed)="removeAssignment(i)"
+            [isProjectManager]="
+              form.get('employee.roles')!.value.includes('PROJECT_MANAGER')
+            "
           >
           </app-assignment-form>
 
@@ -369,7 +378,10 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
       assignments: new FormArray([]),
     },
     {
-      validators: [RoleValidators.mustHaveAtLeastOneRole as ValidatorFn],
+      validators: [
+        RoleValidators.mustHaveAtLeastOneRole as ValidatorFn,
+        AssignmentValidators.cannotBeAReviewerIfIsAProjectManager as ValidatorFn,
+      ],
     }
   );
 

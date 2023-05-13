@@ -67,7 +67,9 @@ import {
               >
                 Worker
               </mat-option>
-              <mat-option value="REVIEWER">Reviewer</mat-option>
+              <mat-option value="REVIEWER" [disabled]="isProjectManager"
+                >Reviewer</mat-option
+              >
             </mat-select>
             <mat-error
               *ngIf="
@@ -75,6 +77,15 @@ import {
               "
             >
               Cannot be a worker if task status is in review or completed
+            </mat-error>
+            <mat-error
+              *ngIf="
+                form
+                  .get('role')!
+                  .hasError('cannotBeAReviewerIfIsAProjectManager')
+              "
+            >
+              Cannot be a reviewer if is a Project Manager
             </mat-error>
           </mat-form-field>
         </mat-grid-tile>
@@ -158,6 +169,7 @@ export class AssignmentFormComponent {
   );
 
   @Input({ required: true }) form!: FormGroup;
+  @Input() isProjectManager: boolean = false;
   @Output() removed: EventEmitter<void> = new EventEmitter<void>();
 
   protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
