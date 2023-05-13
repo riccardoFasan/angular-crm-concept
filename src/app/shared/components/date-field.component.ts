@@ -44,6 +44,7 @@ import { MatInputModule } from '@angular/material/input';
       <mat-datepicker #picker></mat-datepicker>
       <button
         *ngIf="control.value"
+        [disabled]="control.disabled"
         matSuffix
         mat-icon-button
         aria-label="Clear"
