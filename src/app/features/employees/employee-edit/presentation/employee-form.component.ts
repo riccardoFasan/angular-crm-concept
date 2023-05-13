@@ -91,6 +91,18 @@ import { areEqualObjects } from 'src/utilities';
             <input formControlName="pictureUrl" matInput type="email" />
           </mat-form-field>
         </mat-grid-tile>
+
+        <mat-grid-tile colspan="1" rowspan="1">
+          <mat-form-field appearance="outline">
+            <mat-label>Roles</mat-label>
+            <mat-select multiple formControlName="roles">
+              <mat-option value="PROJECT_MANAGER">Project manager</mat-option>
+              <mat-option value="DESIGNER">Designer</mat-option>
+              <mat-option value="DEVELOPER">Developer</mat-option>
+              <mat-option value="TESTER">Tester</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-grid-tile>
       </mat-grid-list>
 
       <ng-container formArrayName="assignments">
@@ -153,7 +165,7 @@ import { areEqualObjects } from 'src/utilities';
   styles: [
     `
       :host {
-        $row-height: 4rem;
+        $row-height: 6rem;
         padding: 1rem;
 
         div:first-child {

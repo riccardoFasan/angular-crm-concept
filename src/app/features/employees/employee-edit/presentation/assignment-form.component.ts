@@ -54,10 +54,8 @@ import {
           <mat-form-field appearance="outline">
             <mat-label>Role</mat-label>
             <mat-select formControlName="role">
-              <mat-option value="PROJECT_MANAGER">Project manager</mat-option>
-              <mat-option value="DESIGNER">Designer</mat-option>
-              <mat-option value="DEVELOPER">Developer</mat-option>
-              <mat-option value="TESTER">Tester</mat-option>
+              <mat-option value="WORKER">Worker</mat-option>
+              <mat-option value="REVIEWER">Reviewer</mat-option>
             </mat-select>
           </mat-form-field>
         </mat-grid-tile>
