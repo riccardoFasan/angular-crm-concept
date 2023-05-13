@@ -37,6 +37,7 @@ import { provideComponentStore } from '@ngrx/component-store';
 import { EmployeeEditOptionsStoreService } from '../store';
 import { AssignmentFormComponent } from './assignment-form.component';
 import { areEqualObjects } from 'src/utilities';
+import { RoleValidators } from '../validators';
 
 @Component({
   selector: 'app-employee-form',
@@ -111,6 +112,25 @@ import { areEqualObjects } from 'src/utilities';
                   <mat-option value="DEVELOPER">Developer</mat-option>
                   <mat-option value="TESTER">Tester</mat-option>
                 </mat-select>
+                <mat-error
+                  *ngIf="
+                    form
+                      .get('employee.roles')!
+                      .hasError('cannotBeBothDesignerAndTester')
+                  "
+                >
+                  An employee cannot a Designer and a Tester at the same time
+                </mat-error>
+                <mat-error
+                  *ngIf="form.get('employee.roles')!.hasError('required')"
+                >
+                  An employee must have a role
+                </mat-error>
+                <mat-error
+                  *ngIf="form.get('employee.roles')!.hasError('maxlength')"
+                >
+                  An employee should have a maximum of 2 roles
+                </mat-error>
               </mat-form-field>
             </mat-grid-tile>
 
@@ -142,7 +162,6 @@ import { areEqualObjects } from 'src/utilities';
             <mat-grid-tile colspan="1" rowspan="1">
               <div class="stepper-nav">
                 <button mat-button matStepperPrevious>Back</button>
-                <button mat-button matStepperNext>Next</button>
               </div>
             </mat-grid-tile>
 
@@ -166,7 +185,7 @@ import { areEqualObjects } from 'src/utilities';
       <mat-grid-list
         [cols]="vm.mobile ? 1 : 2"
         gutterSize="1rem"
-        rowHeight="fit"
+        rowHeight="2rem"
       >
         <mat-grid-tile [colspan]="vm.mobile ? 1 : 2" rowspan="1">
           <div>
@@ -196,7 +215,7 @@ import { areEqualObjects } from 'src/utilities';
   styles: [
     `
       :host {
-        $row-height: 8rem;
+        $row-height: 8.25rem;
         padding: 1rem;
 
         div:first-child {
@@ -284,7 +303,7 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
         lastName: formData.lastName,
         email: formData.email,
         pictureUrl: formData.pictureUrl,
-        roles: formData.roles,
+        roles: formData.roles || [],
       },
       assignments: formData.assignments,
     };
@@ -328,7 +347,11 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
       pictureUrl: new FormControl<string | null>(null, []), // sent to BE as dataURL // TODO: add size and format validators
       roles: new FormControl<EmployeeRole[]>(
         [],
-        [Validators.min(1), Validators.max(2)] // TODO: add custom validator for role combination
+        [
+          Validators.required, // Validators.minLength(1) is ignored by Angular (Read the method description)
+          Validators.maxLength(2),
+          RoleValidators.cannotBeBothDesignerAndTester,
+        ]
       ),
     }),
     assignments: new FormArray([], []), // TODO: disable if no roles
