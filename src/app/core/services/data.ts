@@ -1,10 +1,10 @@
-import { AssignmentRole, EmployeeRole, Priority, Status } from '../enums';
+import { AssignmentRole, EmployeeRole, Priority, TaskStatus } from '../enums';
 import { Assignment, Employee, Option, Task } from '../models';
 
 const FAKE_TASK_1: Task = {
   id: '1',
   description: 'delectus aut autem',
-  status: Status.Completed,
+  status: TaskStatus.Completed,
   priority: Priority.Top,
   deadline: new Date(),
 };
@@ -12,7 +12,7 @@ const FAKE_TASK_1: Task = {
 const FAKE_TASK_2: Task = {
   id: '2',
   description: 'quis ut nam facilis et officia qui',
-  status: Status.NotStarted,
+  status: TaskStatus.NotStarted,
   priority: Priority.Medium,
   deadline: new Date(),
 };
@@ -20,7 +20,7 @@ const FAKE_TASK_2: Task = {
 const FAKE_TASK_3: Task = {
   id: '3',
   description: 'fugiat veniam minus',
-  status: Status.InProgress,
+  status: TaskStatus.InProgress,
   priority: Priority.Low,
   deadline: new Date(),
 };
@@ -28,7 +28,7 @@ const FAKE_TASK_3: Task = {
 const FAKE_TASK_4: Task = {
   id: '4',
   description: 'et porro tempora',
-  status: Status.NotStarted,
+  status: TaskStatus.NotStarted,
   priority: Priority.Low,
   deadline: new Date(),
 };
@@ -37,7 +37,7 @@ const FAKE_TASK_5: Task = {
   id: '5',
   description:
     'laboriosam mollitia et enim quasi adipisci quia provident illum',
-  status: Status.Completed,
+  status: TaskStatus.InProgress,
   priority: Priority.Low,
   deadline: new Date(),
 };
@@ -45,7 +45,7 @@ const FAKE_TASK_5: Task = {
 const FAKE_TASK_6: Task = {
   id: '6',
   description: 'qui ullam ratione quibusdam voluptatem quia omnis',
-  status: Status.InProgress,
+  status: TaskStatus.InProgress,
   priority: Priority.Low,
   deadline: new Date(),
 };
@@ -53,7 +53,7 @@ const FAKE_TASK_6: Task = {
 const FAKE_TASK_7: Task = {
   id: '7',
   description: 'illo expedita consequatur quia in',
-  status: Status.NotStarted,
+  status: TaskStatus.NotStarted,
   priority: Priority.Low,
   deadline: new Date(),
 };
@@ -61,7 +61,7 @@ const FAKE_TASK_7: Task = {
 const FAKE_TASK_8: Task = {
   id: '8',
   description: 'quo adipisci enim quam ut ab',
-  status: Status.Completed,
+  status: TaskStatus.Completed,
   priority: Priority.Low,
   deadline: new Date(),
 };
@@ -69,7 +69,7 @@ const FAKE_TASK_8: Task = {
 const FAKE_TASK_9: Task = {
   id: '9',
   description: 'molestiae perspiciatis ipsa',
-  status: Status.NotStarted,
+  status: TaskStatus.NotStarted,
   priority: Priority.Low,
   deadline: new Date(),
 };
@@ -77,7 +77,7 @@ const FAKE_TASK_9: Task = {
 const FAKE_TASK_10: Task = {
   id: '10',
   description: 'illo est ratione doloremque quia maiores aut',
-  status: Status.Completed,
+  status: TaskStatus.Completed,
   priority: Priority.Low,
   deadline: new Date(),
 };
@@ -274,9 +274,9 @@ export const FAKE_PRIORITIES: Option<Priority>[] = [
   { label: 'Top', value: Priority.Top },
 ];
 
-export const FAKE_STATES: Option<Status>[] = [
-  { label: 'Not started', value: Status.NotStarted },
-  { label: 'In progress', value: Status.InProgress },
-  { label: 'In review', value: Status.InReview },
-  { label: 'Completed', value: Status.Completed },
+export const FAKE_STATES: Option<TaskStatus>[] = [
+  { label: 'Not started', value: TaskStatus.NotStarted },
+  { label: 'In progress', value: TaskStatus.InProgress },
+  { label: 'In review', value: TaskStatus.InReview },
+  { label: 'Completed', value: TaskStatus.Completed },
 ];

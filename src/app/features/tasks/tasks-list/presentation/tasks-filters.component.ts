@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { Option } from 'src/app/core/models';
-import { Priority, Status } from 'src/app/core/enums';
+import { Priority, TaskStatus } from 'src/app/core/enums';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { DateFieldComponent } from 'src/app/shared/components';
@@ -40,7 +40,7 @@ import { DateFieldComponent } from 'src/app/shared/components';
     >
       <mat-grid-tile colspan="1" rowspan="1">
         <mat-form-field appearance="outline">
-          <mat-label>Status</mat-label>
+          <mat-label>TaskStatus</mat-label>
           <mat-select
             [disabled]="optionsLoading"
             [(ngModel)]="status"
@@ -131,15 +131,16 @@ import { DateFieldComponent } from 'src/app/shared/components';
 export class TasksFiltersComponent {
   @Input() mobile: boolean = false;
 
-  @Input() status?: Status;
+  @Input() status?: TaskStatus;
   @Input() priority?: Priority;
   @Input() deadline?: Date;
 
   @Input() priorities: Option<Priority>[] = [];
-  @Input() states: Option<Status>[] = [];
+  @Input() states: Option<TaskStatus>[] = [];
   @Input() optionsLoading: boolean = false;
 
-  @Output() statusChange: EventEmitter<Status> = new EventEmitter<Status>();
+  @Output() statusChange: EventEmitter<TaskStatus> =
+    new EventEmitter<TaskStatus>();
   @Output() priorityChange: EventEmitter<Priority> =
     new EventEmitter<Priority>();
   @Output() deadlineChange: EventEmitter<Date> = new EventEmitter<Date>();

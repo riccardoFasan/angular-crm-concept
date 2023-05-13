@@ -1,10 +1,10 @@
-import { Priority, Status } from 'src/app/core/enums';
+import { Priority, TaskStatus } from 'src/app/core/enums';
 import { TasksFilters, Option } from 'src/app/core/models';
 
 export interface TasksFiltersState {
   filters: TasksFilters;
   priorities: Option<Priority>[];
-  states: Option<Status>[];
+  states: Option<TaskStatus>[];
   optionsLoading: boolean;
   error?: string;
 }

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatusColorPipe } from 'src/app/shared/pipes';
-import { Status } from 'src/app/core/enums';
+import { TaskStatus } from 'src/app/core/enums';
 import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
@@ -21,5 +21,5 @@ import { MatChipsModule } from '@angular/material/chips';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusChipComponent {
-  @Input() status!: Status;
+  @Input() status!: TaskStatus;
 }

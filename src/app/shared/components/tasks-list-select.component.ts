@@ -46,7 +46,7 @@ import { ErrorSnackbarDirective } from '../directives';
       } as vm"
     >
       <mat-form-field appearance="outline">
-        <mat-label>Tasks</mat-label>
+        <mat-label>Task</mat-label>
         <input
           type="text"
           placeholder="Select a task"

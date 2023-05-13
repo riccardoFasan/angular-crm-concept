@@ -36,7 +36,11 @@ import {
     MatButtonModule,
   ],
   template: `
-    <ng-container *ngIf="{ mobile: mobile$ | async } as vm">
+    <ng-container
+      *ngIf="{
+        mobile: mobile$ | async
+      } as vm"
+    >
       <mat-grid-list
         *ngIf="form"
         [cols]="vm.mobile ? 1 : 2"
@@ -54,9 +58,24 @@ import {
           <mat-form-field appearance="outline">
             <mat-label>Role</mat-label>
             <mat-select formControlName="role">
-              <mat-option value="WORKER">Worker</mat-option>
+              <mat-option
+                value="WORKER"
+                [disabled]="
+                  form.get('task')!.value?.status === 'IN_REVIEW' ||
+                  form.get('task')!.value?.status === 'COMPLETED'
+                "
+              >
+                Worker
+              </mat-option>
               <mat-option value="REVIEWER">Reviewer</mat-option>
             </mat-select>
+            <mat-error
+              *ngIf="
+                form.get('role')!.hasError('cannotBeAWorkerIfTaskIsFinished')
+              "
+            >
+              Cannot be a worker if task status is in review or completed
+            </mat-error>
           </mat-form-field>
         </mat-grid-tile>
 

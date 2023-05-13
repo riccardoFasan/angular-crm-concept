@@ -5,7 +5,7 @@ import {
   EmployeeRole,
   Priority,
   SortOrder,
-  Status,
+  TaskStatus,
 } from '../enums';
 import {
   Employee,
@@ -131,7 +131,7 @@ export class ApiService {
     return this.request(FAKE_PRIORITIES);
   }
 
-  getStates(): Observable<Option<Status>[]> {
+  getStates(): Observable<Option<TaskStatus>[]> {
     return this.request(FAKE_STATES);
   }
 

@@ -9,7 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EditingMode, Priority, Status } from 'src/app/core/enums';
+import { EditingMode, Priority, TaskStatus } from 'src/app/core/enums';
 import { Task, TaskFormData } from 'src/app/core/models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -47,7 +47,7 @@ import { areEqualObjects } from 'src/utilities';
   template: `
     <div>
       <app-back></app-back>
-      <h1>{{ editingMode === 'EDITING' ? 'Edit task' : 'Create task' }}</h1>
+      <h1>{{ mode === 'EDITING' ? 'Edit task' : 'Create task' }}</h1>
     </div>
     <form [formGroup]="form">
       <mat-grid-list
@@ -186,8 +186,12 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   @Input() loading: boolean = false;
   @Input() saved: boolean = false;
-  @Input() editingMode: EditingMode = EditingMode.Editing;
   @Input() task?: Task;
+  @Input({ required: true }) set editingMode(mode: EditingMode) {
+    if (mode === EditingMode.Editing) this.touch();
+    this.mode = mode;
+  }
+
   @Input() set formData(formData: TaskFormData) {
     this.form.patchValue(formData);
   }
@@ -202,7 +206,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   protected readonly form: FormGroup = new FormGroup({
     description: new FormControl<string>('', [Validators.required]),
-    status: new FormControl<Status | null>(null, [Validators.required]),
+    status: new FormControl<TaskStatus | null>(null, [Validators.required]),
     priority: new FormControl<Priority | null>(null, [Validators.required]),
     deadline: new FormControl<Date | null>(null),
   });
@@ -215,6 +219,8 @@ export class TaskFormComponent implements OnInit, OnDestroy {
       tap((formData: TaskFormData) => this.formDataChange.emit(formData)),
       takeUntil(this.destroy$)
     );
+
+  protected mode: EditingMode = EditingMode.Editing;
 
   ngOnInit(): void {
     this.valueChanges$.subscribe();

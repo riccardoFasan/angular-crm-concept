@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { ComponentStore, OnStateInit } from '@ngrx/component-store';
 import { TasksFiltersState, INITIAL_TASKS_FILTERS_STATE } from '../state';
-import { Priority, Status } from 'src/app/core/enums';
+import { Priority, TaskStatus } from 'src/app/core/enums';
 import { ApiService } from 'src/app/core/services';
 import { Observable, forkJoin, pipe, switchMap, tap } from 'rxjs';
 import { TasksFilters, Option } from 'src/app/core/models';
@@ -21,7 +21,7 @@ export class TasksFiltersStoreService
     (state: TasksFiltersState) => state.priorities
   );
 
-  readonly states$: Observable<Option<Status>[]> = this.select(
+  readonly states$: Observable<Option<TaskStatus>[]> = this.select(
     (state: TasksFiltersState) => state.states
   );
 
@@ -72,7 +72,7 @@ export class TasksFiltersStoreService
   );
 
   private readonly updateStates = this.updater(
-    (state: TasksFiltersState, states: Option<Status>[]) => ({
+    (state: TasksFiltersState, states: Option<TaskStatus>[]) => ({
       ...state,
       states,
     })

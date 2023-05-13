@@ -39,6 +39,7 @@ import { EmployeeEditOptionsStoreService } from '../store';
 import { AssignmentFormComponent } from './assignment-form.component';
 import { areEqualObjects } from 'src/utilities';
 import { RoleValidators } from '../validators';
+import { AssignmentValidators } from '../validators/assignment.validators';
 
 @Component({
   selector: 'app-employee-form',
@@ -59,7 +60,7 @@ import { RoleValidators } from '../validators';
     <div>
       <app-back></app-back>
       <h1>
-        {{ editingMode === 'EDITING' ? 'Edit employee' : 'Create employee' }}
+        {{ mode === 'EDITING' ? 'Edit employee' : 'Create employee' }}
       </h1>
     </div>
     <form *ngIf="{ mobile: mobile$ | async } as vm" [formGroup]="form">
@@ -299,8 +300,11 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
 
   @Input({ required: true }) loading: boolean = false;
   @Input({ required: true }) saved: boolean = false;
-  @Input({ required: true }) editingMode: EditingMode = EditingMode.Editing;
   @Input({ required: true }) employee?: Employee;
+  @Input({ required: true }) set editingMode(mode: EditingMode) {
+    if (mode === EditingMode.Editing) this.touch();
+    this.mode = mode;
+  }
   @Input({ required: true }) set formData(formData: EmployeeFormData) {
     const data: any = {
       employee: {
@@ -324,6 +328,8 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
 
   @Output() onSave: EventEmitter<EmployeeFormData> =
     new EventEmitter<EmployeeFormData>();
+
+  protected mode: EditingMode = EditingMode.Editing;
 
   protected readonly searchingTasks$: Observable<boolean> =
     this.optionsStore.searchingTasks$;
@@ -426,20 +432,27 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
     assignment: Assignment | null,
     index: number = 0
   ): void {
-    const group: FormGroup = new FormGroup({
-      task: new FormControl<Task | null>(assignment?.task || null, [
-        Validators.required,
-      ]),
-      role: new FormControl<AssignmentRole | null>(assignment?.role || null, [
-        Validators.required,
-      ]),
-      fromDate: new FormControl<Date | null>(assignment?.fromDate || null, [
-        Validators.required,
-      ]),
-      dueDate: new FormControl<Date | null>(assignment?.dueDate || null, [
-        Validators.required,
-      ]),
-    });
+    const group: FormGroup = new FormGroup(
+      {
+        task: new FormControl<Task | null>(assignment?.task || null, [
+          Validators.required,
+        ]),
+        role: new FormControl<AssignmentRole | null>(assignment?.role || null, [
+          Validators.required,
+        ]),
+        fromDate: new FormControl<Date | null>(assignment?.fromDate || null, [
+          Validators.required,
+        ]),
+        dueDate: new FormControl<Date | null>(assignment?.dueDate || null, [
+          Validators.required,
+        ]),
+      },
+      {
+        validators: [
+          AssignmentValidators.cannotBeAWorkerIfTaskIsFinished as ValidatorFn,
+        ],
+      }
+    );
     this.assignments.insert(index, group);
   }
 }

@@ -9,7 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { TasksFiltersStoreService } from '../store';
 import { provideComponentStore } from '@ngrx/component-store';
-import { Priority, Status } from 'src/app/core/enums';
+import { Priority, TaskStatus } from 'src/app/core/enums';
 import { TasksFilters, Option } from 'src/app/core/models';
 import { Observable } from 'rxjs';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
@@ -62,7 +62,8 @@ export class TasksFiltersContainerComponent {
   protected readonly filters$: Observable<TasksFilters> = this.store.filters$;
   protected readonly priorities$: Observable<Option<Priority>[]> =
     this.store.priorities$;
-  protected readonly states$: Observable<Option<Status>[]> = this.store.states$;
+  protected readonly states$: Observable<Option<TaskStatus>[]> =
+    this.store.states$;
   protected readonly optionsLoading$: Observable<boolean> =
     this.store.optionsLoading$;
   protected readonly error$: Observable<string | undefined> = this.store.error$;

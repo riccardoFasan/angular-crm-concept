@@ -11,7 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { SidebarStoreService } from 'src/app/layout/store';
 import { TasksFilters, Option } from 'src/app/core/models';
-import { Priority, Status } from 'src/app/core/enums';
+import { Priority, TaskStatus } from 'src/app/core/enums';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -125,7 +125,7 @@ export class TasksSearchComponent {
 
   @Input() filters!: TasksFilters;
   @Input() priorities: Option<Priority>[] = [];
-  @Input() states: Option<Status>[] = [];
+  @Input() states: Option<TaskStatus>[] = [];
   @Input() optionsLoading: boolean = false;
 
   @Output() filtersChange: EventEmitter<TasksFilters> =
@@ -142,7 +142,7 @@ export class TasksSearchComponent {
     );
 
   protected description: string = '';
-  protected status?: Status;
+  protected status?: TaskStatus;
   protected priority?: Priority;
   protected deadline?: Date;
 

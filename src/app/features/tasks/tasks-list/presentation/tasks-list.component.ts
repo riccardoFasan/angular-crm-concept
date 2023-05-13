@@ -51,7 +51,7 @@ import { MatIconModule } from '@angular/material/icon';
       </ng-container>
 
       <ng-container matColumnDef="status">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>TaskStatus</th>
         <td mat-cell *matCellDef="let item">
           <app-status-chip [status]="item.status"></app-status-chip>
         </td>
