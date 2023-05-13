@@ -28,27 +28,16 @@ export class RoleValidators {
     const values: [EmployeeRole, EmployeeRole | undefined] =
       roleControl?.value || [];
     const hasRoles: boolean = values.length > 0;
-    const assignmentControls: FormGroup[] = <FormGroup[]>(
-      assignmentsControl.controls
-    );
-    const controls: FormControl[] = assignmentControls.reduce(
-      (controls: FormControl[], group: FormGroup) => {
-        const groupControls: FormControl[] = Object.values(
-          group.controls
-        ) as FormControl[];
-        return [...controls, ...groupControls];
-      },
-      []
-    );
+    const controls: FormGroup[] = <FormGroup[]>assignmentsControl.controls;
     if (!hasRoles && controls.length > 0) {
-      controls.forEach((control: FormControl) => {
+      controls.forEach((control: FormGroup) => {
         if (!control.enabled) return;
         control.disable();
       });
       const error: ValidationErrors = { mustHaveAtLeastOneRole: true };
       return error;
     }
-    controls.forEach((control: FormControl) => {
+    controls.forEach((control: FormGroup) => {
       if (control.enabled) return;
       control.enable();
     });

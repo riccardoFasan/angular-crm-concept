@@ -78,7 +78,13 @@ import {
 
         <mat-grid-tile [colspan]="vm.mobile ? 1 : 2" rowspan="1">
           <div>
-            <button (click)="remove()" mat-button mat-flat-button type="button">
+            <button
+              [disabled]="form.disabled"
+              (click)="remove()"
+              mat-button
+              mat-flat-button
+              type="button"
+            >
               Remove
             </button>
           </div>
