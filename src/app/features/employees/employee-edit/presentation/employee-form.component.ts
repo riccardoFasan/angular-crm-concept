@@ -26,6 +26,7 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { BackComponent } from 'src/app/shared/components';
@@ -153,6 +154,10 @@ import { RoleValidators } from '../validators';
             (removed)="removeAssignment(i)"
           >
           </app-assignment-form>
+
+          <mat-error *ngIf="form.hasError('mustHaveAtLeastOneRole')">
+            Assignments cannot be modified if the employee has no role
+          </mat-error>
 
           <mat-grid-list
             [cols]="vm.mobile ? 1 : 2"
@@ -330,32 +335,37 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
 
   protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
 
-  protected readonly form: FormGroup = new FormGroup({
-    employee: new FormGroup({
-      firstName: new FormControl<string>('', [
-        Validators.required,
-        Validators.minLength(3),
-      ]),
-      lastName: new FormControl<string>('', [
-        Validators.required,
-        Validators.minLength(3),
-      ]),
-      email: new FormControl<string>('', [
-        Validators.required,
-        Validators.email,
-      ]),
-      pictureUrl: new FormControl<string | null>(null, []), // sent to BE as dataURL // TODO: add size and format validators
-      roles: new FormControl<EmployeeRole[]>(
-        [],
-        [
-          Validators.required, // Validators.minLength(1) is ignored by Angular (Read the method description)
-          Validators.maxLength(2),
-          RoleValidators.cannotBeBothDesignerAndTester,
-        ]
-      ),
-    }),
-    assignments: new FormArray([], []), // TODO: disable if no roles
-  });
+  protected readonly form: FormGroup = new FormGroup(
+    {
+      employee: new FormGroup({
+        firstName: new FormControl<string>('', [
+          Validators.required,
+          Validators.minLength(3),
+        ]),
+        lastName: new FormControl<string>('', [
+          Validators.required,
+          Validators.minLength(3),
+        ]),
+        email: new FormControl<string>('', [
+          Validators.required,
+          Validators.email,
+        ]),
+        pictureUrl: new FormControl<string | null>(null, []), // sent to BE as dataURL // TODO: add size and format validators
+        roles: new FormControl<EmployeeRole[]>(
+          [],
+          [
+            Validators.required, // Validators.minLength(1) is ignored by Angular (Read the method description)
+            Validators.maxLength(2),
+            RoleValidators.cannotBeBothDesignerAndTester,
+          ]
+        ),
+      }),
+      assignments: new FormArray([]),
+    },
+    {
+      validators: [RoleValidators.mustHaveAtLeastOneRole as ValidatorFn],
+    }
+  );
 
   private readonly valueChanges$: Observable<EmployeeFormData> =
     this.form.valueChanges.pipe(
