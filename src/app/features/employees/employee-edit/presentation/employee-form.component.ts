@@ -29,14 +29,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { BackComponent } from 'src/app/shared/components';
-import {
-  Observable,
-  Subject,
-  distinctUntilChanged,
-  filter,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { Observable, Subject, filter, takeUntil, tap } from 'rxjs';
 import { MobileObserverService } from 'src/app/shared/services';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { provideComponentStore } from '@ngrx/component-store';
@@ -101,12 +94,31 @@ import { areEqualObjects } from 'src/utilities';
       </mat-grid-list>
 
       <ng-container formArrayName="assignments">
+        <h2>Assignments</h2>
         <app-assignment-form
           *ngFor="let assignment of assignments.controls; index as i"
           [form]="$any(assignment)"
+          (removed)="removeAssignment(i)"
         >
         </app-assignment-form>
       </ng-container>
+      <mat-grid-list
+        [cols]="vm.mobile ? 1 : 2"
+        gutterSize="1rem"
+        rowHeight="5rem"
+      >
+        <mat-grid-tile [colspan]="vm.mobile ? 1 : 2" rowspan="1">
+          <button
+            (click)="addAssignment()"
+            [disabled]="loading"
+            mat-button
+            mat-flat-button
+            type="button"
+          >
+            Add assignment
+          </button>
+        </mat-grid-tile>
+      </mat-grid-list>
 
       <mat-grid-list
         [cols]="vm.mobile ? 1 : 2"
@@ -141,7 +153,7 @@ import { areEqualObjects } from 'src/utilities';
   styles: [
     `
       :host {
-        $row-height: 5rem;
+        $row-height: 4rem;
         padding: 1rem;
 
         div:first-child {
@@ -280,24 +292,6 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
     return this.form.get('assignments') as FormArray;
   }
 
-  protected insertAssignment(assignment: Assignment, index: number = 0): void {
-    const group: FormGroup = new FormGroup({
-      task: new FormControl<Task | null>(assignment.task || null, [
-        Validators.required,
-      ]),
-      role: new FormControl<AssignmentRole | null>(assignment.role || null, [
-        Validators.required,
-      ]),
-      fromDate: new FormControl<Date | null>(assignment.fromDate || null, [
-        Validators.required,
-      ]),
-      dueDate: new FormControl<Date | null>(assignment.dueDate || null, [
-        Validators.required,
-      ]),
-    });
-    this.assignments.insert(index, group);
-  }
-
   protected removeAssignment(index: number): void {
     this.assignments.removeAt(index);
   }
@@ -314,5 +308,31 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
       return;
     }
     this.form.reset();
+  }
+
+  protected addAssignment(): void {
+    const lastIndex: number = this.assignments.length - 1;
+    this.insertAssignment(null, lastIndex + 1);
+  }
+
+  private insertAssignment(
+    assignment: Assignment | null,
+    index: number = 0
+  ): void {
+    const group: FormGroup = new FormGroup({
+      task: new FormControl<Task | null>(assignment?.task || null, [
+        Validators.required,
+      ]),
+      role: new FormControl<AssignmentRole | null>(assignment?.role || null, [
+        Validators.required,
+      ]),
+      fromDate: new FormControl<Date | null>(assignment?.fromDate || null, [
+        Validators.required,
+      ]),
+      dueDate: new FormControl<Date | null>(assignment?.dueDate || null, [
+        Validators.required,
+      ]),
+    });
+    this.assignments.insert(index, group);
   }
 }

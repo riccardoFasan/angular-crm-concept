@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Input,
+  Output,
   inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -11,10 +13,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { Task } from 'src/app/core/models';
 import { Observable } from 'rxjs';
 import { MobileObserverService } from 'src/app/shared/services';
-import { DateFieldComponent } from 'src/app/shared/components';
+import {
+  DateFieldComponent,
+  TasksListSelectComponent,
+} from 'src/app/shared/components';
 
 @Component({
   selector: 'app-assignment-form',
@@ -28,60 +32,72 @@ import { DateFieldComponent } from 'src/app/shared/components';
     MatButtonModule,
     MatGridListModule,
     DateFieldComponent,
+    TasksListSelectComponent,
+    MatButtonModule,
   ],
   template: `
-    <mat-grid-list
-      *ngIf="form"
-      [cols]="(mobile$ | async) ? 1 : 2"
-      gutterSize="1rem"
-      rowHeight="fit"
-      [formGroup]="form"
-    >
-      <mat-grid-tile colspan="1" rowspan="1">
-        <!--  <mat-form-field appearance="outline">
-          <mat-label>Task</mat-label>
-            <mat-select formControlName="task">
-            <mat-option *ngFor="let task of tasks" [value]="task.id">
-              {{ task.description }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>-->
-      </mat-grid-tile>
+    <ng-container *ngIf="{ mobile: mobile$ | async } as vm">
+      <mat-grid-list
+        *ngIf="form"
+        [cols]="vm.mobile ? 1 : 2"
+        gutterSize="1rem"
+        rowHeight="fit"
+        [formGroup]="form"
+      >
+        <mat-grid-tile colspan="1" rowspan="1">
+          <app-tasks-list-select
+            [control]="$any(form.get('task'))"
+          ></app-tasks-list-select>
+        </mat-grid-tile>
 
-      <mat-grid-tile colspan="1" rowspan="1">
-        <mat-form-field appearance="outline">
-          <mat-label>Role</mat-label>
-          <mat-select formControlName="role">
-            <mat-option value="PROJECT_MANAGER">Project manager</mat-option>
-            <mat-option value="DESIGNER">Designer</mat-option>
-            <mat-option value="DEVELOPER">Developer</mat-option>
-            <mat-option value="TESTER">Tester</mat-option>
-          </mat-select>
-        </mat-form-field>
-      </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1">
+          <mat-form-field appearance="outline">
+            <mat-label>Role</mat-label>
+            <mat-select formControlName="role">
+              <mat-option value="PROJECT_MANAGER">Project manager</mat-option>
+              <mat-option value="DESIGNER">Designer</mat-option>
+              <mat-option value="DEVELOPER">Developer</mat-option>
+              <mat-option value="TESTER">Tester</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </mat-grid-tile>
 
-      <mat-grid-tile colspan="1" rowspan="1">
-        <app-date-field
-          [label]="'From date'"
-          [control]="$any(form.get('fromDate'))"
-        >
-        </app-date-field>
-      </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1">
+          <app-date-field
+            [label]="'From date'"
+            [control]="$any(form.get('fromDate'))"
+          >
+          </app-date-field>
+        </mat-grid-tile>
 
-      <mat-grid-tile colspan="1" rowspan="1">
-        <app-date-field
-          [label]="'Due date'"
-          [control]="$any(form.get('dueDate'))"
-        >
-        </app-date-field>
-      </mat-grid-tile>
-    </mat-grid-list>
+        <mat-grid-tile colspan="1" rowspan="1">
+          <app-date-field
+            [label]="'Due date'"
+            [control]="$any(form.get('dueDate'))"
+          >
+          </app-date-field>
+        </mat-grid-tile>
+
+        <mat-grid-tile [colspan]="vm.mobile ? 1 : 2" rowspan="1">
+          <div>
+            <button (click)="remove()" mat-button mat-flat-button type="button">
+              Remove
+            </button>
+          </div>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </ng-container>
   `,
   styles: [
     `
       :host {
-        $row-height: 4rem;
-        padding: 1rem;
+        $row-height: 6rem;
+
+        display: block;
+        padding: 1.5rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1rem;
+        margin-bottom: 2rem;
 
         mat-grid-list {
           width: 100%;
@@ -96,6 +112,12 @@ import { DateFieldComponent } from 'src/app/shared/components';
 
           mat-grid-tile {
             padding: 0;
+
+            &:last-child div {
+              width: 100%;
+              display: flex;
+              justify-content: flex-end;
+            }
 
             mat-form-field {
               width: calc(100% - 1px);
@@ -113,6 +135,11 @@ export class AssignmentFormComponent {
   );
 
   @Input({ required: true }) form!: FormGroup;
+  @Output() removed: EventEmitter<void> = new EventEmitter<void>();
 
   protected readonly mobile$: Observable<boolean> = this.mobileObserver.mobile$;
+
+  protected remove(): void {
+    this.removed.emit();
+  }
 }

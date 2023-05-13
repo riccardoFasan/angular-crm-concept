@@ -11,3 +11,23 @@ body {
   background-color: #303030;
   color: #fff;
 }
+
+mat-option span.mat-mdc-option {
+  white-space: nowrap;
+}
+
+.cdk-overlay-pane:has(cdk-virtual-scroll-viewport) {
+  height: 100%;
+  max-height: 200px;
+
+  .mat-mdc-autocomplete-panel {
+    display: flex;
+
+    cdk-virtual-scroll-viewport {
+      height: 100%;
+      width: 100%;
+      max-height: 200px;
+      flex: 1;
+    }
+  }
+}
