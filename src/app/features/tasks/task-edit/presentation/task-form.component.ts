@@ -24,9 +24,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { BackComponent } from 'src/app/shared/components';
-import { Observable, Subject, takeUntil, tap } from 'rxjs';
+import { Observable, Subject, filter, takeUntil, tap } from 'rxjs';
 import { MobileObserverService } from 'src/app/shared/services';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { areEqualObjects } from 'src/utilities';
 
 @Component({
   selector: 'app-task-form',
@@ -208,8 +209,11 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   private readonly valueChanges$: Observable<TaskFormData> =
     this.form.valueChanges.pipe(
-      takeUntil(this.destroy$),
-      tap((formData: TaskFormData) => this.formDataChange.emit(formData))
+      filter(
+        (formData: TaskFormData) => !areEqualObjects(formData, this.form.value)
+      ),
+      tap((formData: TaskFormData) => this.formDataChange.emit(formData)),
+      takeUntil(this.destroy$)
     );
 
   ngOnInit(): void {

@@ -16,7 +16,7 @@ import {
   switchMap,
   take,
 } from 'rxjs';
-import { Employee, TaskFormData } from 'src/app/core/models';
+import { Employee, Task, TaskFormData } from 'src/app/core/models';
 import { EditingMode } from 'src/app/core/enums';
 import { EmployeeFormComponent } from '../presentation';
 import { provideComponentStore } from '@ngrx/component-store';

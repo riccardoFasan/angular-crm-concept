@@ -12,18 +12,22 @@
           "standalone": true,
           "changeDetection": "OnPush",
           "style": "scss",
-          "skipTests": true
+          "skipTests": true,
+          "flat": true
         },
         "@schematics/angular:pipe": {
           "standalone": true,
-          "skipTests": true
+          "skipTests": true,
+          "flat": true
         },
         "@schematics/angular:directive": {
           "standalone": true,
-          "skipTests": true
+          "skipTests": true,
+          "flat": true
         },
         "@schematics/angular:service": {
-          "skipTests": true
+          "skipTests": true,
+          "flat": true
         }
       },
       "root": "",

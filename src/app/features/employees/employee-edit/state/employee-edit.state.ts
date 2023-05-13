@@ -1,4 +1,4 @@
-import { Employee, EmployeeFormData } from 'src/app/core/models';
+import { Employee, EmployeeFormData, Task } from 'src/app/core/models';
 
 export interface EmployeeEditState {
   formData: EmployeeFormData;

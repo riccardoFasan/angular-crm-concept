@@ -10,13 +10,12 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Option } from 'src/app/core/models';
 import { Priority, Status } from 'src/app/core/enums';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { DateFieldComponent } from 'src/app/shared/components';
 
 @Component({
   selector: 'app-tasks-filters',
@@ -27,11 +26,10 @@ import { MatGridListModule } from '@angular/material/grid-list';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatIconModule,
     MatButtonModule,
     MatGridListModule,
+    DateFieldComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -90,30 +88,11 @@ import { MatGridListModule } from '@angular/material/grid-list';
         </mat-form-field>
       </mat-grid-tile>
       <mat-grid-tile colspan="1" rowspan="1">
-        <mat-form-field appearance="outline">
-          <mat-label>Deadline</mat-label>
-          <input
-            [(ngModel)]="deadline"
-            (ngModelChange)="onDeadlineChange()"
-            [matDatepicker]="picker"
-            matInput
-          />
-          <mat-hint>mm/dd/yyyy</mat-hint>
-          <mat-datepicker-toggle
-            matIconSuffix
-            [for]="picker"
-          ></mat-datepicker-toggle>
-          <button
-            *ngIf="deadline"
-            matSuffix
-            mat-icon-button
-            aria-label="Clear"
-            (click)="clearDeadline()"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-datepicker #picker></mat-datepicker>
-        </mat-form-field>
+        <app-date-field
+          [label]="'Deadline'"
+          [date]="deadline!"
+          (dateChange)="onDeadlineChange($event)"
+        ></app-date-field>
       </mat-grid-tile>
     </mat-grid-list>
   `,
@@ -173,7 +152,8 @@ export class TasksFiltersComponent {
     this.priorityChange.emit(this.priority);
   }
 
-  protected onDeadlineChange(): void {
+  protected onDeadlineChange(deadline: Date | undefined): void {
+    this.deadline = deadline;
     this.deadlineChange.emit(this.deadline);
   }
 
@@ -189,6 +169,6 @@ export class TasksFiltersComponent {
 
   protected clearDeadline(): void {
     this.deadline = undefined;
-    this.onDeadlineChange();
+    this.onDeadlineChange(this.deadline);
   }
 }

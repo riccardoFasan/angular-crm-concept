@@ -16,13 +16,10 @@ import {
   EmployeeFormData,
   Option,
   Task,
-  TaskFormData,
 } from 'src/app/core/models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import {
   FormArray,
@@ -32,11 +29,20 @@ import {
   Validators,
 } from '@angular/forms';
 import { BackComponent } from 'src/app/shared/components';
-import { Observable, Subject, takeUntil, tap } from 'rxjs';
+import {
+  Observable,
+  Subject,
+  distinctUntilChanged,
+  filter,
+  takeUntil,
+  tap,
+} from 'rxjs';
 import { MobileObserverService } from 'src/app/shared/services';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { provideComponentStore } from '@ngrx/component-store';
 import { EmployeeEditOptionsStoreService } from '../store';
+import { AssignmentFormComponent } from './assignment-form.component';
+import { areEqualObjects } from 'src/utilities';
 
 @Component({
   selector: 'app-employee-form',
@@ -47,11 +53,10 @@ import { EmployeeEditOptionsStoreService } from '../store';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatButtonModule,
     MatGridListModule,
     BackComponent,
+    AssignmentFormComponent,
   ],
   template: `
     <div>
@@ -60,21 +65,54 @@ import { EmployeeEditOptionsStoreService } from '../store';
         {{ editingMode === 'EDITING' ? 'Edit employee' : 'Create employee' }}
       </h1>
     </div>
-    <form [formGroup]="form">
+    <form *ngIf="{ mobile: mobile$ | async } as vm" [formGroup]="form">
       <mat-grid-list
-        *ngIf="{ mobile: mobile$ | async } as vm"
         [cols]="vm.mobile ? 1 : 2"
         gutterSize="1rem"
         rowHeight="fit"
       >
-        <mat-grid-tile colspan="1" rowspan="1"> </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1">
+          <mat-form-field appearance="outline">
+            <mat-label>Firstname</mat-label>
+            <input formControlName="firstName" matInput type="text" />
+          </mat-form-field>
+        </mat-grid-tile>
 
-        <mat-grid-tile colspan="1" rowspan="1"> </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1">
+          <mat-form-field appearance="outline">
+            <mat-label>Lastname</mat-label>
+            <input formControlName="lastName" matInput type="text" />
+          </mat-form-field>
+        </mat-grid-tile>
 
-        <mat-grid-tile colspan="1" rowspan="1"> </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1">
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input formControlName="email" matInput type="email" />
+          </mat-form-field>
+        </mat-grid-tile>
 
-        <mat-grid-tile colspan="1" rowspan="1"> </mat-grid-tile>
+        <mat-grid-tile colspan="1" rowspan="1">
+          <mat-form-field appearance="outline">
+            <mat-label>Picture</mat-label>
+            <input formControlName="pictureUrl" matInput type="email" />
+          </mat-form-field>
+        </mat-grid-tile>
+      </mat-grid-list>
 
+      <ng-container formArrayName="assignments">
+        <app-assignment-form
+          *ngFor="let assignment of assignments.controls; index as i"
+          [form]="$any(assignment)"
+        >
+        </app-assignment-form>
+      </ng-container>
+
+      <mat-grid-list
+        [cols]="vm.mobile ? 1 : 2"
+        gutterSize="1rem"
+        rowHeight="5rem"
+      >
         <mat-grid-tile [colspan]="vm.mobile ? 1 : 2" rowspan="1">
           <div>
             <button
@@ -129,19 +167,23 @@ import { EmployeeEditOptionsStoreService } from '../store';
           }
 
           mat-grid-tile {
-            padding: 1rem 0;
+            padding: 0;
 
             mat-form-field {
               width: calc(100% - 1px);
             }
 
-            &:last-child div {
-              display: flex;
-              align-items: center;
-              justify-content: flex-end;
-              width: 100%;
-              margin-top: 2rem;
+            input[type='file'] {
+              margin-left: 1rem;
             }
+          }
+
+          &:last-child div {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            width: 100%;
+            margin-top: 2rem;
           }
         }
       }
@@ -161,11 +203,11 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
 
   private readonly destroy$: Subject<void> = new Subject<void>();
 
-  @Input() loading: boolean = false;
-  @Input() saved: boolean = false;
-  @Input() editingMode: EditingMode = EditingMode.Editing;
-  @Input() employee?: Employee;
-  @Input() set formData(formData: EmployeeFormData) {
+  @Input({ required: true }) loading: boolean = false;
+  @Input({ required: true }) saved: boolean = false;
+  @Input({ required: true }) editingMode: EditingMode = EditingMode.Editing;
+  @Input({ required: true }) employee?: Employee;
+  @Input({ required: true }) set formData(formData: EmployeeFormData) {
     this.form.patchValue(formData);
     const assignments: Assignment[] = formData.assignments || [];
     assignments.forEach((assignment: Assignment, i: number) =>
@@ -204,25 +246,17 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
       [],
       [Validators.min(1), Validators.max(2)] // TODO: add custom validator for role combination
     ),
-    assignments: new FormArray( // TODO: disable if no roles
-      [
-        new FormGroup({
-          task: new FormControl<Task | null>(null, [Validators.required]),
-          role: new FormControl<AssignmentRole | null>(null, [
-            Validators.required,
-          ]), // TODO: add custom validator for role combination and for task status
-          fromDate: new FormControl<Date | null>(null, [Validators.required]),
-          dueDate: new FormControl<Date | null>(null, [Validators.required]),
-        }),
-      ],
-      []
-    ),
+    assignments: new FormArray([], []), // TODO: disable if no roles
   });
 
   private readonly valueChanges$: Observable<EmployeeFormData> =
     this.form.valueChanges.pipe(
-      takeUntil(this.destroy$),
-      tap((formData: EmployeeFormData) => this.formDataChange.emit(formData))
+      filter(
+        (formData: EmployeeFormData) =>
+          !areEqualObjects(formData, this.form.value)
+      ),
+      tap((formData: EmployeeFormData) => this.formDataChange.emit(formData)),
+      takeUntil(this.destroy$)
     );
 
   ngOnInit(): void {
@@ -240,6 +274,10 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
   touch(): void {
     this.form.markAllAsTouched();
     this.form.updateValueAndValidity();
+  }
+
+  protected get assignments(): FormArray {
+    return this.form.get('assignments') as FormArray;
   }
 
   protected insertAssignment(assignment: Assignment, index: number = 0): void {
@@ -276,9 +314,5 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
       return;
     }
     this.form.reset();
-  }
-
-  private get assignments(): FormArray {
-    return this.form.get('assignments') as FormArray;
   }
 }
