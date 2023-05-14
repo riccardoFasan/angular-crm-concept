@@ -12,14 +12,14 @@ export const APP_ROUTES: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('./features/tasks/tasks-list/tasks-list.routes').then(
+          import('./pages/tasks/tasks-list/tasks-list.routes').then(
             (m) => m.TASKS_LIST_ROUTES
           ),
       },
       {
         path: ':id',
         loadChildren: () =>
-          import('./features/tasks/task-edit/task-edit.routes').then(
+          import('./pages/tasks/task-edit/task-edit.routes').then(
             (m) => m.TASK_EDIT_ROUTES
           ),
       },
@@ -31,16 +31,16 @@ export const APP_ROUTES: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import(
-            './features/employees/employees-list/employees-list.routes'
-          ).then((m) => m.EMPLOYEES_LIST_ROUTES),
+          import('./pages/employees/employees-list/employees-list.routes').then(
+            (m) => m.EMPLOYEES_LIST_ROUTES
+          ),
       },
       {
         path: ':id',
         loadChildren: () =>
-          import(
-            './features/employees/employee-edit/employee-edit.routes'
-          ).then((m) => m.EMPLOYEE_EDIT_ROUTES),
+          import('./pages/employees/employee-edit/employee-edit.routes').then(
+            (m) => m.EMPLOYEE_EDIT_ROUTES
+          ),
       },
     ],
   },

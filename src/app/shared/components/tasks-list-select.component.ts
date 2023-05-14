@@ -13,7 +13,6 @@ import {
   TasksSearchCriteria,
 } from 'src/app/core/models';
 import { Observable } from 'rxjs';
-import { TasksListStoreService } from 'src/app/features/tasks/tasks-list/store';
 import { provideComponentStore } from '@ngrx/component-store';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -23,6 +22,9 @@ import {
   ScrollingModule,
 } from '@angular/cdk/scrolling';
 import { ErrorSnackbarDirective } from '../directives';
+import { ListStoreService } from 'src/app/features/list/store/list-store.service';
+import { ITEM_ADAPTER } from 'src/app/core/tokens';
+import { TasksAdapterService } from 'src/app/pages/tasks/tasks-list/services/tasks-adapter.service';
 
 @Component({
   selector: 'app-tasks-list-select',
@@ -88,11 +90,19 @@ import { ErrorSnackbarDirective } from '../directives';
       }
     `,
   ],
-  providers: [provideComponentStore(TasksListStoreService)],
+  providers: [
+    {
+      provide: ITEM_ADAPTER,
+      useExisting: TasksAdapterService,
+    },
+    provideComponentStore(ListStoreService),
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TasksListSelectComponent {
-  private readonly store: TasksListStoreService = inject(TasksListStoreService);
+  private readonly store: ListStoreService<Task> = inject(
+    ListStoreService<Task>
+  );
 
   @Input() control: FormControl = new FormControl(undefined);
 

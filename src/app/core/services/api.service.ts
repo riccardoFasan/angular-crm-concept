@@ -1,17 +1,10 @@
 import { Injectable } from '@angular/core';
 import { first, map, Observable, timer } from 'rxjs';
-import {
-  AssignmentRole,
-  EmployeeRole,
-  Priority,
-  SortOrder,
-  TaskStatus,
-} from '../enums';
+import { SortOrder } from '../enums';
 import {
   Employee,
   EmployeeFormData,
   TasksFilters,
-  Option,
   Pagination,
   TasksSearchCriteria,
   EmployeesSearchCriteria,
@@ -21,14 +14,7 @@ import {
   EmployeesFilters,
   List,
 } from '../models';
-import {
-  ASSIGNMENT_ROLES,
-  EMPLOYEE_ROLES,
-  FAKE_EMPLOYEES,
-  FAKE_PRIORITIES,
-  FAKE_STATES,
-  FAKE_TASKS,
-} from './data';
+import { FAKE_EMPLOYEES, FAKE_TASKS } from './data';
 
 @Injectable({
   providedIn: 'root',
@@ -125,22 +111,6 @@ export class ApiService {
 
   removeEmployee(employee: Employee): Observable<Employee> {
     return this.request(employee);
-  }
-
-  getPriorites(): Observable<Option<Priority>[]> {
-    return this.request(FAKE_PRIORITIES);
-  }
-
-  getStates(): Observable<Option<TaskStatus>[]> {
-    return this.request(FAKE_STATES);
-  }
-
-  getEmployeeRoles(): Observable<Option<EmployeeRole>[]> {
-    return this.request(EMPLOYEE_ROLES);
-  }
-
-  getAssignmentRoles(): Observable<Option<AssignmentRole>[]> {
-    return this.request(ASSIGNMENT_ROLES);
   }
 
   private request(data: any): Observable<any> {

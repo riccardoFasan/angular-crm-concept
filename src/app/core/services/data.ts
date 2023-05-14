@@ -1,5 +1,5 @@
 import { AssignmentRole, EmployeeRole, Priority, TaskStatus } from '../enums';
-import { Assignment, Employee, Option, Task } from '../models';
+import { Assignment, Employee, Task } from '../models';
 
 const FAKE_TASK_1: Task = {
   id: '1',
@@ -254,29 +254,4 @@ export const FAKE_EMPLOYEES: Employee[] = [
   FAKE_EMPLOYEE_3,
   FAKE_EMPLOYEE_4,
   FAKE_EMPLOYEE_5,
-];
-
-export const EMPLOYEE_ROLES: Option<EmployeeRole>[] = [
-  { label: 'Project Manager', value: EmployeeRole.ProjectManager },
-  { label: 'Designer', value: EmployeeRole.Designer },
-  { label: 'Developer', value: EmployeeRole.Developer },
-  { label: 'Tester', value: EmployeeRole.Tester },
-];
-
-export const ASSIGNMENT_ROLES: Option<AssignmentRole>[] = [
-  { label: 'Worker', value: AssignmentRole.Worker },
-  { label: 'Reviewer', value: AssignmentRole.Reviewer },
-];
-
-export const FAKE_PRIORITIES: Option<Priority>[] = [
-  { label: 'Low', value: Priority.Low },
-  { label: 'Medium', value: Priority.Medium },
-  { label: 'Top', value: Priority.Top },
-];
-
-export const FAKE_STATES: Option<TaskStatus>[] = [
-  { label: 'Not started', value: TaskStatus.NotStarted },
-  { label: 'In progress', value: TaskStatus.InProgress },
-  { label: 'In review', value: TaskStatus.InReview },
-  { label: 'Completed', value: TaskStatus.Completed },
 ];
