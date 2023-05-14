@@ -20,10 +20,7 @@ import { EditState } from '../state';
 import { ITEM_ADAPTER } from '../tokens';
 import { ItemAdapter } from '../interfaces';
 import { INITIAL_EDIT_STATE } from '../state';
-
-interface Item {
-  id?: string;
-}
+import { Item } from '../models';
 
 @Injectable()
 export class EditStoreService<T extends Item>

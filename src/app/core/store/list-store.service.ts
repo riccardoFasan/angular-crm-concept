@@ -8,15 +8,17 @@ import {
   tap,
   withLatestFrom,
 } from 'rxjs';
-import { Pagination, SearchCriteria, Sorting, List } from 'src/app/core/models';
+import {
+  Pagination,
+  SearchCriteria,
+  Sorting,
+  List,
+  Item,
+} from 'src/app/core/models';
 import { LoadingStoreService } from 'src/app/core/store';
 import { INITIAL_LIST_STATE, ListState } from '../state/list.state';
 import { ITEM_ADAPTER } from 'src/app/core/tokens';
 import { ItemAdapter } from 'src/app/core/interfaces';
-
-interface Item {
-  id?: string;
-}
 
 @Injectable()
 export class ListStoreService<T extends Item>

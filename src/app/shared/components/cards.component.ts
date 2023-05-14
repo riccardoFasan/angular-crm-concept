@@ -8,13 +8,9 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Pagination } from 'src/app/core/models';
+import { Item, Pagination } from 'src/app/core/models';
 import { RouterModule } from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-
-interface Item {
-  id?: string;
-}
 
 @Component({
   selector: 'app-cards',
