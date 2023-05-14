@@ -8,12 +8,11 @@ import { CommonModule } from '@angular/common';
 import { Item, List } from 'src/app/core/models';
 import { Observable, map } from 'rxjs';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { ScrollingModule } from '@angular/cdk/scrolling';
 import { ITEM_ADAPTER } from 'src/app/core/tokens';
 import { ItemAdapter } from 'src/app/core/interfaces';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-list-select',
@@ -21,9 +20,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MatInputModule,
+    MatSelectModule,
     MatAutocompleteModule,
-    ScrollingModule,
     MatProgressSpinnerModule,
   ],
   template: `
@@ -34,14 +32,18 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
       appearance="outline"
     >
       <mat-label>{{ label }}</mat-label>
-      <input
+      <mat-select
         type="text"
+        matInput
         placeholder="Choose an option"
         [attr.aria-label]="label"
-        matInput
         [formControl]="control"
-        [matAutocomplete]="auto"
-      />
+        [compareWith]="compareWith"
+      >
+        <mat-option *ngFor="let item of vm.items" [value]="item">
+          {{ $any(item).optionLabel }}
+        </mat-option>
+      </mat-select>
       <div *ngIf="!vm.items" class="spinner-wrapper">
         <mat-progress-spinner
           class="example-margin"
@@ -50,15 +52,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
         >
         </mat-progress-spinner>
       </div>
-      <mat-autocomplete
-        autoActiveFirstOption
-        [displayWith]="display"
-        #auto="matAutocomplete"
-      >
-        <mat-option *ngFor="let item of vm.items" [value]="item">
-          {{ $any(item).optionLabel }}
-        </mat-option>
-      </mat-autocomplete>
     </mat-form-field>
   `,
   styles: [
@@ -112,6 +105,10 @@ export class ListSelectComponent<T extends Item> {
         }))
       )
     );
+
+  protected compareWith(item: T, value: T): boolean {
+    return item.id === value.id;
+  }
 
   protected display(item: T | null): string {
     // @ts-ignore
