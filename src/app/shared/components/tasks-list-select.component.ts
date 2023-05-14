@@ -22,9 +22,9 @@ import {
   ScrollingModule,
 } from '@angular/cdk/scrolling';
 import { ErrorSnackbarDirective } from '../directives';
-import { ListStoreService } from 'src/app/features/list/store/list-store.service';
 import { ITEM_ADAPTER } from 'src/app/core/tokens';
-import { TasksAdapterService } from 'src/app/pages/tasks/tasks-list/services/tasks-adapter.service';
+import { TasksAdapterService } from 'src/app/features/tasks/services/tasks-adapter.service';
+import { ListStoreService } from 'src/app/core/store';
 
 @Component({
   selector: 'app-tasks-list-select',
