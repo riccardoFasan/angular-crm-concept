@@ -33,7 +33,6 @@ import { MatSelectModule } from '@angular/material/select';
     >
       <mat-label>{{ label }}</mat-label>
       <mat-select
-        type="text"
         matInput
         placeholder="Choose an option"
         [attr.aria-label]="label"
