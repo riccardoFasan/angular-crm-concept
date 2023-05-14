@@ -9,7 +9,7 @@ import {
   EmployeesSearchCriteria,
   EmployeesFilters,
 } from 'src/app/core/models';
-import { CardsComponent, EmployeesListComponent } from '../presentation';
+import { EmployeeCardComponent, EmployeesListComponent } from '../presentation';
 import { provideComponentStore } from '@ngrx/component-store';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
 import { MobileObserverService } from 'src/app/shared/services';
@@ -21,6 +21,7 @@ import { ListStoreService } from 'src/app/features/list/store/list-store.service
 import { EmployeesAdapterService } from '../services/employees-adapter.service';
 import { ITEM_ADAPTER } from 'src/app/core/tokens';
 import { EmployeesSearchComponent } from '../presentation/employees-search.component';
+import { CardsComponent } from 'src/app/features/list/presentation';
 
 @Component({
   selector: 'app-employees-list-container',
@@ -32,6 +33,7 @@ import { EmployeesSearchComponent } from '../presentation/employees-search.compo
     MatButtonModule,
     MatIconModule,
     EmployeesListComponent,
+    EmployeeCardComponent,
     CardsComponent,
     PaginationComponent,
     EmployeesSearchComponent,
@@ -90,15 +92,18 @@ import { EmployeesSearchComponent } from '../presentation/employees-search.compo
       >
         <mat-icon>add</mat-icon>
       </button>
-      <!-- <app-cards
+      <app-cards
         *ngIf="vm.mobile"
-        [tasks]="vm.items!"
-        [tasks]="vm.items!"
+        [items]="vm.items!"
         [loading]="!!vm.loading"
         [count]="vm.count!"
         [pagination]="vm.searchCriteria!.pagination"
         (paginationChange)="onPaginationChange($event)"
-      ></app-cards> -->
+      >
+        <ng-template let-item #card>
+          <app-employee-card [employee]="item"> </app-employee-card>
+        </ng-template>
+      </app-cards>
       <app-error-snackbar
         *ngIf="vm.error"
         [message]="vm.error"

@@ -9,7 +9,7 @@ import {
   Task,
   SearchCriteria,
 } from 'src/app/core/models';
-import { CardsComponent, TasksListComponent } from '../presentation';
+import { TaskCardComponent, TasksListComponent } from '../presentation';
 import { provideComponentStore } from '@ngrx/component-store';
 import { ErrorSnackbarDirective } from 'src/app/shared/directives';
 import { MobileObserverService } from 'src/app/shared/services';
@@ -21,6 +21,8 @@ import { ListStoreService } from 'src/app/features/list/store/list-store.service
 import { ITEM_ADAPTER } from 'src/app/core/tokens';
 import { TasksAdapterService } from '../services/tasks-adapter.service';
 import { TasksSearchComponent } from '../presentation/tasks-search.component';
+import { CardsComponent } from 'src/app/features/list/presentation';
+import { MatRippleModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-tasks-list-container',
@@ -31,10 +33,12 @@ import { TasksSearchComponent } from '../presentation/tasks-search.component';
     RouterModule,
     MatButtonModule,
     MatIconModule,
+    MatRippleModule,
     TasksListComponent,
     CardsComponent,
     PaginationComponent,
     TasksSearchComponent,
+    TaskCardComponent,
     ErrorSnackbarDirective,
   ],
   providers: [
@@ -92,13 +96,16 @@ import { TasksSearchComponent } from '../presentation/tasks-search.component';
       </button>
       <app-cards
         *ngIf="vm.mobile"
-        [tasks]="vm.items!"
-        [tasks]="vm.items!"
+        [items]="vm.items!"
         [loading]="!!vm.loading"
         [count]="vm.count!"
         [pagination]="vm.searchCriteria!.pagination"
         (paginationChange)="onPaginationChange($event)"
-      ></app-cards>
+      >
+        <ng-template let-item #card>
+          <app-task-card [task]="item"></app-task-card>
+        </ng-template>
+      </app-cards>
       <app-error-snackbar
         *ngIf="vm.error"
         [message]="vm.error"
