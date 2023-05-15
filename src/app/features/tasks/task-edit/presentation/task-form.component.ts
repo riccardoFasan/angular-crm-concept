@@ -204,7 +204,7 @@ export class TaskFormComponent implements OnInit, OnDestroy {
   @Input() set task(task: TaskFormData) {
     const formData: any = {
       ...task,
-      description: task.description || '',
+      description: task?.description || '',
     };
     this.form.patchValue(formData);
   }

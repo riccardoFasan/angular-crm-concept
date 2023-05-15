@@ -1,1 +1,1 @@
-export * from './can-leave-form';
+export * from './can-leave-form.guard';

@@ -7,6 +7,7 @@ import {
   pipe,
   tap,
   withLatestFrom,
+  filter,
 } from 'rxjs';
 import {
   Pagination,
@@ -19,6 +20,7 @@ import { LoadingStoreService } from 'src/app/core/store';
 import { INITIAL_LIST_STATE, ListState } from '../state/list.state';
 import { ITEM_ADAPTER } from 'src/app/core/tokens';
 import { ItemAdapter } from 'src/app/core/interfaces';
+import { RemovalAsker } from 'src/app/shared/services';
 
 @Injectable()
 export class ListStoreService<T extends Item>
@@ -28,6 +30,7 @@ export class ListStoreService<T extends Item>
   private readonly adapter: ItemAdapter<T> = inject(ITEM_ADAPTER);
   private readonly loadingStore: LoadingStoreService =
     inject(LoadingStoreService);
+  private readonly asker: RemovalAsker = inject(RemovalAsker);
 
   readonly items$: Observable<T[]> = this.select(
     (state: ListState<T>) => state.items
@@ -78,23 +81,28 @@ export class ListStoreService<T extends Item>
 
   readonly removeItem = this.effect<T>(
     pipe(
-      tap(() => this.syncLoading(true)),
-      withLatestFrom(this.items$),
-      concatMap(([item, items]) =>
-        this.adapter.removeItem(item).pipe(
-          tap({
-            next: (response: T) => {
-              const remainingItems: T[] = items.filter(
-                (item: T) => item.id !== response.id
-              );
-              this.updateItems(remainingItems);
-              this.syncLoading(false);
-            },
-            error: (message: string) => {
-              this.updateError(message);
-              this.syncLoading(false);
-            },
-          })
+      switchMap((item) =>
+        this.asker.shouldRemove().pipe(
+          filter((shouldRemove: boolean) => shouldRemove),
+          tap(() => this.syncLoading(true)),
+          withLatestFrom(this.items$),
+          concatMap(([_, items]) =>
+            this.adapter.removeItem(item).pipe(
+              tap({
+                next: (response: T) => {
+                  const remainingItems: T[] = items.filter(
+                    (item: T) => item.id !== response.id
+                  );
+                  this.updateItems(remainingItems);
+                  this.syncLoading(false);
+                },
+                error: (message: string) => {
+                  this.updateError(message);
+                  this.syncLoading(false);
+                },
+              })
+            )
+          )
         )
       )
     )

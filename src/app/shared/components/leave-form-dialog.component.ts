@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
-import { DialogAction } from 'src/app/shared/enums';
+import { FormDialogAction } from 'src/app/shared/enums';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
@@ -44,18 +44,18 @@ import { MatButtonModule } from '@angular/material/button';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeaveFormDialogComponent {
-  @Output() onClose: EventEmitter<DialogAction> =
-    new EventEmitter<DialogAction>();
+  @Output() onClose: EventEmitter<FormDialogAction> =
+    new EventEmitter<FormDialogAction>();
 
   protected leave(): void {
-    this.onClose.emit(DialogAction.Leave);
+    this.onClose.emit(FormDialogAction.Leave);
   }
 
   protected save(): void {
-    this.onClose.emit(DialogAction.Save);
+    this.onClose.emit(FormDialogAction.Save);
   }
 
   protected remain(): void {
-    this.onClose.emit(DialogAction.Remain);
+    this.onClose.emit(FormDialogAction.Remain);
   }
 }

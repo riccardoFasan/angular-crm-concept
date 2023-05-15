@@ -2,10 +2,13 @@ import { inject } from '@angular/core';
 import { Observable, map, of, race, switchMap } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LeaveFormDialogComponent } from 'src/app/shared/components';
-import { DialogAction } from '../enums';
+import { FormDialogAction } from '../enums';
 import { CanLeave } from '../interfaces';
+import { CanDeactivateFn } from '@angular/router';
 
-export const canLeaveForm = (component: CanLeave) => {
+export const canLeaveForm: CanDeactivateFn<CanLeave> = (
+  component: CanLeave
+) => {
   const dialog: MatDialog = inject(MatDialog);
   return component.canLeave$.pipe(
     switchMap((canLeave: boolean) => {
@@ -13,16 +16,16 @@ export const canLeaveForm = (component: CanLeave) => {
       const dialogRef: MatDialogRef<LeaveFormDialogComponent> = dialog.open(
         LeaveFormDialogComponent
       );
-      const backdropClick$: Observable<DialogAction> = dialogRef
+      const backdropClick$: Observable<FormDialogAction> = dialogRef
         .backdropClick()
-        .pipe(map(() => DialogAction.Remain));
-      const onButtonClick$: Observable<DialogAction> =
+        .pipe(map(() => FormDialogAction.Remain));
+      const onButtonClick$: Observable<FormDialogAction> =
         dialogRef.componentInstance.onClose;
       return race([backdropClick$, onButtonClick$]).pipe(
-        switchMap((action: DialogAction) => {
+        switchMap((action: FormDialogAction) => {
           dialogRef.close();
-          if (action === DialogAction.Leave) return of(true);
-          if (action === DialogAction.Remain) return of(false);
+          if (action === FormDialogAction.Leave) return of(true);
+          if (action === FormDialogAction.Remain) return of(false);
           return component.beforeLeave();
         })
       );

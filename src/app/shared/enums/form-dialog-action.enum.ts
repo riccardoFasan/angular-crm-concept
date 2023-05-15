@@ -1,4 +1,4 @@
-export enum DialogAction {
+export enum FormDialogAction {
   Remain = 'REMAIN',
   Leave = 'LEAVE',
   Save = 'SAVE',
