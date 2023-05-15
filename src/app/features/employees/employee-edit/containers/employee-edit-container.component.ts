@@ -24,11 +24,17 @@ import { CanLeave } from 'src/app/shared/interfaces';
 import { ITEM_ADAPTER } from 'src/app/core/tokens';
 import { EmployeesAdapterService } from '../../services';
 import { EditStoreService } from 'src/app/core/store';
+import { ErrorSnackbarDirective } from 'src/app/shared/directives';
 
 @Component({
   selector: 'app-employee-edit-container',
   standalone: true,
-  imports: [CommonModule, MatCardModule, EmployeeFormComponent],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    EmployeeFormComponent,
+    ErrorSnackbarDirective,
+  ],
   providers: [
     {
       provide: ITEM_ADAPTER,
@@ -37,23 +43,31 @@ import { EditStoreService } from 'src/app/core/store';
     provideComponentStore(EditStoreService),
   ],
   template: `
-    <mat-card
+    <ng-container
       *ngIf="{
         employee: employee$ | async,
         loading: loading$ | async,
         saved: saved$ | async,
+        error: error$ | async,
         editingMode: editingMode$ | async
       } as vm"
     >
-      <app-employee-form
-        [loading]="vm.loading!"
-        [employee]="vm.employee!"
-        [saved]="vm.saved!"
-        [editingMode]="vm.editingMode!"
-        (formDataChange)="onFormDataChanged($event)"
-        (onSave)="onFormSaved($event)"
-      ></app-employee-form>
-    </mat-card>
+      <mat-card>
+        <app-employee-form
+          [loading]="vm.loading!"
+          [employee]="vm.employee!"
+          [saved]="vm.saved!"
+          [editingMode]="vm.editingMode!"
+          (formDataChange)="onFormDataChanged($event)"
+          (onSave)="onFormSaved($event)"
+        ></app-employee-form>
+      </mat-card>
+      <app-error-snackbar
+        *ngIf="vm.error"
+        [message]="vm.error"
+        (dismissed)="onSnackbardDismissed()"
+      ></app-error-snackbar>
+    </ng-container>
   `,
   styles: [],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,6 +82,7 @@ export class EmployeeEditContainerComponent implements CanLeave {
 
   protected readonly employee$: Observable<Employee | undefined> =
     this.store.item$;
+  protected readonly error$: Observable<string | undefined> = this.store.error$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;
   protected readonly saved$: Observable<boolean> = this.store.saved$;
   protected readonly editingMode$: Observable<EditingMode> =
@@ -106,5 +121,9 @@ export class EmployeeEditContainerComponent implements CanLeave {
 
   protected onFormSaved(formData: TaskFormData): void {
     this.store.saveItem(formData);
+  }
+
+  protected onSnackbardDismissed(): void {
+    this.store.clearError();
   }
 }
