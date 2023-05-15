@@ -97,6 +97,7 @@ import { EmployeesAdapterService } from '../../services';
       <app-cards
         *ngIf="vm.mobile"
         [items]="vm.items!"
+        [filters]="vm.searchCriteria!.filters!"
         [loading]="!!vm.loading"
         [count]="vm.count!"
         [pagination]="vm.searchCriteria!.pagination"

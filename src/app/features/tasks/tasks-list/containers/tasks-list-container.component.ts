@@ -100,6 +100,7 @@ import { ListStoreService } from 'src/app/core/store';
         *ngIf="vm.mobile"
         [items]="vm.items!"
         [loading]="!!vm.loading"
+        [filters]="vm.searchCriteria!.filters!"
         [count]="vm.count!"
         [pagination]="vm.searchCriteria!.pagination"
         (paginationChange)="onPaginationChange($event)"

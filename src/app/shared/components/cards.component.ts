@@ -60,6 +60,10 @@ export class CardsComponent<T extends Item> {
   @Input() pagination!: Pagination;
   @Input() loading: boolean = false;
 
+  @Input() set filters(_: object) {
+    this.loadedItems = [];
+  }
+
   @Input() set items(items: T[]) {
     const newTasks: T[] = items.filter(
       (task: T) => !this.loadedItems.some((t) => t.id === task.id)
