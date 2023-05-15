@@ -19,8 +19,8 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
   template: `
     <div cdkVirtualScrollingElement>
       <cdk-virtual-scroll-viewport
-        [itemSize]="cards.offsetHeight / loadedItems.length"
-        (scrolledIndexChange)="onScroll()"
+        [itemSize]="134"
+        (scrolledIndexChange)="onScroll($event)"
       >
         <div #cards>
           <ng-container *ngIf="cardRef">
@@ -75,24 +75,42 @@ export class CardsComponent<T extends Item> {
 
   protected loadedItems: T[] = [];
 
-  protected onScroll(): void {
-    if (this.canChangePage) this.onPageIndexChange();
+  protected onScroll(scrollIndex: number): void {
+    if (!this.canChangePage(scrollIndex)) return;
+    this.onPageIndexChange(scrollIndex);
   }
 
-  private get canChangePage(): boolean {
+  private get currentCount(): number {
+    return this.loadedItems.length;
+  }
+
+  private get totalPages(): number {
+    return Math.ceil(this.count / this.pagination.pageSize);
+  }
+
+  private canChangePage(nextPageIndex: number): boolean {
     if (this.loading) return false;
-    const pageNumber: number = this.pagination.pageIndex + 1;
-    const nextPageNumber: number = pageNumber + 1;
-    const nextTotalCount: number = this.pagination.pageSize * nextPageNumber;
-    const willLoadNewItems: boolean =
-      nextTotalCount > this.loadedItems.length && nextTotalCount <= this.count;
-    return willLoadNewItems;
+    const hasCount: boolean = this.count > 0;
+    if (!hasCount) return false;
+    if (nextPageIndex <= this.pagination.pageIndex) return false;
+    if (nextPageIndex > this.totalPages) return false;
+    const nextTotalCount: number =
+      this.pagination.pageSize * (nextPageIndex + 1);
+    const isLastPage: boolean = this.totalPages === nextPageIndex;
+    const willLoadNewEntries: boolean =
+      (isLastPage &&
+        nextTotalCount > this.currentCount &&
+        nextTotalCount <= this.pagination.pageSize * this.totalPages) ||
+      (!isLastPage &&
+        nextTotalCount > this.currentCount &&
+        nextTotalCount <= this.count);
+    return willLoadNewEntries;
   }
 
-  private onPageIndexChange(): void {
+  private onPageIndexChange(nextPageIndex: number): void {
     this.paginationChange.emit({
       ...this.pagination,
-      pageIndex: this.pagination.pageIndex + 1,
+      pageIndex: nextPageIndex,
     });
   }
 }
