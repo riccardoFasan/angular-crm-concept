@@ -24,7 +24,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { BackComponent } from 'src/app/shared/components';
-import { Observable, Subject, filter, takeUntil, tap } from 'rxjs';
+import { Observable, Subject, filter, map, takeUntil, tap } from 'rxjs';
 import { MobileObserverService } from 'src/app/shared/services';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { areEqualObjects } from 'src/utilities';
@@ -195,13 +195,17 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   @Input() loading: boolean = false;
   @Input() saved: boolean = false;
-  @Input() task?: Task;
+
   @Input({ required: true }) set editingMode(mode: EditingMode) {
     if (mode === EditingMode.Editing) this.touch();
     this.mode = mode;
   }
 
-  @Input() set formData(formData: TaskFormData) {
+  @Input() set task(task: TaskFormData) {
+    const formData: any = {
+      ...task,
+      description: task.description || '',
+    };
     this.form.patchValue(formData);
   }
 
@@ -222,9 +226,9 @@ export class TaskFormComponent implements OnInit, OnDestroy {
 
   private readonly valueChanges$: Observable<TaskFormData> =
     this.form.valueChanges.pipe(
-      filter(
-        (formData: TaskFormData) => !areEqualObjects(formData, this.form.value)
-      ),
+      filter(() => !this.loading && this.form.dirty),
+      map((formData: TaskFormData) => ({ ...this.task, ...formData })),
+      filter((formData: TaskFormData) => !areEqualObjects(formData, this.task)),
       tap((formData: TaskFormData) => this.formDataChange.emit(formData)),
       takeUntil(this.destroy$)
     );

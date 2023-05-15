@@ -39,7 +39,6 @@ import { EditStoreService } from 'src/app/core/store';
   template: `
     <mat-card
       *ngIf="{
-        formData: formData$ | async,
         employee: employee$ | async,
         loading: loading$ | async,
         saved: saved$ | async,
@@ -48,7 +47,6 @@ import { EditStoreService } from 'src/app/core/store';
     >
       <app-employee-form
         [loading]="vm.loading!"
-        [formData]="vm.formData!"
         [employee]="vm.employee!"
         [saved]="vm.saved!"
         [editingMode]="vm.editingMode!"
@@ -68,13 +66,14 @@ export class EmployeeEditContainerComponent implements CanLeave {
     EditStoreService<Employee>
   );
 
-  protected readonly formData$: Observable<TaskFormData> = this.store.formData$;
   protected readonly employee$: Observable<Employee | undefined> =
     this.store.item$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;
   protected readonly saved$: Observable<boolean> = this.store.saved$;
   protected readonly editingMode$: Observable<EditingMode> =
     this.store.editingMode$;
+
+  private readonly formData$: Observable<TaskFormData> = this.store.formData$;
 
   readonly canLeave$: Observable<boolean> = combineLatest([
     this.saved$,

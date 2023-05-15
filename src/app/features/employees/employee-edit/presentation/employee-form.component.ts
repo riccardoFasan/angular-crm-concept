@@ -195,7 +195,7 @@ import { AssignmentValidators } from '../validators/assignment.validators';
             <mat-grid-tile colspan="1" rowspan="1">
               <div class="add-assignment">
                 <button
-                  (click)="addAssignment()"
+                  (click)="addNewAssignment()"
                   [disabled]="loading"
                   mat-button
                   mat-flat-button
@@ -316,33 +316,40 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
 
   @Input({ required: true }) loading: boolean = false;
   @Input({ required: true }) saved: boolean = false;
-  @Input({ required: true }) employee?: Employee;
+
+  @Input({ required: true }) set employee(employee: Employee | undefined) {
+    const formData: any = {
+      employee: {
+        firstName: employee?.firstName || '',
+        lastName: employee?.lastName || '',
+        email: employee?.email || '',
+        pictureUrl: employee?.pictureUrl || '',
+        roles: employee?.roles || [],
+      },
+      assignments: employee?.assignments,
+    };
+    this.form.patchValue(formData);
+    const assignments: Assignment[] = employee?.assignments || [];
+    const assignmentsControls: FormArray = <FormArray>(
+      this.form.get('assignments')
+    );
+    assignmentsControls.clear();
+    if (assignments.length === 0) {
+      this.addNewAssignment();
+      return;
+    }
+    assignments.forEach((assignment: Assignment, i: number) =>
+      this.insertAssignment(assignment, i)
+    );
+  }
 
   @Input({ required: true }) set editingMode(mode: EditingMode) {
     if (mode === EditingMode.Editing) this.touch();
     if (mode === EditingMode.Creating) {
       const assignments: FormArray = <FormArray>this.form.get('assignments');
-      if (assignments.controls.length === 0) this.addAssignment();
+      if (assignments.controls.length === 0) this.addNewAssignment();
     }
     this.mode = mode;
-  }
-
-  @Input({ required: true }) set formData(formData: EmployeeFormData) {
-    const data: any = {
-      employee: {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        pictureUrl: formData.pictureUrl,
-        roles: formData.roles || [],
-      },
-      assignments: formData.assignments,
-    };
-    this.form.patchValue(data);
-    const assignments: Assignment[] = formData.assignments || [];
-    assignments.forEach((assignment: Assignment, i: number) =>
-      this.insertAssignment(assignment, i)
-    );
   }
 
   @Output() formDataChange: EventEmitter<EmployeeFormData> =
@@ -392,11 +399,13 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
 
   private readonly valueChanges$: Observable<EmployeeFormData> =
     this.form.valueChanges.pipe(
-      filter((formData: any) => !areEqualObjects(formData, this.form.value)),
+      filter(() => !this.loading && this.form.dirty),
       map((formData: any) => ({
+        ...this.employee,
         ...formData.employee,
         assignments: formData.assignments,
       })),
+      filter((formData: any) => !areEqualObjects(formData, this.employee)),
       tap((formData: EmployeeFormData) => this.formDataChange.emit(formData)),
       takeUntil(this.destroy$)
     );
@@ -440,14 +449,13 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
     this.form.reset();
   }
 
-  protected addAssignment(): void {
-    const lastIndex: number = this.assignments.length - 1;
-    this.insertAssignment(null, lastIndex + 1);
+  protected addNewAssignment(): void {
+    this.insertAssignment(null);
   }
 
   private insertAssignment(
     assignment: Assignment | null,
-    index: number = 0
+    index: number = -1
   ): void {
     const group: FormGroup = new FormGroup(
       {
@@ -457,6 +465,10 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
         role: new FormControl<AssignmentRole | null>(assignment?.role || null, [
           Validators.required,
         ]),
+        assignedAt: new FormControl<Date | null>(
+          assignment?.assignedAt || null,
+          [Validators.required]
+        ),
         fromDate: new FormControl<Date | null>(assignment?.fromDate || null, [
           Validators.required,
         ]),
@@ -470,6 +482,7 @@ export class EmployeeFormComponent implements OnInit, OnDestroy {
         ],
       }
     );
+
     this.assignments.insert(index, group);
   }
 }

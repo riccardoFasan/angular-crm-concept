@@ -39,7 +39,6 @@ import { TasksAdapterService } from '../../services';
   template: `
     <mat-card
       *ngIf="{
-        formData: formData$ | async,
         task: task$ | async,
         loading: loading$ | async,
         saved: saved$ | async,
@@ -48,7 +47,6 @@ import { TasksAdapterService } from '../../services';
     >
       <app-task-form
         [loading]="vm.loading!"
-        [formData]="vm.formData!"
         [task]="vm.task!"
         [saved]="vm.saved!"
         [editingMode]="vm.editingMode!"
@@ -67,12 +65,13 @@ export class TaskEditContainerComponent implements CanLeave {
     EditStoreService<Task>
   );
 
-  protected readonly formData$: Observable<TaskFormData> = this.store.formData$;
   protected readonly task$: Observable<Task | undefined> = this.store.item$;
   protected readonly loading$: Observable<boolean> = this.store.loading$;
   protected readonly saved$: Observable<boolean> = this.store.saved$;
   protected readonly editingMode$: Observable<EditingMode> =
     this.store.editingMode$;
+
+  private readonly formData$: Observable<TaskFormData> = this.store.formData$;
 
   readonly canLeave$: Observable<boolean> = combineLatest([
     this.saved$,

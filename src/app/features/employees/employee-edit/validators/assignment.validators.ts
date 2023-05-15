@@ -40,7 +40,6 @@ export class AssignmentValidators {
     const isProjectManager: boolean = roleValues.includes(
       EmployeeRole.ProjectManager
     );
-    if (!isProjectManager) return null;
 
     const assignmentsControl: FormArray = <FormArray>form.get('assignments');
     const assignmentControls: FormGroup[] = <FormGroup[]>(
@@ -48,9 +47,11 @@ export class AssignmentValidators {
     );
     if (assignmentControls.length === 0) return null;
 
-    const error: ValidationErrors = {
-      cannotBeAReviewerIfIsAProjectManager: true,
-    };
+    const error: ValidationErrors | null = isProjectManager
+      ? {
+          cannotBeAReviewerIfIsAProjectManager: true,
+        }
+      : null;
 
     let hasError: boolean = false;
     assignmentControls.forEach((control: FormGroup) => {
