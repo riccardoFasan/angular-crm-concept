@@ -28,7 +28,6 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { BackComponent } from 'src/app/shared/components';
 import { Observable, Subject, filter, takeUntil, tap, map } from 'rxjs';
 import { MobileObserverService } from 'src/app/shared/services';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -37,6 +36,8 @@ import { AssignmentFormComponent } from './assignment-form.component';
 import { areEqualObjects } from 'src/utilities';
 import { RoleValidators } from '../validators';
 import { AssignmentValidators } from '../validators/assignment.validators';
+import { RouterModule } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-employee-form',
@@ -50,12 +51,15 @@ import { AssignmentValidators } from '../validators/assignment.validators';
     MatButtonModule,
     MatGridListModule,
     MatStepperModule,
-    BackComponent,
     AssignmentFormComponent,
+    RouterModule,
+    MatIconModule,
   ],
   template: `
     <div>
-      <app-back></app-back>
+      <button [routerLink]="['/employees']" mat-icon-button>
+        <mat-icon>arrow_back</mat-icon>
+      </button>
       <h1>
         {{ mode === 'EDITING' ? 'Edit employee' : 'Create employee' }}
       </h1>

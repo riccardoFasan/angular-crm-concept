@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EditingMode, Priority, TaskStatus } from 'src/app/core/enums';
-import { Task, TaskFormData } from 'src/app/core/models';
+import { TaskFormData } from 'src/app/core/models';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -23,11 +23,12 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { BackComponent } from 'src/app/shared/components';
 import { Observable, Subject, filter, map, takeUntil, tap } from 'rxjs';
 import { MobileObserverService } from 'src/app/shared/services';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { areEqualObjects } from 'src/utilities';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-task-form',
@@ -42,11 +43,14 @@ import { areEqualObjects } from 'src/utilities';
     MatNativeDateModule,
     MatButtonModule,
     MatGridListModule,
-    BackComponent,
+    MatIconModule,
+    RouterModule,
   ],
   template: `
     <div>
-      <app-back></app-back>
+      <button [routerLink]="['/tasks']" mat-icon-button>
+        <mat-icon>arrow_back</mat-icon>
+      </button>
       <h1>{{ mode === 'EDITING' ? 'Edit task' : 'Create task' }}</h1>
     </div>
     <form [formGroup]="form">
