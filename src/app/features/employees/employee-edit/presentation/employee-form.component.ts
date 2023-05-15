@@ -76,6 +76,11 @@ import { AssignmentValidators } from '../validators/assignment.validators';
               <mat-form-field appearance="outline">
                 <mat-label>Firstname</mat-label>
                 <input formControlName="firstName" matInput type="text" />
+                <mat-error
+                  *ngIf="form.get('employee.firstName')!.hasError('required')"
+                >
+                  This field is required
+                </mat-error>
               </mat-form-field>
             </mat-grid-tile>
 
@@ -83,6 +88,11 @@ import { AssignmentValidators } from '../validators/assignment.validators';
               <mat-form-field appearance="outline">
                 <mat-label>Lastname</mat-label>
                 <input formControlName="lastName" matInput type="text" />
+                <mat-error
+                  *ngIf="form.get('employee.lastName')!.hasError('required')"
+                >
+                  This field is required
+                </mat-error>
               </mat-form-field>
             </mat-grid-tile>
 
@@ -90,6 +100,11 @@ import { AssignmentValidators } from '../validators/assignment.validators';
               <mat-form-field appearance="outline">
                 <mat-label>Email</mat-label>
                 <input formControlName="email" matInput type="email" />
+                <mat-error
+                  *ngIf="form.get('employee.email')!.hasError('required')"
+                >
+                  This field is required
+                </mat-error>
               </mat-form-field>
             </mat-grid-tile>
 

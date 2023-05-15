@@ -42,6 +42,9 @@ import { MatSelectModule } from '@angular/material/select';
         <mat-option *ngFor="let item of vm.items" [value]="item">
           {{ $any(item).optionLabel }}
         </mat-option>
+        <mat-error *ngIf="control.hasError('required')">
+          This field is required
+        </mat-error>
       </mat-select>
       <div *ngIf="!vm.items" class="spinner-wrapper">
         <mat-progress-spinner

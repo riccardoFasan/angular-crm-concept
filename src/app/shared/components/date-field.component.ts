@@ -52,6 +52,9 @@ import { MatInputModule } from '@angular/material/input';
       >
         <mat-icon>close</mat-icon>
       </button>
+      <mat-error *ngIf="control.hasError('required')">
+        This field is required
+      </mat-error>
     </mat-form-field>
   `,
   styles: [

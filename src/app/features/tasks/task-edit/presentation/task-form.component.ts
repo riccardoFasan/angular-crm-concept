@@ -60,6 +60,9 @@ import { areEqualObjects } from 'src/utilities';
           <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
             <input formControlName="description" matInput type="text" />
+            <mat-error *ngIf="form.get('description')!.hasError('required')">
+              This field is required
+            </mat-error>
           </mat-form-field>
         </mat-grid-tile>
 
@@ -72,6 +75,9 @@ import { areEqualObjects } from 'src/utilities';
               <mat-option value="IN_REVIEW">In Review</mat-option>
               <mat-option value="COMPLETED">Completed</mat-option>
             </mat-select>
+            <mat-error *ngIf="form.get('status')!.hasError('required')">
+              This field is required
+            </mat-error>
           </mat-form-field>
         </mat-grid-tile>
 
@@ -83,6 +89,9 @@ import { areEqualObjects } from 'src/utilities';
               <mat-option value="MEDIUM">Medium</mat-option>
               <mat-option value="TOP">Top</mat-option>
             </mat-select>
+            <mat-error *ngIf="form.get('priority')!.hasError('required')">
+              This field is required
+            </mat-error>
           </mat-form-field>
         </mat-grid-tile>
 
@@ -131,7 +140,7 @@ import { areEqualObjects } from 'src/utilities';
   styles: [
     `
       :host {
-        $row-height: 5rem;
+        $row-height: 6rem;
         padding: 1rem;
 
         div:first-child {

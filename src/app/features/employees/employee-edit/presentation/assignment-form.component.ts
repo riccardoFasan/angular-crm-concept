@@ -87,6 +87,9 @@ import {
             >
               Cannot be a reviewer if is a Project Manager
             </mat-error>
+            <mat-error *ngIf="form.get('role')!.hasError('required')">
+              This field is required
+            </mat-error>
           </mat-form-field>
         </mat-grid-tile>
 
