@@ -1,27 +1,26 @@
-# Taskboard
+# Build CRMs in Angular using [@ngrx/component-store](https://ngrx.io/guide/component-store) - a concept
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.4.
+## The idea
 
-## Development server
+It is an example on how to use smart and dumb component architecture to build CRMs in Angular that are flexible, easy to maintain, and have simple but robust and flexible state management.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Basically, the application revolves around task and employee entities and has the basic use cases of a CRM, such as displaying paged lists, editing data in forms, and performing CRUD operations via APIs.
 
-## Code scaffolding
+## Notes
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+I made full use of the framework's modern techniques, such as the use of standalone components, the use of ChangeDetection.OnPush to improve performance.
 
-## Build
+There are also examples on how to use those features that are often forgotten by developers
+- custom strategies for dynamic and centralized management of page titles
+- canDeactivate guards to get consent from the user before exiting a form without saving
+- custom validators to separate form validation logic from domain logic and more (for both single inputs and entire form groups)
+- use of ng-template and ng-content to create extendible and reusable components
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Ideas for the future
+- Do a refactoring to replace observables as much as possible with Angular's newest signals
+- Add an example on how and use async validators
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+## Dependencies
+- [Angular](https://angular.io/) 
+- [Angular Material](https://material.angular.io/)
+- [@ngrx/component-store](https://ngrx.io/guide/component-store)
