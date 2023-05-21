@@ -2,7 +2,7 @@
 
 ## The idea
 
-It is an example on how to use smart and dumb component architecture to build CRMs in Angular that are flexible, easy to maintain, and have simple but robust and flexible state management.
+It is an example on how to use [smart and dumb component](https://medium.com/@mrahmedkhan019/smart-dumb-components-in-angular-e1d6dbd6edff) architecture to build CRMs in Angular that are flexible, easy to maintain, and have simple but robust and flexible state management.
 
 Basically, the application revolves around task and employee entities and has the basic use cases of a CRM, such as displaying paged lists, editing data in forms, and performing CRUD operations via APIs.
 
