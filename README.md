@@ -20,7 +20,7 @@ There are also examples on how to use those features that are often forgotten by
 ## Ideas for the future
 - Do a refactoring to replace observables as much as possible with Angular's newest signals
 - Add an example on how and use async validators
-- Add a testing coverage (both unit tets and e2e)
+- Add a testing coverage (both unit tests and e2e)
 
 ## Dependencies
 - [Angular](https://angular.io/) 
