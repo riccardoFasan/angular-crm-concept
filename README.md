@@ -15,6 +15,7 @@ There are also examples on how to use those features that are often forgotten by
 - canDeactivate guards to get consent from the user before exiting a form without saving
 - custom validators to separate form validation logic from domain logic and more (for both single inputs and entire form groups)
 - use of ng-template and ng-content to create extendible and reusable components
+- use of injection tokens to develop extendible and reusable services
 
 ## Ideas for the future
 - Do a refactoring to replace observables as much as possible with Angular's newest signals
